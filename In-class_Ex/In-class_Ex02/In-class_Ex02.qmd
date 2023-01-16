@@ -1,0 +1,47 @@
+---
+title: "In-class Exercise 2: Geospatial Data Wrangling"
+
+date: "r Sys.Date()"
+
+format: html  
+#docx/pdf -> can change to different formats
+
+execute: 
+  message: false
+  warning: false
+  #to not show warning/error msgs
+editor: visual
+---
+
+Install the required packages.
+
+```{r}
+#| eval: false
+install.packages('pacman')
+```
+
+Load the packages.
+
+```{r}
+#| eval: false
+pacman::p_load(sf, tidyverse, funModeling)
+```
+
+Read the file from geoBoundaries.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM0")%>%st_transform(crs=26392)
+
+```
+
+Read the file from Humanitarian Data Exchange.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+nga = st_read(dsn = "data/geospatial/", layer="nga_admbnda_adm1_osgof_20190417")%>%st_transform(crs=26392)
+```

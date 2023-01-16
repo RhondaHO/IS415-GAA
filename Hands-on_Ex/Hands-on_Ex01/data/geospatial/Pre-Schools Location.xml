@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:dct="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcat="http://www.w3.org/ns/dcat#"
+>
+  <dcat:Dataset rdf:about="https://dataportal.asia/dataset/1f127dc3-7596-4b86-846b-9d32bfa88532">
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://dataportal.asia/dataset/1f127dc3-7596-4b86-846b-9d32bfa88532/resource/66c41375-f58d-4801-b484-6140a162519b">
+        <dct:title>Pre-Schools Location (GEOJSON)</dct:title>
+        <dct:format>GeoJSON</dct:format>
+        <dcat:accessURL rdf:resource="https://geo.data.gov.sg/preschools-location/2020/08/12/geojson/preschools-location.geojson"/>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2020-10-29T01:49:34.507341</dct:issued>
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://dataportal.asia/dataset/1f127dc3-7596-4b86-846b-9d32bfa88532/resource/06fb77f8-125b-4202-a770-698a51ffab30">
+        <dct:title>Pre-Schools Location (KML)</dct:title>
+        <dct:format>KML</dct:format>
+        <dcat:accessURL rdf:resource="https://geo.data.gov.sg/preschools-location/2020/08/12/kml/preschools-location.kml"/>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dct:identifier>1f127dc3-7596-4b86-846b-9d32bfa88532</dct:identifier>
+    <dct:publisher>
+      <foaf:Organization rdf:about="https://dataportal.asia/organization/0194f0a3-76d8-49d6-bd7a-3270c1e03a84">
+        <foaf:name>data.gov.sg</foaf:name>
+      </foaf:Organization>
+    </dct:publisher>
+    <dcat:keyword>ecda</dcat:keyword>
+    <dcat:keyword>childcare</dcat:keyword>
+    <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2020-10-29T01:49:46.369504</dct:modified>
+    <dct:description>The location of pre-schools (childcare centres and kindergartens)</dct:description>
+    <dcat:keyword>childcare centre</dcat:keyword>
+    <dcat:keyword>OneMap</dcat:keyword>
+    <dct:title>Pre-Schools Location</dct:title>
+    <dcat:keyword>pre-school</dcat:keyword>
+    <dcat:keyword>kindergarten</dcat:keyword>
+    <dcat:keyword>preschool</dcat:keyword>
+    <dcat:keyword>ancestry</dcat:keyword>
+  </dcat:Dataset>
+</rdf:RDF>

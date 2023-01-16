@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "IS415-GAA",
     "section": "",
-    "text": "Welcome to IS415 Geospatial Analyticvs and Applications.\nThis is the course website of IS415 I study this term. You will find my course work on this website."
+    "text": "Welcome to IS415 Geospatial Analytics and Applications.\nThis is the course website of IS415 I study this term. You will find my course work on this website."
   },
   {
     "objectID": "about.html",
@@ -12,5 +12,12 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "title": "In-class Exercise 2: Geospatial Data Wrangling",
+    "section": "",
+    "text": "Install the required packages.\n\ninstall.packages('pacman')\n\nLoad the packages.\n\npacman::p_load(sf, tidyverse, funModeling)\n\nRead the file from geoBoundaries.\n\n\nShow the code\ngeoNGA = st_read(dsn = \"data/geospatial/\", layer=\"geoBoundaries-NGA-ADM0\")%>%st_transform(crs=26392)\n\n\nRead the file from Humanitarian Data Exchange.\n\n\nShow the code\nnga = st_read(dsn = \"data/geospatial/\", layer=\"nga_admbnda_adm1_osgof_20190417\")%>%st_transform(crs=26392)"
   }
 ]
