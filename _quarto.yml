@@ -4,10 +4,26 @@ project:
 website:
   title: "IS415-GAA"
   navbar:
+    background: "#ccccff"
+
     left:
-      - href: index.qmd
+    - text: "Hands-on Exercise"
+      menu:
+      - text: Hands-on Exercise 1
+        href: "Hands-on Ex/Hands-on_Ex01/Hands-on_Ex01.qmd"
+    
+    - text: "In-class Exercise"
+      menu:
+      - text: In-class Exercise 2
+        href: "In-class Ex/In-class_Ex02/In-class_Ex02.qmd"
+    
+    right:
+      - href: home.qmd
         text: Home
-      - about.qmd
+        
+      - href: about.qmd
+        text: About
+        
 
 format:
   html:
