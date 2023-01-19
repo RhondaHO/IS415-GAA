@@ -83,9 +83,11 @@ Combining the geospatial and aspatial data frame into simple feature data frame.
 Visualising the distribution of water point by using appropriate analytical visualisation methods.
 
 ```{r}
+#| eval: false
 plot(nga)
 ```
 
 ```{r}
+#| eval: false
 plot(geoNGA)
 ```

@@ -116,6 +116,6 @@
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#task-4",
     "title": "In-class Exercise 2: Geospatial Data Wrangling",
     "section": "Task 4",
-    "text": "Task 4\nVisualising the distribution of water point by using appropriate analytical visualisation methods."
+    "text": "Task 4\nVisualising the distribution of water point by using appropriate analytical visualisation methods.\n\nplot(nga)\n\n\nplot(geoNGA)"
   }
 ]
