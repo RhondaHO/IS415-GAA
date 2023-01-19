@@ -1,6 +1,8 @@
 ---
 title: "In-class Exercise 2: Geospatial Data Wrangling"
 
+title-block-banner: true
+
 date: "r Sys.Date()"
 
 format: html  
@@ -13,21 +15,25 @@ execute:
 editor: visual
 ---
 
-Install the required packages.
+## Task 1
+
+Using appropriate sf method, import the shapefile into R and save it in a simple feature data frame format. Note that there are three Projected Coordinate Systems of Nigeria, they are: EPSG: 26391, 26392, and 26303. You can use any one of them.
+
+1.  Install the required packages.
 
 ```{r}
 #| eval: false
 install.packages('pacman')
 ```
 
-Load the packages.
+2.  Load the packages.
 
 ```{r}
 #| eval: false
 pacman::p_load(sf, tidyverse, funModeling)
 ```
 
-Read the file from geoBoundaries.
+3.  Read the file from geoBoundaries.
 
 ```{r}
 #| code-fold: true
@@ -37,11 +43,49 @@ geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM0")%>%st_
 
 ```
 
-Read the file from Humanitarian Data Exchange.
+4.  Read the file from Humanitarian Data Exchange.
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
 #| eval: false
 nga = st_read(dsn = "data/geospatial/", layer="nga_admbnda_adm1_osgof_20190417")%>%st_transform(crs=26392)
+```
+
+## Task 2
+
+Using appropriate tidyr and dplyr methods, derive the proportion of functional and non-functional water point at LGA level.
+
+```{r}
+#| eval: false
+st_geometry(geoNGA)
+glimpse(geoNGA)
+head(geoNGA, n=5)
+```
+
+```{r}
+#| eval: false
+st_geometry(nga)
+glimpse(nga)
+head(nga, n=5)
+```
+
+## Task 3
+
+Combining the geospatial and aspatial data frame into simple feature data frame.
+
+```{r}
+
+```
+
+## Task 4
+
+Visualising the distribution of water point by using appropriate analytical visualisation methods.
+
+```{r}
+plot(nga)
+```
+
+```{r}
+plot(geoNGA)
 ```

@@ -7,6 +7,7 @@ date: "r Sys.Date()"
 
 format: html  
 
+
 execute: 
   message: false
   warning: false
@@ -67,11 +68,8 @@ st_geometry(mpsz)
         glimpse(mpsz)
         ```
 
-    -   head()
+    -    head()
 
-    ```{=html}
-    <!-- -->
-    ```
         ```{r}
         #| eval: false
         head(mpsz, n=5) 
@@ -79,7 +77,7 @@ st_geometry(mpsz)
 
 ## Plotting the Geospatial Data
 
-1.  To visualise the geospatial features, make use of *plot()* of R Graphic.
+1.   To visualise the geospatial features, make use of *plot()* of R Graphic.
 
 ```{r}
 #| eval: false
@@ -93,7 +91,7 @@ plot(mpsz)
 plot(st_geometry(mpsz))
 ```
 
-3.  Plot the sf object by using a specific attribute.
+3.   Plot the sf object by using a specific attribute.
 
 ```{r}
 #| eval: false
