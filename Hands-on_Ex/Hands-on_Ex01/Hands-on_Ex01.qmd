@@ -20,8 +20,11 @@ Install and load the required packages.
 
 ```{r}
 #| eval: false
-
 install.packages("pacman")
+
+```
+
+```{r}
 pacman::p_load(sf, tidyverse)
 ```
 
@@ -35,7 +38,6 @@ pacman::p_load(sf, tidyverse)
     -   *PreSchool*, a point feature layer in kml file format
 
 ```{r}
-#| eval: false
 mpsz = st_read(dsn = "data/geospatial", 
                layer = "MP14_SUBZONE_WEB_PL")
 
@@ -44,7 +46,6 @@ cyclingpath = st_read(dsn = "data/geospatial",
 
 preschool = st_read("data/geospatial/pre-schools-location-kml.kml")
 
-st_geometry(mpsz)
 ```
 
 2.  Note that when the input geospatial data is in shapefile format, two arguments will be used, namely: dsn to define the data path and layer to provide the shapefile name. Also note that no extension such as .shp, .dbf, .prj and .shx are needed.
@@ -55,34 +56,21 @@ st_geometry(mpsz)
 
     -   st_geometry()
 
-        ```{r}
-        #| eval: false
-        st_geometry(mpsz)
-        ```
-
     -   glimpse()
-
-        ```{r}
-        #| eval: false
-        glimpse(mpsz)
-        ```
 
     -   head()
 
-    ```{=html}
-    <!-- -->
-    ```
-        ```{r}
-        #| eval: false
-        head(mpsz, n=5) 
-        ```
+```{r}
+st_geometry(mpsz)
+glimpse(mpsz)
+head(mpsz, n=5) 
+```
 
 ## Plotting the Geospatial Data
 
 1.  To visualise the geospatial features, make use of *plot()* of R Graphic.
 
 ```{r}
-#| eval: false
 plot(mpsz)
 ```
 

@@ -61,13 +61,59 @@ Using appropriate tidyr and dplyr methods, derive the proportion of functional a
 st_geometry(geoNGA)
 glimpse(geoNGA)
 head(geoNGA, n=5)
+
+st_geometry(nga)
+glimpse(nga)
+head(nga, n=5)
+```
+
+```{r}
+library(dplyr)
 ```
 
 ```{r}
 #| eval: false
-st_geometry(nga)
-glimpse(nga)
-head(nga, n=5)
+wpdx <- read_csv("data/aspatial/wpdx.csv")
+list(wpdx)
+```
+
+Convert into a simple dataframe feature
+
+```{r}
+#| eval: false
+wpdx_sf <- st_as_sf(wpdx, 
+                       coords = c("lat_deg", "lon_deg"),
+                       crs=4326) %>% st_transform(crs = 3414)
+```
+
+Take a look at the dataframe.
+
+```{r}
+#| eval: false
+glimpse(wpdx_sf)
+```
+
+Replace NA values of *status_clean* to empty string and then mutate the dataframe so that functional = 1, non-functional = 0.
+
+```{r}
+#| eval: false
+wpdx_sf <- replace(wpdx_sf['status_clean'], is.na(wpdx_sf['status_clean']), "")
+
+wpdx_sf %>%
+ select(status_clean) %>%
+ mutate(
+  functional = case_when(status_clean!="" ~ 1,
+                         status_clean=="" ~ 0
+                         )
+ )
+
+
+```
+
+```{r}
+#| eval: false
+wpdx_sf$functional<-as.numeric(wpdx_sf$functional)
+#hist(wpdx_sf$`functional`)
 ```
 
 ## Task 3
