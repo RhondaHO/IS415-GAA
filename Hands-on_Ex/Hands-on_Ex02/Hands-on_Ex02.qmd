@@ -96,7 +96,7 @@ write_rds(mpsz_pop2020, "data/rds/mpszpop2020.rds")
 
 ```
 
-##  
+## 
 
 ## 4. Choropleth Mapping Geospatial Data Using tmap
 
@@ -329,7 +329,7 @@ tm_shape(mpsz_pop2020)+
   tm_layout(legend.position = c("right", "bottom"))
 ```
 
-#### 4.6.2  By defining a group-by variable in tm_facets()
+#### 4.6.2 By defining a group-by variable in tm_facets()
 
 ```{r}
 #| eval: false
