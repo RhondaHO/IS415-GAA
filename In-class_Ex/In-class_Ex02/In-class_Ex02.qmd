@@ -39,7 +39,9 @@ pacman::p_load(sf, tidyverse, funModeling)
 #| code-fold: true
 #| code-summary: "Show the code"
 #| eval: false
-geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM0")%>%st_transform(crs=26392)
+geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM2")%>%st_transform(crs=26392)
+
+#transforms data from decimal to metres
 
 ```
 
@@ -49,12 +51,119 @@ geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM0")%>%st_
 #| code-fold: true
 #| code-summary: "Show the code"
 #| eval: false
-nga = st_read(dsn = "data/geospatial/", layer="nga_admbnda_adm1_osgof_20190417")%>%st_transform(crs=26392)
+NGA = st_read(dsn = "data/geospatial/", layer="nga_admbnda_adm2_osgof_20190417")%>%st_transform(crs=26392)
+```
+
+5.  Read the file from and filter out where country name is Nigeria
+
+```{r}
+#| eval: false
+wp_nga <- read_csv("data/aspatial/wpdx.csv") %>%
+  filter(clean_country_name %in% c("Nigeria"))
+
+#list(wpdx)
+
 ```
 
 ## Task 2
 
 Using appropriate tidyr and dplyr methods, derive the proportion of functional and non-functional water point at LGA level.
+
+```{r}
+wp_nga$Geometry = st_as_sfc(wp_nga$`new_georeferenced_column_`)
+wp_nga
+
+wp_sf <- st_sf(wp_nga, crs=4326)
+wp_sf
+
+wp_sf <- wp_sf %>%
+  st_transform(crs = 26392)
+```
+
+```{r}
+#exclude redundant fields
+NGA <- NGA %>%
+  select(3:4, 8:9)
+```
+
+```{r}
+#check for duplicate names
+NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
+
+
+#lets correct the errors (suppose to manually find)
+
+```
+
+```{r}
+#check frequency count
+
+freq(data = wp_sf,
+     input = "status_clean")
+```
+
+```{r}
+#replace NA fills with unknown
+wp_sf_nga <- wp_sf%>%
+  rename(status_clean = 'status_clean') %>%
+    select(status_clean) %>%
+    mutate(status_clean = replace_na(
+           status_clean, "unknown"))
+```
+
+```{r}
+#filter out the NA values, extract functional water output
+wp_functional <- wp_sf_nga %>%
+  filter(status_clean %in%
+           c(
+             "Functional",
+             "Functional, needs repair",
+             "Functional, not in use"
+           ))
+```
+
+```{r}
+#extract non functional
+wp_nonfunctional <- wp_sf_nga %>%
+  filter(status_clean %in%
+           c(
+             "Abandoned/Decommissioned",
+             "Non-Functional",
+             "Non-Functional, dry"
+           ))
+```
+
+```{r}
+#extract unknown
+wp_unknown <- wp_sf_nga %>%
+  filter(status_clean == "unknown")
+```
+
+```{r}
+
+# extra step to cross check whether previously extracted correctly
+NGA_wp <- NGA %>%
+  mutate(`total_wp`= lengths(
+    st_intersects(NGA, wp_sf_nga)
+  )) %>%
+  mutate(`wp_functional`= lengths(
+    st_intersects(NGA, wp_sf_nga)
+  )) %>%
+  mutate(`wp_nonfunctional`= lengths(
+    st_intersects(NGA, wp_sf_nga)
+  )) %>%
+  mutate(`wp_unknown`= lengths(
+    st_intersects(NGA, wp_sf_nga)
+  ))
+  
+```
+
+```{r}
+#save in rds format (rds allow us to retain the data structure/simple feature with the data properties)
+
+write_rds(NGA_wp, "data/rds/NGA_wp.rds")
+
+```
 
 ```{r}
 #| eval: false
@@ -72,9 +181,7 @@ library(dplyr)
 ```
 
 ```{r}
-#| eval: false
-wpdx <- read_csv("data/aspatial/wpdx.csv")
-list(wpdx)
+
 ```
 
 Convert into a simple dataframe feature
@@ -110,10 +217,26 @@ wpdx_sf %>%
 
 ```
 
+rrr
+
+```{r}
+ggplot(data = NGA_wp,
+       aes(x = total_wp)) +
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue") +
+  geom_vline(aes(xintercept=mean(
+    total_wp, na.rm=T)),
+    color="red",
+    linetype="dashed",
+    
+  )))
+```
+
 ```{r}
 #| eval: false
 wpdx_sf$functional<-as.numeric(wpdx_sf$functional)
-#hist(wpdx_sf$`functional`)
+#hist(wpdx_sf$`functional`)gg
 ```
 
 ## Task 3
