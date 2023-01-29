@@ -15,25 +15,20 @@ execute:
 editor: visual
 ---
 
-## Task 1
-
-Using appropriate sf method, import the shapefile into R and save it in a simple feature data frame format. Note that there are three Projected Coordinate Systems of Nigeria, they are: EPSG: 26391, 26392, and 26303. You can use any one of them.
-
-1.  Install the required packages.
+## 1. Getting Started
 
 ```{r}
-#| eval: false
-install.packages('pacman')
-```
-
-2.  Load the packages.
-
-```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
 #| eval: false
 pacman::p_load(sf, tidyverse, funModeling)
 ```
 
-3.  Read the file from geoBoundaries.
+## 2. Handling Geospatial Data
+
+### 2.1  Importing Geospatial
+
+Read the file from geoBoundaries.
 
 ```{r}
 #| code-fold: true
@@ -45,7 +40,7 @@ geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM2")%>%st_
 
 ```
 
-4.  Read the file from Humanitarian Data Exchange.
+Read the file from Humanitarian Data Exchange.
 
 ```{r}
 #| code-fold: true
@@ -54,48 +49,85 @@ geoNGA = st_read(dsn = "data/geospatial/", layer="geoBoundaries-NGA-ADM2")%>%st_
 NGA = st_read(dsn = "data/geospatial/", layer="nga_admbnda_adm2_osgof_20190417")%>%st_transform(crs=26392)
 ```
 
-5.  Read the file from and filter out where country name is Nigeria
+### 2.2 Handling Aspatial Data
+
+Read the file from and filter out where country name is Nigeria
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
 #| eval: false
 wp_nga <- read_csv("data/aspatial/wpdx.csv") %>%
   filter(clean_country_name %in% c("Nigeria"))
 
-#list(wpdx)
-
 ```
 
-## Task 2
+Converting an aspatial data into an sf data.frame involves two steps.
 
-Using appropriate tidyr and dplyr methods, derive the proportion of functional and non-functional water point at LGA level.
+First, we need to convert the wkt field into sfc field by using st_as_sfc() data type.
+
+Next, we will convert the tibble data.frame into an sf object by using st_sf(). It is also important for us to include the referencing system of the data into the sf object.
 
 ```{r}
+#| eval: false
 wp_nga$Geometry = st_as_sfc(wp_nga$`new_georeferenced_column_`)
 wp_nga
 
 wp_sf <- st_sf(wp_nga, crs=4326)
 wp_sf
 
+#Transforming into Nigeria projected coordinate system
 wp_sf <- wp_sf %>%
   st_transform(crs = 26392)
 ```
 
+
+## 3. Geospatial Data Cleaning
+NGA sf data.frame consists of many redundent fields. The code chunk below uses select() of dplyr to retain column 3, 4, 8 and 9. Do you know why?
+
+### 3.1 Exclude redundant fields
+
 ```{r}
+#| eval: false
 #exclude redundant fields
 NGA <- NGA %>%
   select(3:4, 8:9)
 ```
 
+### 3.2 Checking for duplicate name
+
 ```{r}
+#| eval: false
 #check for duplicate names
 NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
 
 
 #lets correct the errors (suppose to manually find)
+NGA$ADM2_EN[94] <- "Bassa, Kogi"
+NGA$ADM2_EN[95] <- "Bassa, Plateau"
+NGA$ADM2_EN[304] <- "Ifelodun, Kwara"
+NGA$ADM2_EN[305] <- "Ifelodun, Osun"
+NGA$ADM2_EN[355] <- "Irepodun, Kwara"
+NGA$ADM2_EN[356] <- "Irepodun, Osun"
+NGA$ADM2_EN[519] <- "Nasarawa, Kano"
+NGA$ADM2_EN[520] <- "Nasarawa, Nasarawa"
+NGA$ADM2_EN[546] <- "Obi, Benue"
+NGA$ADM2_EN[547] <- "Obi, Nasarawa"
+NGA$ADM2_EN[693] <- "Surulere, Lagos"
+NGA$ADM2_EN[694] <- "Surulere, Oyo"
 
 ```
+Now, let us rerun the code chunk below to confirm that the duplicated name issue has been addressed.
+```{r}
+#| eval: false
+NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
+```
+
+## 4. Data Wrangling for Water Point Data
+Exploratory Data Analysis (EDA) is a popular approach to gain initial understanding of the data. In the code chunk below, freq() of funModeling package is used to reveal the distribution of water point status visually.
 
 ```{r}
+#| eval: false
 #check frequency count
 
 freq(data = wp_sf,
@@ -103,6 +135,7 @@ freq(data = wp_sf,
 ```
 
 ```{r}
+#| eval: false
 #replace NA fills with unknown
 wp_sf_nga <- wp_sf%>%
   rename(status_clean = 'status_clean') %>%
@@ -111,7 +144,10 @@ wp_sf_nga <- wp_sf%>%
            status_clean, "unknown"))
 ```
 
+### 4.1 Extracting Water Point Data
+
 ```{r}
+#| eval: false
 #filter out the NA values, extract functional water output
 wp_functional <- wp_sf_nga %>%
   filter(status_clean %in%
@@ -123,6 +159,7 @@ wp_functional <- wp_sf_nga %>%
 ```
 
 ```{r}
+#| eval: false
 #extract non functional
 wp_nonfunctional <- wp_sf_nga %>%
   filter(status_clean %in%
@@ -134,13 +171,30 @@ wp_nonfunctional <- wp_sf_nga %>%
 ```
 
 ```{r}
+#| eval: false
 #extract unknown
 wp_unknown <- wp_sf_nga %>%
   filter(status_clean == "unknown")
 ```
 
+Next, the code chunk below is used to perform a quick EDA on the derived sf data.frames.
 ```{r}
+#| eval: false
+freq(data = wp_functional,
+     input = 'status_clean')
 
+freq(data = wp_nonfunctional,
+     input = 'status_clean')
+
+freq(data = wp_unknown,
+     input = 'status_clean')
+
+```
+
+### 4.2 Performing Point-in-Polygon Count
+Next, we want to find out the number of total, functional, nonfunctional and unknown water points in each LGA. This is performed in the following code chunk. First, it identifies the functional water points in each LGA by using st_intersects() of sf package. Next, length() is used to calculate the number of functional water points that fall inside each LGA.
+```{r}
+#| eval: false
 # extra step to cross check whether previously extracted correctly
 NGA_wp <- NGA %>%
   mutate(`total_wp`= lengths(
@@ -158,105 +212,34 @@ NGA_wp <- NGA %>%
   
 ```
 
+### 4.3 Visualing attributes by using statistical graphs
 ```{r}
+#| eval: false
+ggplot(data = NGA_wp,
+       aes(x = total_wp)) + 
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue") +
+  geom_vline(aes(xintercept=mean(
+    total_wp, na.rm=T)),
+             color="red", 
+             linetype="dashed", 
+             linewidth=0.8) +
+  ggtitle("Distribution of total water points by LGA") +
+  xlab("No. of water points") +
+  ylab("No. of\nLGAs") +
+  theme(axis.title.y=element_text(angle = 0))
+
+```
+
+
+
+```{r}
+#| eval: false
+
 #save in rds format (rds allow us to retain the data structure/simple feature with the data properties)
 
 write_rds(NGA_wp, "data/rds/NGA_wp.rds")
 
 ```
 
-```{r}
-#| eval: false
-st_geometry(geoNGA)
-glimpse(geoNGA)
-head(geoNGA, n=5)
-
-st_geometry(nga)
-glimpse(nga)
-head(nga, n=5)
-```
-
-```{r}
-library(dplyr)
-```
-
-```{r}
-
-```
-
-Convert into a simple dataframe feature
-
-```{r}
-#| eval: false
-wpdx_sf <- st_as_sf(wpdx, 
-                       coords = c("lat_deg", "lon_deg"),
-                       crs=4326) %>% st_transform(crs = 3414)
-```
-
-Take a look at the dataframe.
-
-```{r}
-#| eval: false
-glimpse(wpdx_sf)
-```
-
-Replace NA values of *status_clean* to empty string and then mutate the dataframe so that functional = 1, non-functional = 0.
-
-```{r}
-#| eval: false
-wpdx_sf <- replace(wpdx_sf['status_clean'], is.na(wpdx_sf['status_clean']), "")
-
-wpdx_sf %>%
- select(status_clean) %>%
- mutate(
-  functional = case_when(status_clean!="" ~ 1,
-                         status_clean=="" ~ 0
-                         )
- )
-
-
-```
-
-rrr
-
-```{r}
-ggplot(data = NGA_wp,
-       aes(x = total_wp)) +
-  geom_histogram(bins=20,
-                 color="black",
-                 fill="light blue") +
-  geom_vline(aes(xintercept=mean(
-    total_wp, na.rm=T)),
-    color="red",
-    linetype="dashed",
-    
-  )))
-```
-
-```{r}
-#| eval: false
-wpdx_sf$functional<-as.numeric(wpdx_sf$functional)
-#hist(wpdx_sf$`functional`)gg
-```
-
-## Task 3
-
-Combining the geospatial and aspatial data frame into simple feature data frame.
-
-```{r}
-
-```
-
-## Task 4
-
-Visualising the distribution of water point by using appropriate analytical visualisation methods.
-
-```{r}
-#| eval: false
-plot(nga)
-```
-
-```{r}
-#| eval: false
-plot(geoNGA)
-```
