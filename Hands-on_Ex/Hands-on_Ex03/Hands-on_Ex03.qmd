@@ -87,7 +87,8 @@ tmap_mode('plot')
 
 ```
 
-## 4. Geospatial Data wrangling
+## 4. Geospatial Data wrangling 
+The first 3 steps are important for dealing with geospatial data wrangling. Source data must be in sf., source data needs to be in the same projection system as once it is converted, cannot tell.
 
 ### 4.1 Converting sf data frames to sp’s Spatial* class
 The code chunk below uses as_Spatial() of sf package to convert the three geospatial data from simple feature data frame to sp’s Spatial* class.
@@ -442,7 +443,7 @@ kde_childcareSG_bw_raster
 #| code-fold: true
 #| code-summary: "Show the code"
 #| eval: false
-projection(kde_childcareSG_bw_raster) <- CRS("+init=EPSG:3414")
+projection(kde_childcareSG_bw_raster) <-CRS("+init=EPSG:3414")
 kde_childcareSG_bw_raster
 ```
 
