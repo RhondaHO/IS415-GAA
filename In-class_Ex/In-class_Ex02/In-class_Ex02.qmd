@@ -3,7 +3,7 @@ title: "In-class Exercise 2: Geospatial Data Wrangling"
 
 title-block-banner: true
 
-date: "r Sys.Date()"
+date-modified: last-modified
 
 format: html  
 #docx/pdf -> can change to different formats
