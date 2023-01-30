@@ -1,0 +1,310 @@
+---
+title: "In-class Exercise 3: Analytical Mapping"
+
+title-block-banner: true
+
+date: "25 january 2023"
+date-modified: last-modified
+
+format: html  
+
+execute: 
+  message: false
+  warning: false
+
+editor: visual
+---
+
+## 1. Install and load packages
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+pacman::p_load(sf, tidyverse, tmap)
+
+NGA_wp <- read_rds("data/rds/NGA_wp.rds")
+
+```
+
+## 2. Basic Chloropleth Map
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+p1 <- tm_shape(NGA_wp) + 
+  tm_fill("wp_functional",
+          n=10, #10 classes
+          style="equal", #classification method
+          palette="Blues") + #always plural form
+  tm_borders(lwd = 0.1, #border thickness
+             alpha= 1) +
+  tm_layout(main.title = "Distribution of functional water points",
+            legend.outside = FALSE)
+
+p2 <- tm_shape(NGA_wp) + 
+  tm_fill("total_wp",
+          n=10, #10 classes
+          style="equal", #classification method
+          palette="Blues") + #always plural form
+  tm_borders(lwd = 0.1, #border thickness
+             alpha= 1) +
+  tm_layout(main.title = "Distribution of total water points",
+            legend.outside = FALSE)
+
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tmap_arrange(p2,p1,nrow=1)
+```
+
+## 3. Chloropleth Maps for Rates
+
+### 3.1 Deriving Proportion of Functional Water Points and Non-Functional Water Points
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+NGA_wp <- NGA_wp %>%
+  mutate(pct_functional = wp_functional/total_wp) %>%
+  mutate(pct_nonfunctional = wp_nonfunctional/total_wp)
+
+```
+
+### 3.2 Plotting map of rate
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tm_shape(NGA_wp) + 
+  tm_fill("pct_functional",
+          n=10, 
+          style="equal", 
+          palette="Reds") +
+  tm_borders(lwd = 0.1, 
+             alpha= 1) +
+  tm_layout(main.title = "Rate map of functional water points",
+            legend.outside = FALSE)
+
+```
+
+## 4. Extreme Value Maps
+
+### 4.1 Percentile Map
+
+### 4.1.1 Data Preparation
+
+Step 1: Exclude records with NA by using the code chunk below.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+#NGA_wp <- NGA_wp %>%
+  #drop_na()
+
+NGA_wp <- NGA_wp %>%
+  na.omit()
+```
+
+### 4.1.2 Why writing functions?
+
+Step 2: Creating customised classification and extracting values
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+percent <- c(0,.01,.1,.5,.9,.99,1)
+var <- NGA_wp["pct_functional"] %>%
+  st_set_geometry(NULL)
+quantile(var[,1], percent)
+```
+
+### 4.1.3 Creating the get.var function
+
+Writing a function has three big advantages over using copy-and-paste:
+
+You can give a function an evocative name that makes your code easier to understand. As requirements change, you only need to update code in one place, instead of many. You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+get.var <- function(vname,df){
+  v <- df[name] %>%
+    st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
+
+### 4.1.4 A percentile mapping function
+
+Next, we will write a percentile mapping function by using the code chunk below.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+
+percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
+  percent <- c(0,.01,.1,.5,.9,.99,1)
+  var <- get.var(vnam, df)
+  bperc <- quantile(var, percent)
+  tm_shape(df) +
+  tm_polygons() +
+  tm_shape(df) +
+     tm_fill(vnam,
+             title=legtitle,
+             breaks=bperc,
+             palette="Blues",
+          labels=c("< 1%", "1% - 10%", "10% - 50%", "50% - 90%", "90% - 99%", "> 99%"))  +
+  tm_borders() +
+  tm_layout(main.title = mtitle, 
+            title.position = c("right","bottom"))
+}
+```
+
+### 4.1.5 Test drive the percentile mapping function
+
+To run the function, type the code chunk as shown below.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+percentmap("total_wp", NGA_wp)
+
+```
+
+### 4.2 Box Map
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+ggplot(data = NGA_wp,
+       aes(x = "",
+           y = wp_nonfunctional)) +
+  geom_boxplot()
+
+```
+
+### 4.2.1 Creating the boxbreaks function
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+boxbreaks <- function(v,mult=1.5) {
+  qv <- unname(quantile(v))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+  # initialize break points vector
+  bb <- vector(mode="numeric",length=7)
+  # logic for lower and upper fences
+  if (lofence < qv[1]) {  # no lower outliers
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+  if (upfence > qv[5]) { # no upper outliers
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+  bb[3:5] <- qv[2:4]
+  return(bb)
+}
+
+```
+
+### 4.2.2 Creating the get.var function
+The code chunk below is an R function to extract a variable as a vector out of an sf data frame.
+
+arguments: vname: variable name (as character, in quotes) df: name of sf data frame returns: v: vector with values (without a column name)
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+get.var <- function(vname,df) {
+  v <- df[vname] %>% st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+
+```
+
+### 4.2.3 Test drive the newly created function
+Let’s test the newly created function.
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+var <- get.var("wp_nonfunctional", NGA_wp) 
+boxbreaks(var)
+```
+
+### 4.2.4 Boxmap function
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+boxmap <- function(vnam, df, 
+                   legtitle=NA,
+                   mtitle="Box Map",
+                   mult=1.5){
+  var <- get.var(vnam,df)
+  bb <- boxbreaks(var)
+  tm_shape(df) +
+    tm_polygons() +
+  tm_shape(df) +
+     tm_fill(vnam,title=legtitle,
+             breaks=bb,
+             palette="Blues",
+          labels = c("lower outlier", 
+                     "< 25%", 
+                     "25% - 50%", 
+                     "50% - 75%",
+                     "> 75%", 
+                     "upper outlier"))  +
+  tm_borders() +
+  tm_layout(main.title = mtitle, 
+            title.position = c("left",
+                               "top"))
+}
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tmap_mode("plot")
+boxmap("wp_nonfunctional", NGA_wp)
+```
+
+### 4.2.5 Recode zero
+The code chunk below is used to recode LGAs with zero total water point into NA.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+NGA_wp <- NGA_wp %>%
+  mutate(wp_functional = na_if(
+    total_wp, total_wp < 0))
+```

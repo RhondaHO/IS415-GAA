@@ -24,7 +24,6 @@ editor: visual
 pacman::p_load(sf, tidyverse, tmap)
 
 NGA_wp <- read_rds("data/rds/NGA_wp.rds")
-
 ```
 
 ## 2. Basic Chloropleth Map

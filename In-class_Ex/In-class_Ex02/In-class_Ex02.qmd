@@ -26,7 +26,7 @@ pacman::p_load(sf, tidyverse, funModeling)
 
 ## 2. Handling Geospatial Data
 
-### 2.1  Importing Geospatial
+### 2.1 Importing Geospatial
 
 Read the file from geoBoundaries.
 
@@ -81,8 +81,8 @@ wp_sf <- wp_sf %>%
   st_transform(crs = 26392)
 ```
 
-
 ## 3. Geospatial Data Cleaning
+
 NGA sf data.frame consists of many redundent fields. The code chunk below uses select() of dplyr to retain column 3, 4, 8 and 9. Do you know why?
 
 ### 3.1 Exclude redundant fields
@@ -117,13 +117,16 @@ NGA$ADM2_EN[693] <- "Surulere, Lagos"
 NGA$ADM2_EN[694] <- "Surulere, Oyo"
 
 ```
+
 Now, let us rerun the code chunk below to confirm that the duplicated name issue has been addressed.
+
 ```{r}
 #| eval: false
 NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
 ```
 
 ## 4. Data Wrangling for Water Point Data
+
 Exploratory Data Analysis (EDA) is a popular approach to gain initial understanding of the data. In the code chunk below, freq() of funModeling package is used to reveal the distribution of water point status visually.
 
 ```{r}
@@ -178,6 +181,7 @@ wp_unknown <- wp_sf_nga %>%
 ```
 
 Next, the code chunk below is used to perform a quick EDA on the derived sf data.frames.
+
 ```{r}
 #| eval: false
 freq(data = wp_functional,
@@ -192,7 +196,9 @@ freq(data = wp_unknown,
 ```
 
 ### 4.2 Performing Point-in-Polygon Count
+
 Next, we want to find out the number of total, functional, nonfunctional and unknown water points in each LGA. This is performed in the following code chunk. First, it identifies the functional water points in each LGA by using st_intersects() of sf package. Next, length() is used to calculate the number of functional water points that fall inside each LGA.
+
 ```{r}
 #| eval: false
 # extra step to cross check whether previously extracted correctly
@@ -213,6 +219,7 @@ NGA_wp <- NGA %>%
 ```
 
 ### 4.3 Visualing attributes by using statistical graphs
+
 ```{r}
 #| eval: false
 ggplot(data = NGA_wp,
@@ -232,8 +239,6 @@ ggplot(data = NGA_wp,
 
 ```
 
-
-
 ```{r}
 #| eval: false
 
@@ -242,4 +247,3 @@ ggplot(data = NGA_wp,
 write_rds(NGA_wp, "data/rds/NGA_wp.rds")
 
 ```
-
