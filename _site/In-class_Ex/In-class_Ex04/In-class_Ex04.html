@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2023-01-30">
 
-<title>IS415-GAA - Hands-on Exercise 3: 1st Order Spatial Point Patterns Analysis Methods</title>
+<title>IS415-GAA - In-class Exercise 4</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -212,7 +212,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Hands-on Exercise 3: 1st Order Spatial Point Patterns Analysis Methods</h1>
+      <h1 class="title">In-class Exercise 4</h1>
                       </div>
   </div>
     
@@ -324,12 +324,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="mapping-the-geospatial-data-sets" class="level3">
 <h3 class="anchored" data-anchor-id="mapping-the-geospatial-data-sets">3.2 Mapping the geospatial data sets</h3>
+<p>To adjust tmap view settings refer to <a href="#https://search.r-project.org/CRAN/refmans/tmap/html/tm_view.html">here</a>.</p>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'view'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(childcare_sf)<span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'view'</span>) <span class="co">#by default</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(childcare_sf) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">alph=</span><span class="fl">0.5</span>, <span class="co"># intensity of color</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">size=</span><span class="fl">0.01</span>) <span class="sc">+</span> <span class="co">#tm_bubbles alternate method of dots, tend to use if we want to create proportional maps</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">set.zoom.limits=</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">14</span>)) <span class="co"># set zoom limits (zoom out value, zoom in value)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Reminder: Always remember to switch back to plot mode after the interactive map. This is because, each interactive mode will consume a connection. You should also avoid displaying ecessive numbers of interactive maps (i.e.&nbsp;not more than 10) in one RMarkdown document when publish on Netlify.</p>

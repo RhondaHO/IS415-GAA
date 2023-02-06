@@ -42,7 +42,7 @@ pacman::p_load(maptools, sf, raster, spatstat, tmap)
 
 ## 3. Spatial Data Wrangling
 
-### 3.1  Importing the spatial data
+### 3.1 Importing the spatial data
 
 ```{r}
 #| code-fold: true
@@ -76,9 +76,11 @@ mpsz_sf <- st_read(dsn = "data",
 tmap_mode('view')
 tm_shape(childcare_sf)+
   tm_dots()
+
 ```
 
 Reminder: Always remember to switch back to plot mode after the interactive map. This is because, each interactive mode will consume a connection. You should also avoid displaying ecessive numbers of interactive maps (i.e. not more than 10) in one RMarkdown document when publish on Netlify.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -87,11 +89,14 @@ tmap_mode('plot')
 
 ```
 
-## 4. Geospatial Data wrangling 
+## 4. Geospatial Data wrangling
+
 The first 3 steps are important for dealing with geospatial data wrangling. Source data must be in sf., source data needs to be in the same projection system as once it is converted, cannot tell.
 
-### 4.1 Converting sf data frames to sp’s Spatial* class
-The code chunk below uses as_Spatial() of sf package to convert the three geospatial data from simple feature data frame to sp’s Spatial* class.
+### 4.1 Converting sf data frames to sp's Spatial\* class
+
+The code chunk below uses as_Spatial() of sf package to convert the three geospatial data from simple feature data frame to sp's Spatial\* class.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -148,8 +153,9 @@ mpsz
 sg
 ```
 
-### 4.3 Converting the Spatial* class into generic sp format
-spatstat requires the analytical data in ppp object form. There is no direct way to convert a Spatial* classes into ppp object. We need to convert the Spatial classes* into Spatial object first.
+### 4.3 Converting the Spatial\* class into generic sp format
+
+spatstat requires the analytical data in ppp object form. There is no direct way to convert a Spatial\* classes into ppp object. We need to convert the Spatial classes\* into Spatial object first.
 
 ```{r}
 #| code-fold: true
@@ -173,7 +179,7 @@ childcare_sp
 sg
 ```
 
-### 4.4 Converting the generic sp format into spatstat’s ppp format
+### 4.4 Converting the generic sp format into spatstat's ppp format
 
 ```{r}
 #| code-fold: true
@@ -194,6 +200,7 @@ summary(childcare_ppp)
 ```
 
 ### 4.5 Handling duplicated points
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -244,7 +251,9 @@ childcare_ppp_jit <- rjitter(childcare_ppp,
 #| eval: false
 any(duplicated(childcare_ppp_jit))
 ```
-### 4.6 Creating owin object 
+
+### 4.6 Creating owin object
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -261,7 +270,9 @@ summary(sg_owin)
 ```
 
 ### 4.6 Combining point events object and owin object
+
 Extract childcare events that are located within Singapore
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -281,7 +292,9 @@ summary(childcareSG_ppp)
 ### 4.6 First-order Spatial Point Patterns Analysis
 
 #### 4.6.1 Kernel Density Estimation
+
 ##### 4.6.1.1 Computing kernel density estimation using automatic bandwidth selection method
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -298,7 +311,9 @@ kde_childcareSG_bw <- density(childcareSG_ppp,
 #| eval: false
 plot(kde_childcareSG_bw)
 ```
+
 Retrieve the bandwidth used to compute the kde layer
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -307,9 +322,10 @@ bw <- bw.diggle(childcareSG_ppp)
 bw
 ```
 
-
 ##### 4.6.1.2 Rescalling KDE values
+
 Rescale() is used to covert the unit of measurement from meter to kilometer.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -325,8 +341,10 @@ kde_childcareSG.bw <- density(childcareSG_ppp.km, sigma=bw.diggle, edge=TRUE, ke
 plot(kde_childcareSG.bw)
 ```
 
-#### 4.6.2 Working with different automatic badwidth methods 
+#### 4.6.2 Working with different automatic badwidth methods
+
 Other spatstat functions can be used to determine the bandwidth, they are: bw.CvL(), bw.scott(), and bw.ppl().
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -341,7 +359,9 @@ bw.ppl(childcareSG_ppp.km)
 bw.diggle(childcareSG_ppp.km)
 
 ```
+
 Compare the output of using bw.diggle and bw.ppl methods.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -356,9 +376,11 @@ plot(kde_childcareSG.ppl, main = "bw.ppl")
 ```
 
 #### 4.6.3 Working with different kernel methods
+
 By default, the kernel method used in density.ppp() is gaussian. But there are three other options, namely: Epanechnikov, Quartic and Dics.
 
 The code chunk below will be used to compute three more kernel density estimations by using these three kernel function.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -386,10 +408,10 @@ plot(density(childcareSG_ppp.km,
      main="Disc")
 ```
 
-
 ### 4.7 Fixed and Adaptive KDE
 
 #### 4.7.1 Computing KDE by using fixed bandwidth
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -399,7 +421,9 @@ plot(kde_childcareSG_600)
 ```
 
 #### 4.7.2 Computing KDE by using adaptive bandwidth
+
 Derive adaptive kernel density estimation by using density.adaptive() of spatstat.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -409,6 +433,7 @@ plot(kde_childcareSG_adaptive)
 ```
 
 We can compare the fixed and adaptive kernel density estimation outputs by using the code chunk below.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -419,6 +444,7 @@ plot(kde_childcareSG_adaptive, main = "Adaptive bandwidth")
 ```
 
 #### 4.7.3 Converting KDE output into grid object
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -428,6 +454,7 @@ spplot(gridded_kde_childcareSG_bw)
 ```
 
 ##### 4.7.3.1 Converting gridded output into raster
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -438,7 +465,9 @@ kde_childcareSG_bw_raster <-raster(gridded_kde_childcareSG_bw)
 
 kde_childcareSG_bw_raster
 ```
+
 ##### 4.7.3.2 Assigning projection systems
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -448,6 +477,7 @@ kde_childcareSG_bw_raster
 ```
 
 #### 4.7.4 Visualising the output in tmap
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -458,9 +488,11 @@ tm_shape(kde_childcareSG_bw_raster) +
 ```
 
 #### 4.7.5 Comparing Spatial Point Patterns using KDE
+
 Compare KDE of childcare at Ponggol, Tampines, Chua Chu Kang and Jurong West planning areas.
 
 ##### 4.7.5.1 Extracting study area
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -472,6 +504,7 @@ jw = mpsz[mpsz@data$PLN_AREA_N == "JURONG WEST",]
 ```
 
 Plotting of target planning areas
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -482,6 +515,7 @@ plot(tm, main = "Tampines")
 plot(ck, main = "Choa Chu Kang")
 plot(jw, main = "Jurong West")
 ```
+
 ##### 4.7.5.2 Converting the spatial point data frame into generic sp format
 
 ```{r}
@@ -495,6 +529,7 @@ jw_sp = as(jw, "SpatialPolygons")
 ```
 
 ##### 4.7.5.3 Creating owin object
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -506,6 +541,7 @@ jw_owin = as(jw_sp, "owin")
 ```
 
 #### 4.7.5.4 Combining childcare points and the study area
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -533,6 +569,7 @@ plot(childcare_jw_ppp.km, main="Jurong West")
 ```
 
 #### 4.7.5.5 Computing KDE
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -561,7 +598,9 @@ plot(density(childcare_jw_ppp.km,
 ```
 
 #### 4.7.5.6 Computing fixed bandwidth KDE
+
 For comparison purposes, we will use 250m as the bandwidth.
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -590,6 +629,7 @@ plot(density(childcare_tm_ppp.km,
 ```
 
 ### 4.8 Nearest Neighbour Analysis
+
 In this section, we will perform the Clark-Evans test of aggregation for a spatial point pattern by using clarkevans.test() of statspat.
 
 The test hypotheses are:
@@ -598,8 +638,7 @@ Ho = The distribution of childcare services are randomly distributed.
 
 H1= The distribution of childcare services are not randomly distributed.
 
-The 95% confident interval will be used.
-#### 4.8.1 Testing spatial point patterns using Clark and Evans Test
+The 95% confident interval will be used. \#### 4.8.1 Testing spatial point patterns using Clark and Evans Test
 
 ```{r}
 #| code-fold: true
@@ -611,7 +650,6 @@ clarkevans.test(childcareSG_ppp,
                 alternative=c("clustered"),
                 nsim=99)
 ```
-
 
 #### 4.8.2 Clark and Evans Test: Choa Chu Kang planning area
 
