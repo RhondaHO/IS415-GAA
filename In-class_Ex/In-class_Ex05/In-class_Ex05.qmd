@@ -1,0 +1,108 @@
+---
+title: "In-class Exercise 5"
+
+title-block-banner: true
+author: "Rhonda Ho Kah Yee"
+
+
+date: "6 february 2023"
+date-modified: last-modified
+
+format: html  
+
+execute: 
+  message: false
+  warning: false
+
+editor: visual
+---
+
+## 1. Overview
+
+Exploration of Local Co-Location Quotient.
+
+## 2. Getting Started
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+pacman::p_load(maptools, sf, raster, spatstat, tmap, sfdep,dplyr)
+```
+
+## 3. Importing Data
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+studyArea<-st_read(dsn="data", layer="study_area")%>%
+  st_transform(crs=3829) #convert to local projectory system (epsg)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+stores<-st_read(dsn="data", layer="stores")%>%
+  st_transform(crs=3829)
+```
+
+## 4. Local Colocation Quotients (LCLQ)
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tmap_mode('view') #by default
+tm_shape(studyArea) +
+  tm_polygons() +
+tm_shape(stores) +
+  tm_dots(col="Name",
+          size=0.01,
+          border.col="black",
+          border.lwd=0.5) +
+  tm_view(set.zoom.limits= c(12,16)) 
+
+ 
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tmap_mode('plot')
+
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+nb <- include_self(
+  st_knn(st_geometry(stores),6) # 6 nearest neighbours (should be even as it include self)
+)
+
+wt <- st_kernel_weights(nb,
+                        stores,
+                        "gaussian",
+                        adaptive=TRUE)
+
+#nearer target higher weightes
+
+FamilyMart <- stores %>%
+  filter(Name == "Family Mart")
+
+A <- FamilyMart$Name
+
+SevenEleven <- stores %>%
+  filter(Name == "7-Eleven")
+B <- SevenEleven$Name
+
+LCLQ <- local_colocation(A, B, nb, wt, 49) #will not see p-value
+LCLQ_stores <- cbind(stores, LCLQ)
+
+#plot lclq
+```
+
+## 
