@@ -113,32 +113,6 @@ mpsz <- as_Spatial(mpsz_sf)
 sg <- as_Spatial(sg_sf)
 ```
 
-### 4.2 Creating a choropleth map by using tmap's elements
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
-#| eval: false
-tm_shape(mpsz_pop2020)+
-  tm_fill("DEPENDENCY", 
-          style = "quantile", 
-          palette = "Blues",
-          title = "Dependency ratio") +
-  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
-            main.title.position = "center",
-            main.title.size = 1.2,
-            legend.height = 0.45, 
-            legend.width = 0.35,
-            frame = TRUE) +
-  tm_borders(alpha = 0.5) +
-  tm_compass(type="8star", size = 2) +
-  tm_scale_bar() +
-  tm_grid(alpha =0.2) +
-  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
-             position = c("left", "bottom"))
-
-```
-
 ```{r}
 #| code-fold: true
 #| code-summary: "Show the code"
@@ -160,7 +134,7 @@ mpsz
 sg
 ```
 
-### 4.3 Converting the Spatial\* class into generic sp format
+### 4.2 Converting the Spatial\* class into generic sp format
 
 spatstat requires the analytical data in ppp object form. There is no direct way to convert a Spatial\* classes into ppp object. We need to convert the Spatial classes\* into Spatial object first.
 
@@ -186,7 +160,7 @@ childcare_sp
 sg
 ```
 
-### 4.4 Converting the generic sp format into spatstat's ppp format
+### 4.3 Converting the generic sp format into spatstat's ppp format
 
 ```{r}
 #| code-fold: true
@@ -206,7 +180,7 @@ summary(childcare_ppp)
 
 ```
 
-### 4.5 Handling duplicated points
+### 4.4 Handling duplicated points
 
 ```{r}
 #| code-fold: true
@@ -259,7 +233,7 @@ childcare_ppp_jit <- rjitter(childcare_ppp,
 any(duplicated(childcare_ppp_jit))
 ```
 
-### 4.6 Creating owin object
+### 4.5 Creating owin object
 
 ```{r}
 #| code-fold: true

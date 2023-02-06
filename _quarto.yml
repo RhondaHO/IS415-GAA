@@ -15,7 +15,10 @@ website:
         href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.qmd"
   
       - text: Week 4
-        href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.qmd"
+        href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.qmd"
+      
+      - text: Week 5
+        href: "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.qmd"
     
     - text: "In-class Exercise"
       menu:
@@ -26,9 +29,9 @@ website:
       - text: In-class Exercise 4
         href: "In-class_Ex/In-class_Ex04/In-class_Ex04.qmd"
         
-    - text: "Take-home assignment"
+    - text: "Take-home Assignment"
       menu:
-      - text: Take-home assignment 1 
+      - text: Take-home Assignment 1 
         href: "Take-home_Assgn/Take-home_Assgn1/Take-home_Assgn1.qmd"
 
     

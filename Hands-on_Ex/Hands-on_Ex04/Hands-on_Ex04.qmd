@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 3: 1st Order Spatial Point Patterns Analysis Methods"
+title: "Hands-on Exercise 4: 1st Order Spatial Point Patterns Analysis Methods"
 
 title-block-banner: true
 
@@ -309,7 +309,7 @@ kde_childcareSG_bw <- density(childcareSG_ppp,
 #| code-fold: true
 #| code-summary: "Show the code"
 #| eval: false
-plot(kde_childcareSG_bw)
+plot(kde_childcareSG_bw, main="kde_childcareSG.bw in m^2")
 ```
 
 Retrieve the bandwidth used to compute the kde layer
@@ -338,7 +338,8 @@ childcareSG_ppp.km <- rescale(childcareSG_ppp, 1000, "km")
 #| code-summary: "Show the code"
 #| eval: false
 kde_childcareSG.bw <- density(childcareSG_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
-plot(kde_childcareSG.bw)
+plot(kde_childcareSG.bw, main="kde_childcareSG.bw in km")
+
 ```
 
 #### 4.6.2 Working with different automatic badwidth methods
