@@ -13,6 +13,7 @@ format: html
 execute: 
   message: false
   warning: false
+  eval: false
 
 editor: visual
 ---
@@ -46,6 +47,36 @@ studyArea<-st_read(dsn="data", layer="study_area")%>%
 #| eval: false
 stores<-st_read(dsn="data", layer="stores")%>%
   st_transform(crs=3829)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+family = subset(stores, Name == "Family Mart")
+seven = subset(stores, Name == "7-Eleven")
+
+combined <- base::rbind(family, seven)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#| eval: false
+tmap_mode('view') #by default
+tm_shape(studyArea) +
+  tm_polygons() +
+tm_shape(family) +
+  tm_dots(col="Name",
+          size=0.01,
+          border.col="black",
+          border.lwd=0.5)
+tm_shape(seven) +
+  tm_dots(col="Name",
+          size=0.01,
+          border.col="black",
+          border.lwd=0.5) +
+  tm_view(set.zoom.limits= c(12,16)) 
 ```
 
 ## 4. Local Colocation Quotients (LCLQ)

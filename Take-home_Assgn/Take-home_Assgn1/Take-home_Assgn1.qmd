@@ -3,34 +3,43 @@ title: "Take-home Assignment 1: Application of Spatial Point Patterns Analysis"
 
 title-block-banner: true
 
-author: "Rhonda Ho Kah Yee"
-date: "30 january 2023"
+date: "6 february 2023"
 date-modified: last-modified
+author: "Rhonda Ho Kah Yee"
 
-format: 
+format:
   html:
-    code-fold: true
-    code-tools: true
+      code-fold: true
+      code-tools: true
 
 execute: 
   message: false
   warning: false
-  eval: false
 
 editor: visual
 ---
 
 # 1. Overview
 
-Hello, this is Rhonda Ho's Take-home Assignment 1 for IS415 module.
+Hello! This is Rhonda Ho's take-home Assignment 1 for IS415 module.
 
-To view/hide the code, please click on the "\</\> code" tab beside the title and select the option to view/hide the code.
+To view/hide all the code at once, please click on the "\</\> code" tab beside the title of this html document and select the option to view/hide the code.
+
+The full details of this assignment can be found [here](https://is415-ay2022-23t2.netlify.app/th_ex1.html#the-task).
 
 ## 1.1 Objectives
 
 Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, I am tasked to apply appropriate spatial point patterns analysis methods to discover the geographical distribution of functional and non-function water points and their co-locations if any in Osun State, Nigeria.
 
 ## 1.2 The Data
+
+1.  **Apstial data**
+
+For the purpose of this assignment, data from [WPdx Global Data Repositories](https://www.waterpointdata.org/access-data/) will be used. There are two versions of the data. They are: WPdx-Basic and WPdx+. You are required to use **WPdx+** data set.
+
+2.  **Geospatial data**
+
+This study will focus of Osun State, Nigeria. The state boundary GIS data of Nigeria can be downloaded either from The [Humanitarian Data Exchange](https://data.humdata.org/) portal or [geoBoundaries](https://www.geoboundaries.org/).
 
 ## 1.3 Tasks
 
@@ -44,9 +53,8 @@ The specific tasks of this take-home exercise are as follows:
 
     -   Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
 
-```{=html}
 <!-- -->
-```
+
 2.  **Second-order Spatial Point Patterns Analysis**
 
     With reference to the spatial point patterns observed in ESDA:
@@ -85,7 +93,7 @@ For the purpose of this assignment, the following packages will be used:
 
 -   [**maptools**](https://cran.r-project.org/web/packages/maptools/index.html): a set of tools for manipulating geographic data and
 
--   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatia data wrangling and local colocation quotient analysis.
+-   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatial data wrangling and local colocation quotient analysis.
 
 ```{r}
 pacman::p_load(sf, tidyverse, tmap, spatstat, raster, funModeling, maptools, sfdep)
@@ -99,9 +107,11 @@ In this section, [st_read()](https://r-spatial.github.io/sf/reference/st_read.ht
 
 ### 3.1.1 The Geoboundaries Dataset
 
+For Nigeria, there are [three](https://epsg.io/?q=Nigeria%20kind%3APROJCRS) Projected Coordinate Systems of Nigeria, which is EPSG: 26391, 26392, and 26303. For this assignment, I will be using EPSG:26392.
+
 ```{r}
 geoNGA <- st_read("data/geospatial/",
-                  layer = "geoBoundaries-NGA-ADM1") %>%
+                  layer = "geoBoundaries-NGA-ADM2") %>%
   st_transform(crs = 26392)
 
 ```
@@ -129,7 +139,7 @@ By examining both of the sf dataframes closely, we can observe that the NGA data
 
 ### 3.2 Importing Aspatial Data
 
-Moving on to the Aspatial data, as it is in an excel format, I decided to use [read_csv()](https://swcarpentry.github.io/r-novice-inflammation/11-supp-read-write-csv/)function. As the area of study for this task is focused on Osun State, Nigeria, I then filtered out the values accordingly using the [filter()](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8/topics/filter) function. But how do we know which column to filter by? First, I read up on the description of the metadata in the Aspatial data [here](https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj) and discovered that I needed to filter out the country, Nigeria under the \`clean_country_name\`.
+Moving on to the Aspatial data, as it is in an excel format, I decided to use [read_csv()](https://swcarpentry.github.io/r-novice-inflammation/11-supp-read-write-csv/)function. As the area of study for this task is focused on Osun State, Nigeria, I then filtered out the values accordingly using the [filter()](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8/topics/filter) function. But how do we know which column to filter by? First, I read up on the description of the metadata in the Aspatial data [here](https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj) and discovered that I needed to filter out the country, Nigeria under the 'clean_country_name'.
 
 ```{r}
 wp_nga <- read_csv("data/aspatial/wpdx.csv") %>%
@@ -176,7 +186,7 @@ wp_sf <- wp_sf %>%
   st_transform(crs = 26392)
 ```
 
-# 4 Geospatial Data Cleaning
+# 4. Geospatial Data Cleaning
 
 Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset. This is important to improve the data quality which will allow us to analyse and infer better quality information.
 
@@ -597,7 +607,7 @@ The disadvantages of a point map includes:
 
 -   Subjected to distortion of shape, distance, direction, scale, and area
 
-Thus, KDE map would be a more accurate representation.
+Thus, using KDE map would be a more accurate representation than a point map as it tackles the disadvantages of a point map.
 
 # 7. Second-order Spatial Point Patterns Analysis
 
@@ -650,7 +660,7 @@ L_func.csr <- envelope(wpfuncNGA_ppp, Lest, nsim = 39, nrank = 1, global=TRUE)
 plot(L_func.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
-Based on the graph, we can see that the L function is within the randomisation. Hence, we cannot reject the null hypothesis as there is insufficient evidence that the distribution of functional waterpoints in Nigeria, Osun is randomly distributed at the level of 0.05.
+Based on the graph, we can see that the L function is within the randomisation (greyed area). Hence, we cannot reject the null hypothesis as there is insufficient evidence that the distribution of functional waterpoints in Nigeria, Osun is randomly distributed at the level of 0.05.
 
 ## 7.2 Non-functional Waterpoints in Nigeria, Ossun
 
@@ -683,11 +693,13 @@ plot(L_nonfunc.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 
 Based on the graph, we can see that the L function is within the randomisation. Hence, we cannot reject the null hypothesis as there is insufficient evidence to prove that the distribution of non-functional waterpoints in Nigeria, Osun is randomly distributed at the level of 0.05.
 
+## 
+
 # 8. Spatial Correlation Analysis
 
 To look into the spatial correlation analysis between functional and non-functional waterpoints, I decided to perform Local Colocation Quotient Analysis [(LCQA)](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/learnmorecolocationanalysis.htm) as it measures local patterns of spatial association between two categories of point features using the colocation quotient statistic. The output of this analysis will be a map representing the likelihood of the spatial association between the two categories (i.e functional and non-functional waterpoints) analyzed with added fields including the colocation quotient value and p-value.
 
-If the p-value is less that our selected significance level (i.e 0.05), it means that there is sufficent evidence to reject the null hypothesis.
+If the p-value is less than our selected significance level (i.e 0.05), it means that there is sufficent evidence to reject the null hypothesis.
 
 For this hypothesis testing, the hypothesis are as follows:
 
@@ -712,16 +724,66 @@ wpNGA_funct_nonfunct$status_clean[wpNGA_funct_nonfunct$status_clean == "Function
 wpNGA_funct_nonfunct$status_clean[wpNGA_funct_nonfunct$status_clean == "Abandoned/Decommissioned"] <- "Non-functional"
 ```
 
-Next, I need to visualise my sf layers.
+In the code chunk below, [st_knn()](https://sfdep.josiahparry.com/reference/st_knn.html) of sfdep package is used to determine the k (i.e. 6) nearest neighbours for given point geometry.
 
 ```{r}
-#wpNGA_funct_nonfunct
-#tm_shape(NGA_owin) + tm_polygons(wpNGA_funct_nonfunct)
-plot(wpNGA_funct_nonfunct)
-#tmap_mode("view")
-#tm_shape(wpNGA_funct_nonfunct) +
-#  tm_polygons("status_clean")+
-#  tm_view(set.zoom.limits = c(12, 16))
+nb <- include_self(
+  st_knn(st_geometry(wpNGA_funct_nonfunct), 6))
+```
+
+In the code chunk below, [st_kernel_weights()](https://sfdep.josiahparry.com/reference/st_kernel_weights.html) of sfdep package is used to derive a weights list by using a kernel function.
+
+```{r}
+wt <- st_kernel_weights(nb, 
+                        wpNGA_funct_nonfunct, 
+                        "gaussian", 
+                        adaptive = TRUE)
+```
+
+To compute LCLQ by using sfdep package, the reference point data must be in either character or vector list. The code chunks below are used to prepare two vector lists i.e functional and non-functional waterpoints which are called A and B respectively.
+
+```{r}
+wpfunc <- wpNGA_funct_nonfunct %>%
+  filter(status_clean == "Functional")
+A <- wpfunc$status_clean
+
+wpnonfunc <- wpNGA_funct_nonfunct %>%
+  filter(status_clean == "Non-functional")
+B <- wpnonfunc$status_clean
+
+
+```
+
+In the code chunk below [local_colocation()](https://sfdep.josiahparry.com/reference/local_colocation.html) us used to compute the LCLQ values for each functional waterpoint event.
+
+```{r}
+LCLQ <- local_colocation(A, B, nb, wt, 39)
+```
+
+Before we can plot the LCLQ values their p-values, we need to join the output of local_colocation() to the stores sf data.frame. However, a quick check of LCLQ data-frame, we can't find any field can be used as the join field. As a result, [cbind()](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cbind) of Base R is useed.
+
+```{r}
+LCLQ_wp <- cbind(wpNGA_funct_nonfunct, LCLQ)
+```
+
+```{r}
+#| eval: false
+
+#To plot LCLQ values
+#qtm(NGA)
+#plot(st_geometry(NGA))
+
+#NGA is multipolygon, need to change polygon
+
+tmap_mode("view")
+tm_shape(st_geometry(NGA)) +
+  tm_polygons() +
+tm_shape(LCLQ_wp)+ 
+  tm_dots(col = "X7.Eleven",
+             size = 0.01,
+             border.col = "black",
+             border.lwd = 0.5) +
+  tm_view(set.zoom.limits = c(12, 16))
 ```
 
 # Acknowledgements
