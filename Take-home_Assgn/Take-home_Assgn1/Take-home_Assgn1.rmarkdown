@@ -1,0 +1,825 @@
+---
+title: "Take-home Assignment 1: Application of Spatial Point Patterns Analysis"
+
+title-block-banner: true
+
+author: "Rhonda Ho Kah Yee"
+date: "30 january 2023"
+date-modified: last-modified
+
+format: 
+  html:
+    code-fold: true
+    code-tools: true
+
+execute: 
+  message: false
+  warning: false
+  eval: false
+
+editor: visual
+---
+
+
+# 1. Overview
+
+Hello, this is Rhonda Ho's Take-home Assignment 1 for IS415 module.
+
+To view/hide the code, please click on the "\</\> code" tab beside the title and select the option to view/hide the code.
+
+## 1.1 Objectives
+
+Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, I am tasked to apply appropriate spatial point patterns analysis methods to discover the geographical distribution of functional and non-function water points and their co-locations if any in Osun State, Nigeria.
+
+## 1.2 The Data
+
+## 1.3 Tasks
+
+The specific tasks of this take-home exercise are as follows:
+
+1.  **Exploratory Spatial Data Analysis (ESDA)**
+
+    -   Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,
+
+    -   Display the kernel density maps on openstreetmap of Osub State, Nigeria.
+
+    -   Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
+
+
+```{=html}
+<!-- -->
+```
+
+2.  **Second-order Spatial Point Patterns Analysis**
+
+    With reference to the spatial point patterns observed in ESDA:
+
+    -   Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+
+    -   Perform the test by using appropriate Second order spatial point patterns analysis technique.
+
+    -   With reference to the analysis results, draw statistical conclusions.
+
+3.  **Spatial Correlation Analysis**
+
+    In this section, you are required to confirm statistically if the spatial distribution of functional and non-functional water points are independent from each other.
+
+    -   Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+
+    -   Perform the test by using appropriate Second order spatial point patterns analysis technique.
+
+    -   With reference to the analysis results, draw statistical conclusions.
+
+# 2. Getting Started
+
+For the purpose of this assignment, the following packages will be used:
+
+-   [**sf**](https://cran.r-project.org/web/packages/sf/index.html): used for importing, managing, and processing geospatial data
+
+-   [**tidyverse**](https://www.tidyverse.org/): a collection of packages for data science tasks
+
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/index.html): used for creating thematic maps, such as choropleth and bubble maps
+
+-   [**spatstat**](https://spatstat.org/): used for point pattern analysis
+
+-   [**raster**](https://cran.r-project.org/web/packages/raster/): reads, writes, manipulates, analyses and models gridded spatial data (i.e. raster-based geographical data)
+
+-   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/index.html): contains a set of functions related to exploratory data analysis, data preparation, and model performance
+
+-   [**maptools**](https://cran.r-project.org/web/packages/maptools/index.html): a set of tools for manipulating geographic data and
+
+-   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatia data wrangling and local colocation quotient analysis.
+
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, spatstat, raster, funModeling, maptools, sfdep)
+```
+
+
+# 3. Handling of Data
+
+## 3.1 Importing Geospatial Data
+
+In this section, [st_read()](https://r-spatial.github.io/sf/reference/st_read.html) of sf package will be used to import the 2 geospatial data sets into R.
+
+### 3.1.1 The Geoboundaries Dataset
+
+
+```{r}
+geoNGA <- st_read("data/geospatial/",
+                  layer = "geoBoundaries-NGA-ADM1") %>%
+  st_transform(crs = 26392)
+
+```
+
+
+To understand more about the columns and data across our dataset, I used the function [glimpse()](https://dplyr.tidyverse.org/reference/glimpse.html#:~:text=glimpse()%20is%20like%20a,as%20much%20data%20as%20possible.) as shown in the code chunk below.
+
+
+```{r}
+glimpse(geoNGA)
+```
+
+
+### 3.1.2 The NGA Dataset
+
+
+```{r}
+NGA <- st_read("data/geospatial/",
+               layer = "nga_admbnda_adm2_osgof_20190417") %>%
+  st_transform(crs = 26392)
+
+```
+
+```{r}
+glimpse(NGA)
+```
+
+
+By examining both of the sf dataframes closely, we can observe that the NGA dataset provides us with more information with regards to the state i.e Osun which we require to perform our tasks. Hence, NGA data.frame will be used for the subsequent processing.
+
+### 3.2 Importing Aspatial Data
+
+Moving on to the Aspatial data, as it is in an excel format, I decided to use [read_csv()](https://swcarpentry.github.io/r-novice-inflammation/11-supp-read-write-csv/)function. As the area of study for this task is focused on Osun State, Nigeria, I then filtered out the values accordingly using the [filter()](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8/topics/filter) function. But how do we know which column to filter by? First, I read up on the description of the metadata in the Aspatial data [here](https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj) and discovered that I needed to filter out the country, Nigeria under the \`clean_country_name\`.
+
+
+```{r}
+wp_nga <- read_csv("data/aspatial/wpdx.csv") %>%
+  filter(clean_country_name %in% c("Nigeria"))
+```
+
+
+Next, I took a closer look at the data and discovered that the states of Nigeria are splitted in to 4 divisions. To determine where Osun is, I used the function, any() to check which column Osun belonged to.
+
+
+```{r}
+any(wp_nga$clean_adm1=="Osun")
+any(wp_nga$clean_adm2=="Osun")
+any(wp_nga$clean_adm3=="Osun")
+any(wp_nga$clean_adm4=="Osun")
+```
+
+
+Based on the output above, Osun only exists under the column 'clean_adm1', so I filtered out the Osun state in that specific column.
+
+
+```{r}
+wp_nga <- read_csv("data/aspatial/wpdx.csv") %>%
+  filter(clean_adm1 %in% c("Osun"))
+
+```
+
+
+Next, we need to convert the aspatial data into sf data.frame.
+
+To do so, it requires two steps. First, we need to convert the [wkt](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) field into sfc field by using `st_as_sfc()` data type.
+
+
+```{r}
+wp_nga$Geometry = st_as_sfc(wp_nga$`new_georeferenced_column_`)
+wp_nga
+```
+
+
+Next, we will convert the tibble data.frame into an sf object by using [st_sf()](https://r-spatial.github.io/sf/reference/sf.html). It is also important for us to include the referencing system of the data into the sf object.
+
+
+```{r}
+wp_sf <- st_sf(wp_nga, crs=4326)
+wp_sf
+```
+
+
+Afterwards, we need to transform the projection from wgs84 to appropriate projected coordinate system of Nigeria i.e 26392.
+
+
+```{r}
+wp_sf <- wp_sf %>%
+  st_transform(crs = 26392)
+```
+
+
+# 4 Geospatial Data Cleaning
+
+Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset. This is important to improve the data quality which will allow us to analyse and infer better quality information.
+
+## 4.1 Exclude redundant fields
+
+NGA sf data.frame consists of many redundent fields. Thus, I used [select()](https://sparkbyexamples.com/r-programming/r-select-function-from-dplyr/) of dplyr to retain the relevant columns which contain the values under the state of Osun.
+
+
+```{r}
+# method 1: using select function
+NGA <- NGA %>%
+  dplyr::select(c(3:4,8:9))
+
+#dplyr:: is used as there may be library conflicts which prevents me from using the code
+
+# method 2: keeping the column by name
+#keeps <- c("ADM2_EN","ADM2_PCODE","ADM1_EN","ADM1_PCODE")
+#NGA = NGA[keeps]
+
+```
+
+
+Afterwards, I filtered the column 'ADM1_EN' to only include Osun Values.
+
+
+```{r}
+NGA<- NGA %>%
+  filter(ADM1_EN %in% c("Osun"))
+```
+
+
+## 4.2 Check for duplicate names
+
+For the code chunk below, the function [duplicate()](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/duplicated) is used to check for any duplicated values.
+
+
+```{r}
+NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
+```
+
+
+Hence, based on the output above, there is no duplicated values.
+
+# 5. Data Wrangling for Water Point Data
+
+In this section, I would like to perform data wrangling to improve the data usability as it transforms raw data into more readily used formats.
+
+First off, I discovered that the column 'status_clean' shows the type of waterpoints in Nigeria, Osun. To display the frequencies and have a closer look at the unique values of the type ofwaterpoints, I used the function [freq()](https://rdrr.io/cran/summarytools/man/freq.html#:~:text=format_number%3A%20format_number-,freq%3A%20Frequency%20Tables%20for%20Factors%20and%20Other%20Discrete%20Data,From%20Arguments%20Passed%20to%20Functions) .
+
+
+```{r}
+
+funModeling::freq(data = wp_sf,
+     input = 'status_clean')
+
+#unique(wp_sf$status_clean)
+```
+
+
+As you can see from the output above, there are 4 classes in the 'status_clean' field.
+
+Next, we select 'status_clean' and the [replace_na()](https://tidyr.tidyverse.org/reference/replace_na.html) function to replace NA values into 'Unknown'.
+
+
+```{r}
+wp_sf_nga <- wp_sf %>% 
+  dplyr::select(status_clean) %>%
+  mutate(status_clean = replace_na(
+    status_clean, "Unknown"))
+```
+
+
+Now, we can start to extract the water data points base on its status which is functional, non-functional and unknown using the [filter()](https://dplyr.tidyverse.org/reference/filter.html) function.
+
+
+```{r}
+wp_functional <- wp_sf_nga %>%
+  filter(status_clean %in%
+           c("Functional",
+             "Functional, needs repair"))
+
+wp_nonfunctional <- wp_sf_nga %>%
+  filter(status_clean %in%
+           c("Abandoned/Decommissioned"))
+
+wp_unknown <- wp_sf_nga %>%
+  filter(status_clean == "Unknown")
+```
+
+
+## 5.1 Converting sf data frames to sp's Spatial\* class
+
+Next, since the task requires us to perform exploratory spatial data analysis (ESDA), we need to convert simple feature data frame to sp's Spatial\* class using the [as_Spatial()](https://www.google.com/search?q=as_Spatial%28%29++in+r&ei=5uroY5m5IoiA3LUP5ISEkAQ&ved=0ahUKEwiZxLLSjJD9AhUIALcAHWQCAUIQ4dUDCA8&uact=5&oq=as_Spatial%28%29++in+r&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIJCAAQHhANEPEEMgYIABAWEB4yCAgAEBYQHhAPOgcIABAeEPEEOgYIABAeEA86CQgAEB4QDxDxBDoJCAAQFhAeEPEEOgsIABAWEB4QDxDxBEoECEEYAEoECEYYAFAAWNYFYOgGaABwAXgAgAFIiAH9ApIBATaYAQCgAQKgAQHAAQE&sclient=gws-wiz-serp) function.
+
+
+```{r}
+#overview of wp in Ossun state
+wp_spatial <- as_Spatial(wp_sf)
+
+#only functional wp in Ossun state
+wp_func_spatial <- as_Spatial(wp_functional)
+
+#only non-functional wp in Ossun state
+wp_nonfunc_spatial <- as_Spatial(wp_nonfunctional)
+
+#NGA dataset
+NGA_spatial <- as_Spatial(NGA)
+```
+
+
+To further understand our data, we run the code chunk below.
+
+
+```{r}
+wp_spatial
+```
+
+```{r}
+NGA_spatial
+```
+
+
+Looking at the output above, we understand that wp_spatial belongs to the SpatialPointsDataFrame while NGA_spatial belongs to SpatialPolygonsDataFrame class. This will help us in the next section which is the conversion of Spatial\* class into generic sp format.
+
+## 5.2 Converting the Spatial\* class into generic sp format
+
+As spatstat requires the analytical data in ppp object form. We need to convert the Spatial classes\* into Spatial object first. The codes chunk below converts the Spatial\* classes into generic sp objects.
+
+
+```{r}
+wp_sp <- as(wp_spatial, "SpatialPoints")
+wp_func_sp <- as(wp_func_spatial, "SpatialPoints")
+wp_nonfunc_sp <- as(wp_nonfunc_spatial, "SpatialPoints")
+
+NGA_sp <- as(NGA_spatial, "SpatialPolygons")
+```
+
+
+## 5.3 Converting the generic sp format into spatstat's ppp format
+
+Now, we will use [as.ppp()](https://www.rdocumentation.org/packages/spatstat/versions/1.64-1/topics/as.ppp) function of spatstat to convert the spatial data into spatstat's ppp object format.
+
+
+```{r}
+wp_ppp <- as(wp_sp, "ppp")
+wp_ppp
+
+wp_func_ppp <- as(wp_func_sp, "ppp")
+
+
+wp_nonfunc_ppp <- as(wp_nonfunc_sp, "ppp")
+
+```
+
+
+To further understand our data, let's look at its summary statistics.
+
+
+```{r}
+summary(wp_ppp)
+```
+
+
+Based on the output above, fortunately, we do not see a warning messages about duplicates. The code chunk below shows an alternate method of checking for duplicates. If it return FALSE, that means there is no duplicated values.
+
+
+```{r}
+any(duplicated(wp_ppp))
+any(duplicated(wp_func_ppp))
+any(duplicated(wp_nonfunc_ppp))
+```
+
+
+## 5.4 Creating owin object
+
+When analysing spatial point patterns, it is a good practice to confine the analysis with a geographical area, for example, Nigeria's boundary. In spatstat, an object called owin is specially designed to represent this polygonal region.
+
+The code chunk below is used to convert Nigera, Ossun stats SpatialPolygon object into owin object of spatstat.
+
+
+```{r}
+NGA_owin <- as(NGA_sp, "owin")
+plot(NGA_owin)
+summary(NGA_owin)
+```
+
+
+## 5.5 Combining point events object and owin object
+
+In this last step of geospatial data wrangling, we will extract *all waterpoints* that are located within Nigeria Ossun by using the code chunk below.
+
+
+```{r}
+wpNGA_ppp = wp_ppp[NGA_owin]
+summary(wpNGA_ppp)
+plot(wpNGA_ppp)
+```
+
+
+The code chunk below extract *functional waterpoints* that are located within Nigeria, Ossun.
+
+
+```{r}
+wpfuncNGA_ppp = wp_func_ppp[NGA_owin]
+summary(wpfuncNGA_ppp)
+plot(wpfuncNGA_ppp)
+
+```
+
+
+The code chunk below extract *non-functional waterpoints* that are located within Nigeria, Ossun.
+
+
+```{r}
+wpnonfuncNGA_ppp = wp_nonfunc_ppp[NGA_owin]
+summary(wpnonfuncNGA_ppp)
+plot(wpnonfuncNGA_ppp)
+```
+
+
+# 6. First-order Spatial Point Patterns Analysis
+
+## 6.1 Kernel Density Estimation
+
+In this section, I will be computing the kernel density estimation (KDE) of waterpoints in Singapore.
+
+### 6.1.1 Automatic bandwidth selection methods
+
+The code chunk below computes a kernel density by using the following configurations of [density()](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/density) of spatstat:
+
+-   bw.diggle() automatic bandwidth selection method. Other recommended methods are *bw.CvL(), bw.scott() or bw.ppl().*
+
+-   The smoothing kernel used is gaussian, which is the default. Other smoothing methods are: "epanechnikov", "quartic" or "disc".
+
+-   The intensity estimate is corrected for edge effect bias by using method described by Jones (1993) and Diggle (2010, equation 18.9). The default is FALSE.
+
+
+```{r}
+kde_wpNGA_bw <- density(wpNGA_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+
+plot(kde_wpNGA_bw, main="KDE of Waterpoints in Nigeria, Ossun using bw.diggle (m^2)")
+
+```
+
+
+As we can observe from the above, the density values of the output range from 0 to 0.00000004 which is way too small to comprehend. This is because the default unit of measurement of WGS 84 is in meter. As a result, the density values computed is in "number of points per square meter". Thus, for a better visualisation, we need to rescale the KDE values.
+
+### 6.1.2 Rescalling KDE values
+
+In the code chunk below, [rescale()](https://www.rdocumentation.org/packages/scales/versions/0.4.1/topics/rescale) is used to covert the unit of measurement from meter to kilometer.
+
+
+```{r}
+wpNGA_ppp.km <- rescale(wpNGA_ppp, 1000, "km")
+```
+
+
+Now, we can re-run density() using the resale data set and plot the output kde map.
+
+
+```{r}
+kde_wpNGA.bw <- density(wpNGA_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+plot(kde_wpNGA.bw, 
+     main="KDE of Waterpoints in Nigeria, Ossun using bw.diggle (km^2)")
+```
+
+
+According to Baddeley et. (2016), they suggested the use of the bw.ppl() algorithm because in ther experience it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. But they also insist that if the purpose of once study is to detect a single tight cluster in the midst of random noise then the bw.diggle() method seems to work best.
+
+Hence, I decided to look at the output for both.
+
+
+```{r}
+kde_wpNGA.ppl <- density(wpNGA_ppp.km, 
+                               sigma=bw.ppl, 
+                               edge=TRUE,
+                               kernel="gaussian")
+par(mfrow=c(1,2))
+plot(kde_wpNGA.bw, main = "KDE of All Waterpoints, bw.diggle")
+plot(kde_wpNGA.ppl, main = "KDE of All Waterpoints, bw.ppl")
+```
+
+
+### 6.1.3 KDE for Functional and Non-functional Waterpoints in Nigeria, Osun
+
+Next, I performed the same actions as above the code chunk to derive the KDE for functional and non functional waterpoints respectively.
+
+#### **6.1.3.1 KDE for Functional Waterpoints in Nigeria, Osun**
+
+
+```{r}
+#rescale
+wpfuncNGA_ppp.km <- rescale(wpfuncNGA_ppp, 1000, "km")
+
+#kde with bandwith - diggle
+kde_wpfuncNGA.bw <- density(wpfuncNGA_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+
+#kde with bandwith - ppl
+kde_wpfuncNGA.ppl <- density(wpfuncNGA_ppp.km, sigma=bw.ppl, edge=TRUE, kernel="gaussian")
+
+#plot
+plot(kde_wpfuncNGA.bw, main="KDE of Functional Waterpoints (km^2), bw.diggle")
+plot(kde_wpfuncNGA.ppl, main="KDE of Functional Waterpoints (km^2), bw.ppl")
+
+```
+
+
+#### **6.1.3.2 KDE for Non-functional Waterpoints in Nigeria, Osun**
+
+
+```{r}
+#rescale
+wpnonfuncNGA_ppp.km <- rescale(wpnonfuncNGA_ppp, 1000, "km")
+
+#kde with bandwith - diggle
+kde_wpnonfuncNGA.bw <- density(wpnonfuncNGA_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+
+#kde with bandwith - ppl
+kde_wpnonfuncNGA.ppl <- density(wpnonfuncNGA_ppp.km, sigma=bw.ppl, edge=TRUE, kernel="gaussian")
+
+#plot
+plot(kde_wpnonfuncNGA.bw, main="KDE of Non-functional Waterpoints (km^2), bw.diggle")
+plot(kde_wpnonfuncNGA.ppl, main="KDE of Non-functional Waterpoints (km^2), bw.ppl")
+```
+
+
+## 6.2 Converting KDE output into grid object
+
+Next, for mapping purposes, I need to convert the KDE output into a grid object.
+
+
+```{r}
+gridded_kde_wpNGA_bw <- as.SpatialGridDataFrame.im(kde_wpNGA.bw)
+spplot(gridded_kde_wpNGA_bw, main = "Gridded KDE of All Waterpoints, bw.diggle")
+
+```
+
+
+### 6.2.1 Converting gridded output into raster
+
+Next, we will convert the gridded kernal density objects into RasterLayer object by using raster() of raster package.
+
+
+```{r}
+kde_wpNGA_bw_raster <- raster(gridded_kde_wpNGA_bw)
+kde_wpNGA_bw_raster
+
+```
+
+
+Based on the output, the crs property is NA. Hence, we need to assign it.
+
+### 6.2.2 Assigning projection systems
+
+
+```{r}
+projection(kde_wpNGA_bw_raster) <- CRS("+init=EPSG:26392")
+kde_wpNGA_bw_raster
+
+```
+
+
+Based on the output above, the CRS information has been sucessfully added in.
+
+### 6.2.3 Visualising the output in tmap
+
+Finally, we will display the raster in cartographic quality map using tmap package.
+
+#### 6.2.3.1 Raster of KDE All Waterpoints in Nigeria, Osun
+
+
+```{r}
+tm_shape(kde_wpNGA_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(main.title="Raster of KDE Waterpoints in Nigeria, Osun", 
+            main.title.size=1,
+            legend.position = c("right", "bottom"), frame = FALSE)
+```
+
+
+Based on the KDE graphs, most of the waterpoints are clustered around the top middle section. Upon further research on the [cities in Nigeria](https://www.google.com/maps/place/Osun,+Nigeria/data=!4m2!3m1!1s0x10381b1492f19919:0x4444a9d7e31afcd3?sa=X&ved=2ahUKEwiFpO3Fyo_9AhVZTWwGHSTkBBIQ8gF6BAh-EAE), State of Osun, I discovered that most of waterpoints are clustered around the city called Osogbo where the Osun river resides.
+
+#### 6.2.3.2 Raster of KDE Functional Waterpoints in Nigeria, Osun
+
+To display raster of KDE of functional waterpoints in Nigeria, Osun, simply repeat the steps in section 6.
+
+
+```{r}
+# Repeat the same steps in section 6.2
+
+#convert to grid
+gridded_kde_wpfuncNGA_bw <- as.SpatialGridDataFrame.im(kde_wpfuncNGA.bw)
+spplot(gridded_kde_wpfuncNGA_bw, main = "Gridded KDE of Functional Waterpoints, bw.diggle")
+
+#create raster
+kde_wpfuncNGA_bw_raster <- raster(gridded_kde_wpfuncNGA_bw)
+
+#assign CRS info
+projection(kde_wpfuncNGA_bw_raster) <- CRS("+init=EPSG:26392")
+
+
+```
+
+```{r}
+
+tm_shape(kde_wpfuncNGA_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(main.title="Raster of KDE Functional Waterpoints in Nigeria, Osun", 
+            main.title.size=0.8,
+            legend.position = c("right", "bottom"), frame = FALSE)
+```
+
+
+Looking at the KDE graph for functional waterpoints in Nigeria, Osun using bw.diggle, we can observe that the functional waterpoints are mainly clustered in 6 areas. Roughly gauging based on the [cities](https://www.google.com/maps/place/Osun,+Nigeria/@7.500196,4.6687999,9.46z/data=!4m6!3m5!1s0x10381b1492f19919:0x4444a9d7e31afcd3!8m2!3d7.5628964!4d4.5199593!16zL20vMDZ4anFk) in Nigeria, Ossun, the most densely populated area of functional waterpoints area is found in the city of Osogbo, followed by Ikirun/Ota, Isero/Ikonifin and Okeigbo. The less densely populated area of functional waterpoints but we are still able to see a cluster are around the city of Ife and Ikire.
+
+#### 6.2.3.3 Raster of KDE Non-functional Waterpoints in Nigeria, Osun
+
+
+```{r}
+#convert to grid
+gridded_kde_wpnonfuncNGA_bw <- as.SpatialGridDataFrame.im(kde_wpnonfuncNGA.bw)
+spplot(gridded_kde_wpnonfuncNGA_bw, main = "Gridded KDE of Non-functional Waterpoints, bw.diggle")
+
+#create raster
+kde_wpnonfuncNGA_bw_raster <- raster(gridded_kde_wpnonfuncNGA_bw)
+
+#assign CRS info
+projection(kde_wpnonfuncNGA_bw_raster) <- CRS("+init=EPSG:26392")
+
+
+```
+
+```{r}
+
+tm_shape(kde_wpnonfuncNGA_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(main.title="Raster of KDE Non-functional Waterpoints in Nigeria, Osun",
+            main.title.size=0.7,
+            legend.position = c("right", "bottom"), frame = FALSE)
+```
+
+
+Looking at the KDE graph for non-functional waterpoints in Nigeria, Osun using bw.diggle, we can observe that the non-functional waterpoints are roughly clustered in 9 areas. As compared to the functional waterpoints clusters, there are a larger number of non-functional waterpoints clusters but each cluster are much smaller. It also seems that the most densely populated non-functional waterpoints area is quite near, on the right of, the city of Osogbo, where most of the functional waterpoints are.
+
+#### 6.2.3.4 Raster of KDE All Waterpoints in Nigeria, Osun (Openstreetmap)
+
+
+```{r}
+tmap_mode('view')
+tm_basemap(server = "OpenStreetMap") +
+tm_shape(kde_wpNGA_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(main.title="Raster of KDE Waterpoints in Nigeria, Osun", 
+            main.title.size=1,
+            legend.position = c("right", "bottom"), frame = FALSE) +
+  tm_view(set.zoom.limits= c(18,29)) 
+
+```
+
+```{r}
+tmap_mode('plot')
+```
+
+
+### 6.2.4 Advantage of Kernel Density map over Point map
+
+KDE map takes into account the location of features relative to each other while for a point map, it shows the quantity specified by the population field that falls within the identified neighborhood and divide that quantity by the area of the neighborhood.
+
+The disadvantages of a point map includes:
+
+-   Overcrowding of points, when the scale is small, which makes it harder for the user to analyse the map
+
+-   Subjected to distortion of shape, distance, direction, scale, and area
+
+Thus, KDE map would be a more accurate representation.
+
+# 7. Second-order Spatial Point Patterns Analysis
+
+For this section, I intend to analyse the spatial point processes using L-Function by using [Lest()](https://www.rdocumentation.org/packages/spatstat/versions/1.64-1/topics/Lest) of spatstat package and testing if it is significantly different from a complete spatial randomness process. Two hypothesis test will be conducted for functional and non-functional waterpoints in Nigeria, Osun respectively.
+
+**What is [L-function](https://rdrr.io/cran/spatstat.core/man/Lest.html)?**
+
+A brief description of the L-function is that it is a variance-normalized version of the [Ripley's K statistic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726315/#:~:text=H(r)%20%3D%20L(r)%20%E2%88%92%20r.&text=Ripley's%20K%2Dfunction%20is%20typically,are%20distributed%20randomly%20and%20independently.) where it is used to determine whether points have a random, dispersed or clustered distribution pattern at certain scale. Thus, this allows us to compare a given point distribution with a random distribution that is the point distribution under investigation is tested against the null hypothesis that the points are distributed randomly and independently.
+
+**What is a [Complete spatial randomness (CSR)](https://link.springer.com/article/10.1007/s10182-021-00434-4#:~:text=Complete%20spatial%20randomness%20(CSR)%20describes,is%20to%20test%20for%20CSR.)?**
+
+It refers to a point process whereby point events occur within a given study area in a completely random fashion. It is synonymous with a homogeneous spatial Poisson process. If the hypothesis is not rejected, one can assume that the given point pattern is random, and we refer to it as a homogeneous Poisson point pattern.
+
+## 7.1 Functional Waterpoints in Nigeria, Ossun
+
+### 7.1.1 Hypothesis Test
+
+-   Null hypothesis, H0: The distribution of *functional waterpoints* in Nigeria, Osun is *randomly distributed.*
+
+-   Alternative hypothesis, H1: The distribution of *functional waterpoints* in Nigeria, Osun is *not randomly distributed.*
+
+-   The hypothesis will be tested at a significance level of 0.05, with a corresponding confidence level of 95%.
+
+### 7.1.2 Computing L Function estimation
+
+
+```{r}
+L_func = Lest(wpfuncNGA_ppp, correction = "Ripley")
+plot(L_func, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+
+### 7.1.3 Performing Complete Spatial Randomness Test
+
+Next, we perform the function [envelope()](https://www.rdocumentation.org/packages/spatstat/versions/1.64-1/topics/envelope) to compute simulation envelopes of the summary function i.e L function. The following arguments are used:
+
+-   nsim : Number of simulated point patterns to be generated when computing the envelopes.
+
+    As we have chosen the significance level to be 0.05, following this formula from the documentation, significance level alpha = 2 \* nrank / (1 + nsim), nsim would be 39.
+
+-   rank: Integer. Rank of the envelope value amongst the nsim simulated values. A rank of 1 means that the minimum and maximum simulated values will be used.
+
+-   Logical flag indicating whether envelopes should be pointwise (global=FALSE) or simultaneous (global=TRUE).
+
+
+```{r}
+#takes around less than 2 minutes
+L_func.csr <- envelope(wpfuncNGA_ppp, Lest, nsim = 39, nrank = 1, global=TRUE)
+```
+
+```{r}
+plot(L_func.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+
+Based on the graph, we can see that the L function is within the randomisation. Hence, we cannot reject the null hypothesis as there is insufficient evidence that the distribution of functional waterpoints in Nigeria, Osun is randomly distributed at the level of 0.05.
+
+## 7.2 Non-functional Waterpoints in Nigeria, Ossun
+
+### 7.2.1 Hypothesis Test
+
+-   Null hypothesis, H0: The distribution of *non-functional waterpoints* in Nigeria, Osun is *randomly distributed.*
+
+-   Alternative hypothesis, H1: The distribution of *non-functional waterpoints* in Nigeria, Osun is *not randomly distributed.*
+
+-   The hypothesis will be tested at a significance level of 0.05, with a corresponding confidence level of 95%.
+
+### 7.2.2 Computing L Function estimation
+
+
+```{r}
+L_nonfunc = Lest(wpnonfuncNGA_ppp, correction = "Ripley")
+plot(L_nonfunc, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+
+### 7.1.3 Performing Complete Spatial Randomness Test
+
+
+```{r}
+#takes around less than 2 minutes
+L_nonfunc.csr <- envelope(wpnonfuncNGA_ppp, Lest, nsim = 39, nrank = 1, global=TRUE)
+```
+
+```{r}
+plot(L_nonfunc.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+
+Based on the graph, we can see that the L function is within the randomisation. Hence, we cannot reject the null hypothesis as there is insufficient evidence to prove that the distribution of non-functional waterpoints in Nigeria, Osun is randomly distributed at the level of 0.05.
+
+# 8. Spatial Correlation Analysis
+
+To look into the spatial correlation analysis between functional and non-functional waterpoints, I decided to perform Local Colocation Quotient Analysis [(LCQA)](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/learnmorecolocationanalysis.htm) as it measures local patterns of spatial association between two categories of point features using the colocation quotient statistic. The output of this analysis will be a map representing the likelihood of the spatial association between the two categories (i.e functional and non-functional waterpoints) analyzed with added fields including the colocation quotient value and p-value.
+
+If the p-value is less that our selected significance level (i.e 0.05), it means that there is sufficent evidence to reject the null hypothesis.
+
+For this hypothesis testing, the hypothesis are as follows:
+
+-   Null hypothesis, H0: The spatial distribution of functional and non-functional water points are *independent* from each other.
+
+-   Alternative hypothesis, H1: The spatial distribution of functional and non-functional water points are *not independent* from each other.
+
+-   The hypothesis will be tested at a significance level of 0.05, with a corresponding confidence level of 95%.
+
+To start off, I need to retrieve the polygon features of functional and non-functional waterpoints in Nigeria, Osun which i had extracted earlier and combined together into one dataframe.
+
+
+```{r}
+wpNGA_funct_nonfunct <- base::rbind(wp_functional, wp_nonfunctional)
+unique(wpNGA_funct_nonfunct$status_clean)
+```
+
+
+Looking at the df of wpNGA_funct_nonfunct, functional waterpoints consist of "Functional" and "Functional, needs repair" and non-functional waterpoints consist of "Abandoned/Decommissioned". Thus, to make things clearer, I decided to make it so that the df only contains "Functional" or "Non-functional" in the code chunk below.
+
+
+```{r}
+wpNGA_funct_nonfunct$status_clean[wpNGA_funct_nonfunct$status_clean == "Functional, needs repair"] <- "Functional"
+
+wpNGA_funct_nonfunct$status_clean[wpNGA_funct_nonfunct$status_clean == "Abandoned/Decommissioned"] <- "Non-functional"
+```
+
+
+Next, I need to visualise my sf layers.
+
+
+```{r}
+#wpNGA_funct_nonfunct
+#tm_shape(NGA_owin) + tm_polygons(wpNGA_funct_nonfunct)
+plot(wpNGA_funct_nonfunct)
+#tmap_mode("view")
+#tm_shape(wpNGA_funct_nonfunct) +
+#  tm_polygons("status_clean")+
+#  tm_view(set.zoom.limits = c(12, 16))
+```
+
+
+# Acknowledgements
+
+To conclude, I would like to thank Prof. Kam for our IS415 Geospatial Analytics and Applications course materials & resources.
+
