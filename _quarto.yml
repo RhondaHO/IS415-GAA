@@ -4,7 +4,7 @@ project:
 website:
   title: "IS415-GAA"
   navbar:
-    background: "#ccccff"
+    background: "#7D0541"
 
     left:
     - text: "Hands-on Exercise"

@@ -263,7 +263,7 @@ The output object combined both the point and polygon feature in one ppp object 
 summary(childcareSG_ppp)
 ```
 
-#### 4.6.1  Extracting study area
+#### 4.6.1 Extracting study area
 
 ```{r}
 #| code-fold: true
@@ -354,6 +354,7 @@ plot(childcare_jw_ppp.km, main="Jurong West")
 ## 6 Analysing Spatial Point Process Using G-Function
 
 ### 
+
 6.1 Choa Chu Kang planning area
 
 #### 6.1.2 Computing G-function estimation
@@ -437,6 +438,7 @@ plot(G_tm.csr)
 ## 7 Analysing Spatial Point Process Using F-Function
 
 ### 
+
 7.1 Choa Chu Kang planning area
 
 #### 7.1.1 Computing F-function estimation
@@ -560,6 +562,7 @@ plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ### 9.2 Tampiness planning area
 
 #### 
+
 9.2.1 Computing L Function estimation
 
 ```{r}
