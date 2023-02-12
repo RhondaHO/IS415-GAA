@@ -321,7 +321,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   </ul></li>
   <li><a href="#spatial-correlation-analysis" id="toc-spatial-correlation-analysis" class="nav-link" data-scroll-target="#spatial-correlation-analysis">8. Spatial Correlation Analysis</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
   </ul>
 </nav>
     </div>
@@ -1046,7 +1046,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Null hypothesis, H0: The spatial distribution of functional and non-functional water points are <em>independent</em> from each other.</p></li>
 <li><p>Alternative hypothesis, H1: The spatial distribution of functional and non-functional water points are <em>not independent</em> from each other.</p></li>
 <li><p>The hypothesis will be tested at a significance level of 0.05, with a corresponding confidence level of 95%.</p></li>
-<li></li>
 </ul>
 <p>To start off, I need to retrieve the polygon features of functional and non-functional waterpoints in Nigeria, Osun which i had extracted earlier and combined together into one dataframe.</p>
 <div class="cell">
@@ -1079,9 +1078,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 </div>
 </section>
-<section id="references" class="level1">
-<h1>References</h1>
-<p>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726315/#:~:text=H(r)%20%3D%20L(r)%20%E2%88%92%20r.&amp;text=Ripley’s%20K%2Dfunction%20is%20typically,are%20distributed%20randomly%20and%20independently.</p>
+<section id="acknowledgements" class="level1">
+<h1>Acknowledgements</h1>
+<p>To conclude, I would like to thank Prof.&nbsp;Kam for our IS415 Geospatial Analytics and Applications course materials &amp; resources.</p>
 
 
 <!-- -->
@@ -1969,38 +1968,36 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-794"><a href="#cb54-794" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-795"><a href="#cb54-795" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The hypothesis will be tested at a significance level of 0.05, with a corresponding confidence level of 95%.</span>
 <span id="cb54-796"><a href="#cb54-796" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-797"><a href="#cb54-797" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span></span>
+<span id="cb54-797"><a href="#cb54-797" aria-hidden="true" tabindex="-1"></a>To start off, I need to retrieve the polygon features of functional and non-functional waterpoints in Nigeria, Osun which i had extracted earlier and combined together into one dataframe.</span>
 <span id="cb54-798"><a href="#cb54-798" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-799"><a href="#cb54-799" aria-hidden="true" tabindex="-1"></a>To start off, I need to retrieve the polygon features of functional and non-functional waterpoints in Nigeria, Osun which i had extracted earlier and combined together into one dataframe.</span>
-<span id="cb54-800"><a href="#cb54-800" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-803"><a href="#cb54-803" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb54-804"><a href="#cb54-804" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">rbind</span>(wp_functional, wp_nonfunctional)</span>
-<span id="cb54-805"><a href="#cb54-805" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(wpNGA_funct_nonfunct<span class="sc">$</span>status_clean)</span>
-<span id="cb54-806"><a href="#cb54-806" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-801"><a href="#cb54-801" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb54-802"><a href="#cb54-802" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">rbind</span>(wp_functional, wp_nonfunctional)</span>
+<span id="cb54-803"><a href="#cb54-803" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(wpNGA_funct_nonfunct<span class="sc">$</span>status_clean)</span>
+<span id="cb54-804"><a href="#cb54-804" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-805"><a href="#cb54-805" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-806"><a href="#cb54-806" aria-hidden="true" tabindex="-1"></a>Looking at the df of wpNGA_funct_nonfunct, functional waterpoints consist of "Functional" and "Functional, needs repair" and non-functional waterpoints consist of "Abandoned/Decommissioned". Thus, to make things clearer, I decided to make it so that the df only contains "Functional" or "Non-functional" in the code chunk below.</span>
 <span id="cb54-807"><a href="#cb54-807" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-808"><a href="#cb54-808" aria-hidden="true" tabindex="-1"></a>Looking at the df of wpNGA_funct_nonfunct, functional waterpoints consist of "Functional" and "Functional, needs repair" and non-functional waterpoints consist of "Abandoned/Decommissioned". Thus, to make things clearer, I decided to make it so that the df only contains "Functional" or "Non-functional" in the code chunk below.</span>
-<span id="cb54-809"><a href="#cb54-809" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-812"><a href="#cb54-812" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb54-813"><a href="#cb54-813" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct<span class="sc">$</span>status_clean[wpNGA_funct_nonfunct<span class="sc">$</span>status_clean <span class="sc">==</span> <span class="st">"Functional, needs repair"</span>] <span class="ot">&lt;-</span> <span class="st">"Functional"</span></span>
-<span id="cb54-814"><a href="#cb54-814" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-815"><a href="#cb54-815" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct<span class="sc">$</span>status_clean[wpNGA_funct_nonfunct<span class="sc">$</span>status_clean <span class="sc">==</span> <span class="st">"Abandoned/Decommissioned"</span>] <span class="ot">&lt;-</span> <span class="st">"Non-functional"</span></span>
-<span id="cb54-816"><a href="#cb54-816" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-810"><a href="#cb54-810" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb54-811"><a href="#cb54-811" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct<span class="sc">$</span>status_clean[wpNGA_funct_nonfunct<span class="sc">$</span>status_clean <span class="sc">==</span> <span class="st">"Functional, needs repair"</span>] <span class="ot">&lt;-</span> <span class="st">"Functional"</span></span>
+<span id="cb54-812"><a href="#cb54-812" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-813"><a href="#cb54-813" aria-hidden="true" tabindex="-1"></a>wpNGA_funct_nonfunct<span class="sc">$</span>status_clean[wpNGA_funct_nonfunct<span class="sc">$</span>status_clean <span class="sc">==</span> <span class="st">"Abandoned/Decommissioned"</span>] <span class="ot">&lt;-</span> <span class="st">"Non-functional"</span></span>
+<span id="cb54-814"><a href="#cb54-814" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-815"><a href="#cb54-815" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-816"><a href="#cb54-816" aria-hidden="true" tabindex="-1"></a>Next, I need to visualise my sf layers.</span>
 <span id="cb54-817"><a href="#cb54-817" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-818"><a href="#cb54-818" aria-hidden="true" tabindex="-1"></a>Next, I need to visualise my sf layers.</span>
-<span id="cb54-819"><a href="#cb54-819" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-822"><a href="#cb54-822" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb54-823"><a href="#cb54-823" aria-hidden="true" tabindex="-1"></a><span class="co">#wpNGA_funct_nonfunct</span></span>
-<span id="cb54-824"><a href="#cb54-824" aria-hidden="true" tabindex="-1"></a><span class="co">#tm_shape(NGA_owin) + tm_polygons(wpNGA_funct_nonfunct)</span></span>
-<span id="cb54-825"><a href="#cb54-825" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wpNGA_funct_nonfunct)</span>
-<span id="cb54-826"><a href="#cb54-826" aria-hidden="true" tabindex="-1"></a><span class="co">#tmap_mode("view")</span></span>
-<span id="cb54-827"><a href="#cb54-827" aria-hidden="true" tabindex="-1"></a><span class="co">#tm_shape(wpNGA_funct_nonfunct) +</span></span>
-<span id="cb54-828"><a href="#cb54-828" aria-hidden="true" tabindex="-1"></a><span class="co">#  tm_polygons("status_clean")+</span></span>
-<span id="cb54-829"><a href="#cb54-829" aria-hidden="true" tabindex="-1"></a><span class="co">#  tm_view(set.zoom.limits = c(12, 16))</span></span>
-<span id="cb54-830"><a href="#cb54-830" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-820"><a href="#cb54-820" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb54-821"><a href="#cb54-821" aria-hidden="true" tabindex="-1"></a><span class="co">#wpNGA_funct_nonfunct</span></span>
+<span id="cb54-822"><a href="#cb54-822" aria-hidden="true" tabindex="-1"></a><span class="co">#tm_shape(NGA_owin) + tm_polygons(wpNGA_funct_nonfunct)</span></span>
+<span id="cb54-823"><a href="#cb54-823" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(wpNGA_funct_nonfunct)</span>
+<span id="cb54-824"><a href="#cb54-824" aria-hidden="true" tabindex="-1"></a><span class="co">#tmap_mode("view")</span></span>
+<span id="cb54-825"><a href="#cb54-825" aria-hidden="true" tabindex="-1"></a><span class="co">#tm_shape(wpNGA_funct_nonfunct) +</span></span>
+<span id="cb54-826"><a href="#cb54-826" aria-hidden="true" tabindex="-1"></a><span class="co">#  tm_polygons("status_clean")+</span></span>
+<span id="cb54-827"><a href="#cb54-827" aria-hidden="true" tabindex="-1"></a><span class="co">#  tm_view(set.zoom.limits = c(12, 16))</span></span>
+<span id="cb54-828"><a href="#cb54-828" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb54-829"><a href="#cb54-829" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-830"><a href="#cb54-830" aria-hidden="true" tabindex="-1"></a><span class="fu"># Acknowledgements</span></span>
 <span id="cb54-831"><a href="#cb54-831" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-832"><a href="#cb54-832" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span>
-<span id="cb54-833"><a href="#cb54-833" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-834"><a href="#cb54-834" aria-hidden="true" tabindex="-1"></a>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726315/#:\~:text=H(r)%20%3D%20L(r)%20%E2%88%92%20r.&amp;text=Ripley's%20K%2Dfunction%20is%20typically,are%20distributed%20randomly%20and%20independently.</span>
+<span id="cb54-832"><a href="#cb54-832" aria-hidden="true" tabindex="-1"></a>To conclude, I would like to thank Prof. Kam for our IS415 Geospatial Analytics and Applications course materials &amp; resources.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
