@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Ex 6:"
+title: "Hands-on Ex 6: Spatial Weights and Applications"
 
 title-block-banner: true
 
