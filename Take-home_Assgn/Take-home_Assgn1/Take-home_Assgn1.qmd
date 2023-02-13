@@ -53,8 +53,6 @@ The specific tasks of this take-home exercise are as follows:
 
     -   Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
 
-<!-- -->
-
 2.  **Second-order Spatial Point Patterns Analysis**
 
     With reference to the spatial point patterns observed in ESDA:

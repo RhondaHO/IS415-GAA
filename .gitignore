@@ -5,3 +5,5 @@
 .DS_Store
 
 /.quarto/
+#data/ <- any file in this file will not be pushed over,
+#         when you try to knit it, avoid big dataset
