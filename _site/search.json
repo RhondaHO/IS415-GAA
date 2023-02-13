@@ -625,112 +625,112 @@
   {
     "objectID": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
     "href": "In-class_Ex/In-class_Ex06/In-class_Ex06.html",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "",
     "text": "Code\npacman::p_load(sf, sfdep, tmap, tidyverse, knitr)\n\n#inclass uses sfdep, handson uses spdep\n\n\n\n\n\n\n\n\n\nCode\n# st_read from sf package \n\n# task: make it into sf df\nhunan <- st_read(dsn = \"data/geospatial\", \n                 layer = \"Hunan\") \n\n\n\n\n\n\n\nCode\n#tibble df\nhunan2012 <- read_csv(\"data/aspatial/Hunan_2012.csv\")\n#head(hunan,5) colnames(hunan2012)\n\n\n\n\n\n\n\nCode\n# left join-> missing a unique identifier but it automatically matches county\n\nhunan_GDPC <- left_join(hunan,hunan2012)%>%\n  select(1:4, 7, 15)\n\n\n\n\n\n\n\n\nCode\ntmap_mode(\"plot\")\ntm_shape (hunan_GDPC) + \n  tm_fill(\"GDPPC\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          title = \"GDPPC\") +\ntm_layout ( main.title = \"Distribution of GDP per capita by distribution\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\ntm_borders (alpha = 0.5) +\ntm_compass (type=\"8star\", size = 2) +\ntm_scale_bar() + \ntm_grid(alpha =0.2)\n\n# tmap auto changes from decimal to kilometres using great circle formula\n\n\n\n\n\n\n\nCode\n# using queen's method (default value of function)\n\ncn_queen <- hunan_GDPC %>%\n  mutate(nb= st_contiguity(geometry),\n         .before=1) # put newly created field at the first col\n\n#View(cn_queen)\n\n\n\n\n\n\n\n\nNote\n\n\n\nWhat about the Rook’s method?\n\n\n\n\nCode\ncn_rook <- hunan_GDPC %>%\n  mutate(nb= st_contiguity(geometry),\n         queen= FALSE,\n         .before=1)\n\n\n\n\nCode\n# sfdep removes the earlier step and conbines 2 function/ it is redundant\n\nwm_q <- hunan_GDPC %>%\n  mutate(nb= st_contiguity(geometry),\n         wt = st_weights(nb),\n         .before=1)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "",
     "text": "Code\npacman::p_load(sf, spdep, tmap, knitr, tidyverse)\n\n#tidyverse advised to be at the back so the dependencies dont overlap\n\n\n\n\n\nImporting shapefile into r environment\n\n\nCode\nhunan <- st_read(dsn = \"data/geospatial\", \n                 layer = \"Hunan\")\n\n\nImport csv file into r environment\n\n\nCode\nhunan2012 <- read_csv(\"data/aspatial/Hunan_2012.csv\")\n#head(hunan,5)\n\n\nPerforming relational join\n\n\nCode\nhunan <- left_join(hunan,hunan2012)%>%\n  select(1:4, 7, 15)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#computing-queen-contiguity-based-neighbours",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#computing-queen-contiguity-based-neighbours",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Computing (QUEEN) contiguity based neighbours",
     "text": "Computing (QUEEN) contiguity based neighbours\nconcept based on chess i.e(rook, bishop, queen) shows what it considers as neighbours. For continuity neighbours, there needs to be a shared boundary.\nThe code chunk below compute Queen contiguity weight matrix.\n\n\nCode\nwm_q <- poly2nb(hunan, queen=TRUE)\nsummary(wm_q)\n\n\nDecription: The summary report above shows that there are 88 area units in Hunan. The most connected area unit has 11 neighbours. There are two area units with only one heighbours.\nFor each polygon in our polygon object, wm_q lists all neighboring polygons. For example, to see the neighbors for the first polygon in the object, type:\n\n\nCode\nwm_q[[1]]\n\n\nPolygon 1 has 5 neighbors. The numbers represent the polygon IDs as stored in hunan SpatialPolygonsDataFrame class.\nWe can retrive the county name of Polygon ID=1 by using the code chunk below:\n\n\nCode\nhunan$County[1]\n\n\nThe output reveals that Polygon ID=1 is Anxiang county.\nTo reveal the county names of the five neighboring polygons, the code chunk will be used:\n\n\nCode\nhunan$NAME_3[c(2,3,4,57,85)]\n\n\nWe can retrieve the GDPPC of these five countries by using the code chunk below.\n\n\nCode\nnb1 <- wm_q[[1]]\nnb1 <- hunan$GDPPC[nb1]\nnb1\n\n\nThe printed output above shows that the GDPPC of the five nearest neighbours based on Queen’s method are 20981, 34592, 24473, 21311 and 22879 respectively.\nYou can display the complete weight matrix by using str(). Be warned: The output might cut across several pages. Save the trees if you are going to print out the report.\n\n\nCode\nstr(wm_q)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#creating-rook-contiguity-based-neighbours",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#creating-rook-contiguity-based-neighbours",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Creating (ROOK) contiguity based neighbours",
     "text": "Creating (ROOK) contiguity based neighbours\nThe code chunk below is used to compute Rook contiguity weight matrix.\n\n\nCode\nwm_r <- poly2nb(hunan, queen=FALSE)\nsummary(wm_r)\n\n\nThe summary report above shows that there are 88 area units in Hunan. The most connect area unit has 10 neighbours. There are two area units with only one neighbours."
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#visualising-contiguity-weights",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#visualising-contiguity-weights",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Visualising contiguity weights",
     "text": "Visualising contiguity weights\nA connectivity graph takes a point and displays a line to each neighboring point. We are working with polygons at the moment, so we will need to get points in order to make our connectivity graphs. The most typically method for this will be polygon centroids. We will calculate these in the sf package before moving onto the graphs. Getting Latitude and Longitude of Polygon Centroids\nWe will need points to associate with each polygon before we can make our connectivity graph. It will be a little more complicated than just running st_centroid on the sf object: us.bound. We need the coordinates in a separate data frame for this to work. To do this we will use a mapping function. The mapping function applies a given function to each element of a vector and returns a vector of the same length. Our input vector will be the geometry column of us.bound. Our function will be st_centroid. We will be using map_dbl variation of map from the purrr package. For more documentation, check out map documentation\nTo get our longitude values we map the st_centroid function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1. This allows us to get only the longitude, which is the first value in each centroid.\n\n\nCode\nlongitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])\n\n\n\n\nCode\nlatitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[2]])\n\n\n\n\nCode\ncoords <- cbind(longitude, latitude)\n\n\n\n\nCode\nhead(coords)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-queen-contiguity-based-neighbours-map",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-queen-contiguity-based-neighbours-map",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Plotting Queen contiguity based neighbours map",
     "text": "Plotting Queen contiguity based neighbours map\n\n\nCode\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= \"red\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-rook-contiguity-based-neighbours-map",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-rook-contiguity-based-neighbours-map",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Plotting Rook contiguity based neighbours map",
     "text": "Plotting Rook contiguity based neighbours map\n\n\nCode\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = \"red\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-both-queen-and-rook-contiguity-based-neighbours-maps",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-both-queen-and-rook-contiguity-based-neighbours-maps",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Plotting both Queen and Rook contiguity based neighbours maps",
     "text": "Plotting both Queen and Rook contiguity based neighbours maps\n\n\nCode\npar(mfrow=c(1,2))\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= \"red\", main=\"Queen Contiguity\")\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = \"red\", main=\"Rook Contiguity\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#determine-the-cut-off-distance",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#determine-the-cut-off-distance",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Determine the cut-off distance",
     "text": "Determine the cut-off distance\nFirstly, we need to determine the upper limit for distance band by using the steps below:\n\nReturn a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using knearneigh() of spdep.\nConvert the knn object returned by knearneigh() into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using knn2nb().\nReturn the length of neighbour relationship edges by using nbdists() of spdep. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise\nRemove the list structure of the returned object by using unlist().\n\n\n\nCode\n#coords <- coordinates(hunan)\nk1 <- knn2nb(knearneigh(coords))\nk1dists <- unlist(nbdists(k1, coords, longlat = TRUE))\nsummary(k1dists)\n\n\nComputing fixed distance weight matrix\nNow, we will compute the distance weight matrix by using dnearneigh() as shown in the code chunk below.\n\n\nCode\nwm_d62 <- dnearneigh(coords, 0, 62, longlat = TRUE)\nwm_d62\n\n\nQuiz: What is the meaning of “Average number of links: 3.681818” shown above?\nNext, we will use str() to display the content of wm_d62 weight matrix.\n\n\nCode\nstr(wm_d62)\n\n\nAnother way to display the structure of the weight matrix is to combine table() and card() of spdep.\n\n\nCode\ntable(hunan$County, card(wm_d62))\n\n\n\n\nCode\nn_comp <- n.comp.nb(wm_d62)\nn_comp$nc\n\n\n\n\nCode\ntable(n_comp$comp.id)\n\n\n\n\nCode\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_d62, coords, add=TRUE)\nplot(k1, coords, add=TRUE, col=\"red\", length=0.08)\n\n\nThe red lines show the links of 1st nearest neighbours and the black lines show the links of neighbours within the cut-off distance of 62km.\nAlternatively, we can plot both of them next to each other by using the code chunk below.\n\n\nCode\npar(mfrow=c(1,2))\nplot(hunan$geometry, border=\"lightgrey\")\nplot(k1, coords, add=TRUE, col=\"red\", length=0.08, main=\"1st nearest neighbours\")\nplot(hunan$geometry, border=\"lightgrey\")\nplot(wm_d62, coords, add=TRUE, pch = 19, cex = 0.6, main=\"Distance link\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#computing-adaptive-distance-weight-matrix",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#computing-adaptive-distance-weight-matrix",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Computing adaptive distance weight matrix",
     "text": "Computing adaptive distance weight matrix\nOne of the characteristics of fixed distance weight matrix is that more densely settled areas (usually the urban areas) tend to have more neighbours and the less densely settled areas (usually the rural counties) tend to have lesser neighbours. Having many neighbours smoothes the neighbour relationship across more neighbours.\nIt is possible to control the numbers of neighbours directly using k-nearest neighbours, either accepting asymmetric neighbours or imposing symmetry as shown in the code chunk below.\n\n\nCode\nknn6 <- knn2nb(knearneigh(coords, k=6))\nknn6\nstr(knn6)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-distance-based-neighbours",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#plotting-distance-based-neighbours",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Plotting distance based neighbours",
     "text": "Plotting distance based neighbours\nWe can plot the weight matrix using the code chunk below.\n\n\nCode\nplot(hunan$geometry, border=\"lightgrey\")\nplot(knn6, coords, pch = 19, cex = 0.6, add = TRUE, col = \"red\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#row-standardised-weights-matrix",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#row-standardised-weights-matrix",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Row-standardised weights matrix",
     "text": "Row-standardised weights matrix\nNext, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight (style=“W”). This is accomplished by assigning the fraction 1/(#ofneighbors) to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors’ values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we’ll stick with the style=“W” option for simplicity’s sake but note that other more robust options are available, notably style=“B”.\n\n\nCode\nrswm_q <- nb2listw(wm_q, style=\"W\", zero.policy = TRUE)\nrswm_q\n\n\nThe zero.policy=TRUE option allows for lists of non-neighbors. This should be used with caution since the user may not be aware of missing neighbors in their dataset however, a zero.policy of FALSE would return an error.\nTo see the weight of the first polygon’s eight neighbors type:\n\n\nCode\nrswm_q$weights[10]\n\n\nEach neighbor is assigned a 0.125 of the total weight. This means that when R computes the average neighboring income values, each neighbor’s income will be multiplied by 0.2 before being tallied.\nUsing the same method, we can also derive a row standardised distance weight matrix by using the code chunk below.\n\n\nCode\nrswm_ids <- nb2listw(wm_q, glist=ids, style=\"B\", zero.policy=TRUE)\nrswm_ids\n\n\n\n\nCode\nrswm_ids$weights[1]\n\n\n\n\nCode\nsummary(unlist(rswm_ids$weights))"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-lag-with-row-standardized-weights",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-lag-with-row-standardized-weights",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Spatial lag with row-standardized weights",
     "text": "Spatial lag with row-standardized weights\nFinally, we’ll compute the average neighbor GDPPC value for each polygon. These values are often referred to as spatially lagged values.\n\n\nCode\n# had to run this -> hunan$GDPPC on its own first before the code could load, error was hunan$GDPPC not a vector\n\nGDPPC.lag <- lag.listw(rswm_q, hunan$GDPPC)\nGDPPC.lag\n\n\nRecalled in the previous section, we retrieved the GDPPC of these five countries by using the code chunk below.\n\n\nCode\nnb1 <- wm_q[[1]]\nnb1 <- hunan$GDPPC[nb1]\nnb1\n\n\nWe can append the spatially lag GDPPC values onto hunan sf data frame by using the code chunk below.\n\n\nCode\nlag.list <- list(hunan$NAME_3, lag.listw(rswm_q, hunan$GDPPC))\nlag.res <- as.data.frame(lag.list)\ncolnames(lag.res) <- c(\"NAME_3\", \"lag GDPPC\")\nhunan <- left_join(hunan,lag.res)\n\n\n\n\nCode\nhead(hunan)\n\n\nNext, we will plot both the GDPPC and spatial lag GDPPC for comparison using the code chunk below.\n\n\nCode\ngdppc <- qtm(hunan, \"GDPPC\")\nlag_gdppc <- qtm(hunan, \"lag GDPPC\")\ntmap_arrange(gdppc, lag_gdppc, asp=1, ncol=2)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-lag-as-a-sum-of-neighboring-values",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-lag-as-a-sum-of-neighboring-values",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Spatial lag as a sum of neighboring values",
     "text": "Spatial lag as a sum of neighboring values\nWe can calculate spatial lag as a sum of neighboring values by assigning binary weights. This requires us to go back to our neighbors list, then apply a function that will assign binary weights, then we use glist = in the nb2listw function to explicitly assign these weights.\nWe start by applying a function that will assign a value of 1 per each neighbor. This is done with lapply, which we have been using to manipulate the neighbors structure throughout the past notebooks. Basically it applies a function across each value in the neighbors structure.\n\n\nCode\nb_weights <- lapply(wm_q, function(x) 0*x + 1)\nb_weights2 <- nb2listw(wm_q, \n                       glist = b_weights, \n                       style = \"B\")\nb_weights2\n\n\n\n\nCode\nlag_sum <- list(hunan$NAME_3, lag.listw(b_weights2, hunan$GDPPC))\nlag.res <- as.data.frame(lag_sum)\ncolnames(lag.res) <- c(\"NAME_3\", \"lag_sum GDPPC\")\n\nlag_sum\n\n\nNext, we will append the lag_sum GDPPC field into hunan sf data frame by using the code chunk below.\n\n\nCode\nhunan <- left_join(hunan, lag.res)\n\n\nNow, We can plot both the GDPPC and Spatial Lag Sum GDPPC for comparison using the code chunk below.\n\n\nCode\ngdppc <- qtm(hunan, \"GDPPC\")\nlag_sum_gdppc <- qtm(hunan, \"lag_sum GDPPC\")\ntmap_arrange(gdppc, lag_sum_gdppc, asp=1, ncol=2)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-window-average",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-window-average",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Spatial window average",
     "text": "Spatial window average\nThe spatial window average uses row-standardized weights and includes the diagonal element. To do this in R, we need to go back to the neighbors structure and add the diagonal element before assigning weights.\nTo add the diagonal element to the neighbour list, we just need to use include.self() from spdep.\n\n\nCode\nwm_qs <- include.self(wm_q)\n\n\nNotice that the Number of nonzero links, Percentage nonzero weights and Average number of links are 536, 6.921488 and 6.090909 respectively as compared to wm_q of 448, 5.785124 and 5.090909\nLet us take a good look at the neighbour list of area [1] by using the code chunk below.\n\n\nCode\nwm_qs[[1]]\n\n\nNotice that now [1] has six neighbours instead of five.\nNow we obtain weights with nb2listw()\n\n\nCode\nwm_qs <- nb2listw(wm_qs)\nwm_qs\n\n\nAgain, we use nb2listw() and glist() to explicitly assign weight values.\nLastly, we just need to create the lag variable from our weight structure and GDPPC variable.\n\n\nCode\nlag_w_avg_gpdpc <- lag.listw(wm_qs, \n                             hunan$GDPPC)\nlag_w_avg_gpdpc\n\n\nNext, we will convert the lag variable listw object into a data.frame by using as.data.frame().\n\n\nCode\nlag.list.wm_qs <- list(hunan$NAME_3, lag.listw(wm_qs, hunan$GDPPC))\nlag_wm_qs.res <- as.data.frame(lag.list.wm_qs)\ncolnames(lag_wm_qs.res) <- c(\"NAME_3\", \"lag_window_avg GDPPC\")\n\n\nNote: The third command line on the code chunk above renames the field names of lag_wm_q1.res object into NAME_3 and lag_window_avg GDPPC respectively.\nNext, the code chunk below will be used to append lag_window_avg GDPPC values onto hunan sf data.frame by using left_join() of dplyr package.\n\n\nCode\nhunan <- left_join(hunan, lag_wm_qs.res)\n\n\nTo compare the values of lag GDPPC and Spatial window average, kable() of Knitr package is used to prepare a table using the code chunk below.\n\n\nCode\nhunan %>%\n  select(\"County\", \"lag GDPPC\", \"lag_window_avg GDPPC\") %>%\n  kable()\n\n\nLastly, qtm() of tmap package is used to plot the lag_gdppc and w_ave_gdppc maps next to each other for quick comparison.\n\n\nCode\nw_avg_gdppc <- qtm(hunan, \"lag_window_avg GDPPC\")\ntmap_arrange(lag_gdppc, w_avg_gdppc, asp=1, ncol=2)\n\n\nNote: For more effective comparison, it is advicible to use the core tmap mapping functions."
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-window-sum",
     "href": "Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html#spatial-window-sum",
-    "title": "Hands-on Ex 6:",
+    "title": "Hands-on Ex 6: Spatial Weights and Applications",
     "section": "Spatial window sum",
     "text": "Spatial window sum\nThe spatial window sum is the counter part of the window average, but without using row-standardized weights.\nTo add the diagonal element to the neighbour list, we just need to use include.self() from spdep.\n\n\nCode\nwm_qs <- include.self(wm_q)\nwm_qs\n\n\nNext, we will assign binary weights to the neighbour structure that includes the diagonal element.\n\n\nCode\nb_weights <- lapply(wm_qs, function(x) 0*x + 1)\nb_weights[1]\n\n\nNotice that now [1] has six neighbours instead of five.\nAgain, we use nb2listw() and glist() to explicitly assign weight values.\n\n\nCode\nb_weights2 <- nb2listw(wm_qs, \n                       glist = b_weights, \n                       style = \"B\")\nb_weights2\n\n\nWith our new weight structure, we can compute the lag variable with lag.listw().\n\n\nCode\nw_sum_gdppc <- list(hunan$NAME_3, lag.listw(b_weights2, hunan$GDPPC))\nw_sum_gdppc\n\n\nNext, we will convert the lag variable listw object into a data.frame by using as.data.frame().\n\n\nCode\nw_sum_gdppc.res <- as.data.frame(w_sum_gdppc)\ncolnames(w_sum_gdppc.res) <- c(\"NAME_3\", \"w_sum GDPPC\")\n\n\nNote: The second command line on the code chunk above renames the field names of w_sum_gdppc.res object into NAME_3 and w_sum GDPPC respectively.\nNext, the code chunk below will be used to append w_sum GDPPC values onto hunan sf data.frame by using left_join() of dplyr package.\n\n\nCode\nhunan <- left_join(hunan, w_sum_gdppc.res)\n\n\nTo compare the values of lag GDPPC and Spatial window average, kable() of Knitr package is used to prepare a table using the code chunk below.\n\n\nCode\nhunan %>%\n  select(\"County\", \"lag_sum GDPPC\", \"w_sum GDPPC\") %>%\n  kable()\n\n\nLastly, qtm() of tmap package is used to plot the lag_sum GDPPC and w_sum_gdppc maps next to each other for quick comparison.\n\n\nCode\nw_sum_gdppc <- qtm(hunan, \"w_sum GDPPC\")\ntmap_arrange(lag_sum_gdppc, w_sum_gdppc, asp=1, ncol=2)"
   }
