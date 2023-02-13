@@ -23,6 +23,7 @@ editor: visual
 # Spatial Weights and Applications
 
 ## Loading of Packages
+
 ```{r}
 
 pacman::p_load(sf, sfdep, tmap, tidyverse, knitr)
@@ -32,7 +33,8 @@ pacman::p_load(sf, sfdep, tmap, tidyverse, knitr)
 
 ## Getting the Data Into R Environment
 
-Importing shapefile into r environment
+### Importing shapefile into r environment
+
 ```{r}
 # st_read from sf package 
 
@@ -40,11 +42,10 @@ Importing shapefile into r environment
 hunan <- st_read(dsn = "data/geospatial", 
                  layer = "Hunan") 
 
-# %>% st_transform(crs = 4490)
-
-
 ```
-Import csv file into r environment
+
+### Import csv file into r environment
+
 ```{r}
 
 #tibble df
@@ -53,16 +54,15 @@ hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
 
 ```
 
-Performing relational join
+### Performing relational join
+
 ```{r}
 # left join-> missing a unique identifier but it automatically matches county
 
 hunan_GDPC <- left_join(hunan,hunan2012)%>%
   select(1:4, 7, 15)
 ```
-
-
-
+## Visualisation
 ```{r}
 tmap_mode("plot")
 tm_shape (hunan_GDPC) + 
@@ -85,15 +85,34 @@ tm_grid(alpha =0.2)
 
 ```
 
+## Identify area neighbours
+
 ```{r}
+# using queen's method (default value of function)
 
 cn_queen <- hunan_GDPC %>%
   mutate(nb= st_contiguity(geometry),
+         .before=1) # put newly created field at the first col
+
+#View(cn_queen)
+```
+
+::: callout-note
+What about the Rook's method?
+:::
+
+```{r}
+cn_rook <- hunan_GDPC %>%
+  mutate(nb= st_contiguity(geometry),
+         queen= FALSE,
          .before=1)
 ```
 
 ```{r}
+# sfdep removes the earlier step and conbines 2 function/ it is redundant
 
+wm_q <- hunan_GDPC %>%
+  mutate(nb= st_contiguity(geometry),
+         wt = st_weights(nb),
+         .before=1)
 ```
-
-
