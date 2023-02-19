@@ -1,0 +1,128 @@
+---
+title: "Take-home Assignment 2: Spatio-temporal Analysis of COVID-19 Vaccination Trends at the Sub-district Level, DKI Jakarta"
+
+title-block-banner: true
+
+date: "20 february 2023"
+date-modified: last-modified
+author: "Rhonda Ho Kah Yee"
+
+format:
+  html:
+      code-fold: true
+      code-tools: true
+
+execute: 
+  message: false
+  warning: false
+  eval: false
+
+editor: visual
+---
+
+# 1. Overview
+
+Hello! This is Rhonda Ho's take-home Assignment 1 for IS415 module.
+
+To view/hide all the code at once, please click on the "\</\> code" tab beside the title of this html document and select the option to view/hide the code.
+
+The full details of this assignment can be found [here](https://is415-ay2022-23t2.netlify.app/th_ex2.html).
+
+## 1.1 Objectives
+
+Exploratory Spatial Data Analysis (ESDA) hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate Local Indicators of Spatial Association (LISA) and Emerging Hot Spot Analysis (EHSA) to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.
+
+## 1.2 The Data
+
+1.  **Aspatial data**
+
+For the purpose of this assignment, data from [Riwayat File Vaksinasi DKI Jakarta](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/) will be used. Daily vaccination data are provides. You are only required to download either the first day of the month or last day of the month of the study period.
+
+2.  **Geospatial data**
+
+For the purpose of this study, DKI Jakarta administration boundary 2019 will be used. The data set can be downloaded at Indonesia Geospatial portal, specifically at [this page](https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html).
+
+::: callout-note
+-   The national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1.
+
+-   Exclude all the outer islands from the DKI Jakarta sf data frame, and
+
+-   Retain the first nine fields in the DKI Jakarta sf data frame. The ninth field JUMLAH_PEN = Total Population.
+:::
+
+## 1.3 Tasks
+
+The specific tasks of this take-home exercise are as follows:
+
+1.  **Choropleth Mapping and Analysis**
+
+    -   Compute the monthly vaccination rate from July 2021 to June 2022 at sub-district (also known as kelurahan in Bahasa Indonesia) level,
+
+    -   Prepare the monthly vaccination rate maps by using appropriate tmap functions,
+
+    -   Describe the spatial patterns revealed by the choropleth maps (not more than 200 words).
+
+2.  **Local Gi\* Analysis**
+
+    With reference to the vaccination rate maps prepared in ESDA:
+
+    -   Compute local Gi\* values of the monthly vaccination rate,
+
+    -   Display the Gi\* maps of the monthly vaccination rate. The maps should only display the significant (i.e. p-value \< 0.05)
+
+    -   With reference to the analysis results, draw statistical conclusions (not more than 250 words).
+
+3.  **Emerging Hot Spot Analysis(EHSA)**
+
+    With reference to the local Gi\* values of the vaccination rate maps prepared in the previous section:
+
+    -   Perform Mann-Kendall Test by using the spatio-temporal local Gi\* values,
+
+    -   Select three sub-districts and describe the temporal trends revealed (not more than 250 words), and
+
+    -   Prepared a EHSA map of the Gi\* values of vaccination rate. The maps should only display the significant (i.e. p-value \< 0.05).\
+
+    -   With reference to the EHSA map prepared, describe the spatial patterns revealed. (not more than 250 words).
+
+# 2. Getting Started
+
+For the purpose of this assignment, the following packages will be used:
+
+-   [**sf**](https://cran.r-project.org/web/packages/sf/index.html): used for importing, managing, and processing geospatial data
+
+-   [**tidyverse**](https://www.tidyverse.org/): a collection of packages for data science tasks
+
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/index.html): used for creating thematic maps, such as choropleth and bubble maps
+
+-   [**spatstat**](https://spatstat.org/): used for point pattern analysis
+
+-   [**raster**](https://cran.r-project.org/web/packages/raster/): reads, writes, manipulates, analyses and models gridded spatial data (i.e. raster-based geographical data)
+
+-   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/index.html): contains a set of functions related to exploratory data analysis, data preparation, and model performance
+
+-   [**maptools**](https://cran.r-project.org/web/packages/maptools/index.html): a set of tools for manipulating geographic data and
+
+-   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatial data wrangling and local colocation quotient analysis.
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, spatstat, raster, funModeling, maptools, sfdep)
+```
+
+# 3. Handling of Data
+
+## 3.1 Import shapefile into r environment
+
+As the national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1 we need to ensure that the crs information is [EPSG:23830.](https://epsg.io/23830)
+
+```{r}
+jkt2019 <- st_read(dsn = "data/geospatial", 
+                 layer = "BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA") %>%
+  st_transform(crs = 23830)
+```
+
+
+
+## 3.2 Importing Aspatial Data
+```{r}
+jkt2021_jul1 <- read_csv("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2022).xlsx")
+```
