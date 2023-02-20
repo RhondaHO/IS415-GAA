@@ -1,20 +1,20 @@
 ---
-title: "In-class Exercise 7"
+title: "In-class Ex 7"
 
 title-block-banner: true
 
-date: "20 february 2023"
-date-modified: last-modified
+date: "6 february 2023" 
+date-modified: last-modified 
 author: "Rhonda Ho Kah Yee"
 
-format:
-  html:
-      code-fold: true
-      code-tools: true
+format: 
+  html: 
+    code-fold: true 
+    code-tools: true
 
 execute: 
-  message: false
-  warning: false
+  message: false 
+  warning: false 
   eval: false
 
 editor: visual
@@ -75,13 +75,13 @@ global_moranI$K
 ```
 
 We should set a seed number to make our results reproducible.
+
 ```{r}
 
 set.seed(1234)
 ```
 
-**Performing global moran'I test with permutations**
-The code chunk below intends to run 100 simulations (total simulations = 1+ nsim=99).
+**Performing global moran'I test with permutations** The code chunk below intends to run 100 simulations (total simulations = 1+ nsim=99).
 
 ```{r}
 # with permutations, 
@@ -140,5 +140,48 @@ tm_shape(lisa_sig) +
   tm_fill("mean") + 
   tm_borders(alpha=0.4)
   #tm_view(set.zoom.limits=c(6,8))
+
+```
+
+Computing local Moran's I
+
+```{r}
+HCSA <- wm_q %>%
+  mutate(local_Gi = local_gstar_perm(
+    GDPPC, nb, wt, nsim=99),
+    .before=1) %>%
+  unnest(local_Gi)
+
+HCSA
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("p_sim") +
+  tm_borders(alpha=0.05)
+
+# need to make sure to be able to see the significance level
+```
+
+```{r}
+
+# GDPPC_nb <- GDPPC_st %>% 
+  #activate("geometry") %>%
+  #mutate(
+   # nb = include_self(st_continuity(geometry)),
+    #wt = st_weights(nb)
+  #) %>%
+  #set_nbs("nb") %>%
+  #set_wts("wt")
+
+```
+
+```{r}
+
+
+```
+
+```{r}
 
 ```
