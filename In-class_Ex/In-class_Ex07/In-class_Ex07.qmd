@@ -1,0 +1,144 @@
+---
+title: "In-class Exercise 7"
+
+title-block-banner: true
+
+date: "20 february 2023"
+date-modified: last-modified
+author: "Rhonda Ho Kah Yee"
+
+format:
+  html:
+      code-fold: true
+      code-tools: true
+
+execute: 
+  message: false
+  warning: false
+  eval: false
+
+editor: visual
+---
+
+# Getting Started
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, tidyverse)
+```
+
+# Importing the Data
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan") 
+
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+#head(hunan,5) colnames(hunan2012)
+
+hunan_GDPC <- left_join(hunan,hunan2012)%>%
+  select(1:4, 7, 15)
+```
+
+```{r}
+wm_q <- hunan_GDPC %>%
+  mutate(nb= st_contiguity(geometry),
+         wt = st_weights(nb,
+                         style="W"), 
+                          #W refers to row standardisation
+         .before=1)
+```
+
+**Computing global moran'I** (redundant step)
+
+```{r}
+moranI <- global_moran(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+```
+
+**Performing global moran'I test** -\> gives test results and statistics
+
+```{r}
+global_moranI <- global_moran_test(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt)
+
+global_moranI
+```
+
+p-value = 1.095e-06 less that 0.05,
+
+```{r}
+global_moranI$I
+
+global_moranI$K
+```
+
+We should set a seed number to make our results reproducible.
+```{r}
+
+set.seed(1234)
+```
+
+**Performing global moran'I test with permutations**
+The code chunk below intends to run 100 simulations (total simulations = 1+ nsim=99).
+
+```{r}
+# with permutations, 
+
+global_moran_perm(wm_q$GDPPC,
+                       wm_q$nb,
+                       wm_q$wt,
+                  nsim=99)
+```
+
+It shows 2 sided because it is a large sample test.
+
+**Computing Local Moran'I**
+
+```{r}
+lisa <- wm_q %>% 
+  mutate(local_moran =local_moran(
+    GDPPC, nb, wt, nsim=99),
+    .before=1)%>%
+  unnest(local_moran) 
+  #need to unnest the list to be able to use the values
+
+lisa
+
+#z ii is standardised
+# p ii is the permutations
+
+# This step is helpful as we dont hve to manually integrate like we did in the handson exercise (handson ex7 steps 10.7.3 - qunadrant <- vector....)
+
+#general way: mean and pysal(python lib that does the same thing as finding the mean) should be the same
+
+#can use the mean for the takehome assgn , dont hve worry about the median and pysal (feel free to explore)
+
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(lisa) +
+  tm_fill("p_ii_sim") + #using the simulations is btr than p_ii cos results will be more stable
+  tm_borders(alpha=0.5)
+  #tm_view(set.zoom.limits=c(6,8))
+```
+
+```{r}
+# takehome assgn should use gstar instead of lisa 
+
+lisa_sig <-lisa %>%
+  filter(p_ii<0.05)
+
+tmap_mode("plot")
+tm_shape(lisa) +
+  tm_polygons() + 
+  tm_borders(alpha=0.5)+
+
+tm_shape(lisa_sig) +
+  tm_fill("mean") + 
+  tm_borders(alpha=0.4)
+  #tm_view(set.zoom.limits=c(6,8))
+
+```

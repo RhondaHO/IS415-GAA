@@ -22,7 +22,7 @@ editor: visual
 
 # 1. Overview
 
-Hello! This is Rhonda Ho's take-home Assignment 1 for IS415 module.
+Hello! This is Rhonda Ho's take-home Assignment 2 for IS415 module.
 
 To view/hide all the code at once, please click on the "\</\> code" tab beside the title of this html document and select the option to view/hide the code.
 
@@ -44,9 +44,7 @@ For the purpose of this study, DKI Jakarta administration boundary 2019 will be 
 
 ::: callout-note
 -   The national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1.
-
 -   Exclude all the outer islands from the DKI Jakarta sf data frame, and
-
 -   Retain the first nine fields in the DKI Jakarta sf data frame. The ninth field JUMLAH_PEN = Total Population.
 :::
 
@@ -105,7 +103,7 @@ For the purpose of this assignment, the following packages will be used:
 -   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatial data wrangling and local colocation quotient analysis.
 
 ```{r}
-pacman::p_load(sf, tidyverse, tmap, spatstat, raster, funModeling, maptools, sfdep)
+pacman::p_load(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl, tidyverse)
 ```
 
 # 3. Handling of Data
@@ -120,9 +118,8 @@ jkt2019 <- st_read(dsn = "data/geospatial",
   st_transform(crs = 23830)
 ```
 
-
-
 ## 3.2 Importing Aspatial Data
+
 ```{r}
-jkt2021_jul1 <- read_csv("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2022).xlsx")
+jkt2021_jul1 <- read_excel("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2022).xlsx")
 ```
