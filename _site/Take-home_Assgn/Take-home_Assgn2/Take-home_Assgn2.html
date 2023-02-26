@@ -215,10 +215,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Take-home_Assgn/Take-home_Assgn1/Take-home_Assgn1.html">
  <span class="dropdown-text">Take-home Assignment 1</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../Take-home_Assgn/Take-home_Assgn2/Take-home_Assgn2.html">
- <span class="dropdown-text">Take-home Assignment 2</span></a>
-  </li>  
     </ul>
   </li>
 </ul>
@@ -265,7 +261,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 20, 2023</p>
+        <p class="date-modified">February 24, 2023</p>
       </div>
     </div>
       
@@ -287,10 +283,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#tasks" id="toc-tasks" class="nav-link" data-scroll-target="#tasks">1.3 Tasks</a></li>
   </ul></li>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">2. Getting Started</a></li>
-  <li><a href="#handling-of-data" id="toc-handling-of-data" class="nav-link" data-scroll-target="#handling-of-data">3. Handling of Data</a>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">3. Data Wrangling</a>
   <ul class="collapse">
-  <li><a href="#import-shapefile-into-r-environment" id="toc-import-shapefile-into-r-environment" class="nav-link" data-scroll-target="#import-shapefile-into-r-environment">3.1 Import shapefile into r environment</a></li>
-  <li><a href="#importing-aspatial-data" id="toc-importing-aspatial-data" class="nav-link" data-scroll-target="#importing-aspatial-data">3.2 Importing Aspatial Data</a></li>
+  <li><a href="#geospatial-data" id="toc-geospatial-data" class="nav-link" data-scroll-target="#geospatial-data">3.1 Geospatial Data</a>
+  <ul class="collapse">
+  <li><a href="#import-shapefile-into-r-environment" id="toc-import-shapefile-into-r-environment" class="nav-link" data-scroll-target="#import-shapefile-into-r-environment">3.1.1 Import shapefile into r environment</a></li>
+  </ul></li>
+  <li><a href="#aspatial-data" id="toc-aspatial-data" class="nav-link" data-scroll-target="#aspatial-data">3.2 Aspatial Data</a>
+  <ul class="collapse">
+  <li><a href="#observations-of-data-website" id="toc-observations-of-data-website" class="nav-link" data-scroll-target="#observations-of-data-website">3.2.1 Observations of Data Website</a></li>
+  <li><a href="#importing-aspatial-data" id="toc-importing-aspatial-data" class="nav-link" data-scroll-target="#importing-aspatial-data">3.2.2 Importing Aspatial Data</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -383,36 +386,197 @@ Note
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl,ivmte, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="handling-of-data" class="level1">
-<h1>3. Handling of Data</h1>
-<section id="import-shapefile-into-r-environment" class="level2">
-<h2 class="anchored" data-anchor-id="import-shapefile-into-r-environment">3.1 Import shapefile into r environment</h2>
+<section id="data-wrangling" class="level1">
+<h1>3. Data Wrangling</h1>
+<section id="geospatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-data">3.1 Geospatial Data</h2>
+<section id="import-shapefile-into-r-environment" class="level3">
+<h3 class="anchored" data-anchor-id="import-shapefile-into-r-environment">3.1.1 Import shapefile into r environment</h3>
 <p>As the national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1 we need to ensure that the crs information is <a href="https://epsg.io/23830">EPSG:23830.</a></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jkt2019 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">23830</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA"</span>) </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#%&gt;% st_transform(crs = 23830)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="importing-aspatial-data" class="level2">
-<h2 class="anchored" data-anchor-id="importing-aspatial-data">3.2 Importing Aspatial Data</h2>
+</section>
+<section id="aspatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="aspatial-data">3.2 Aspatial Data</h2>
+<section id="observations-of-data-website" class="level3">
+<h3 class="anchored" data-anchor-id="observations-of-data-website">3.2.1 Observations of Data Website</h3>
+<p>Examining DKI Jakarta Vaccination File History website where we were suppose to get our data, some of my observations were:</p>
+<ul>
+<li><p>Entire page is in Indonesian</p>
+<ul>
+<li><p>To translate to English, simply right click anywhere on the webpage and click “Translate to English” button</p></li>
+<li><p>Alternative solutions for translation can be found <a href="https://www.wikihow.com/Translate-a-Web-Page">here</a>.</p></li>
+</ul></li>
+<li><p>There were two columns for DKI Jakarta Vaccination File History, one for “<em>Vaccination Data Based on Village and District</em>”, another for “<em>RT-Based Vaccination Data</em>”</p>
+<ul>
+<li>We will be focusing on the “V<em>accination Data Based on Village and District</em>”column as our task require us to analyse on a sub-district level.</li>
+</ul></li>
+<li><p>Many instances of missing data!</p>
+<ul>
+<li><p>E.g 1) The hyperlink to March 1 2021 will direct you to March 2 2021 data and March 1 2021 cannot be found :(</p></li>
+<li><p>E.g 2) Certain months such as July 2021, August 2021, February 2022 were missing the record of the date written in the table and its respective data</p>
+<ul>
+<li><p>A few examples of missing records are 19 July 2021, 28 August 2022, 11 September, 28 February 2022, 17 March 2022</p></li>
+<li><p>Upon further research and some of my assumptions, missing data can be due to:</p>
+<ul>
+<li><p>A glitch in the system, which prevents the data from being uploaded</p></li>
+<li><p>An update of the system which may prevent records from being uploaded on that day</p></li>
+<li><p>Data not recorded as there is no available data due to the day being a holiday</p>
+<ul>
+<li><p>For e.g 28 February 2022 record and data is missing and that day so happens to be an Indonesian major holiday called <a href="https://publicholidays.co.id/isra-miraj/">Isra Mi’raj</a>. Upon further <a href="https://www.3ecpa.co.id/resources/indonesia-public-holidays/isra-miraj/#:~:text=They%20walk%20in%20the%20city,Indonesia%20during%20Isra%20Mi'raj.">research</a>, Indonesians celebrate that day by gathering at their local mosque for prayers and/or will be walking in the city going to the city hall while chanting the Salawat. Thus, there is a high possibility that people will not get vaccinated on this specific day.</p></li>
+<li><p>For reference, the list of holidays for <a href="https://www.officeholidays.com/countries/indonesia/2021">2021</a>and <a href="https://publicholidays.co.id/2022-dates/">2022</a>.</p></li>
+<li><p>However, there are also days where it is a holiday but vaccination data is still being recorded such as 1 January 2022 (New Year’s Day) and 1 May 2022(Labour Day). A possible reason could be that, assuming Indonesia is similar to Singapore, certain clinics will still be opened but only for selected hours.</p></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Under our task we are required to compute monthly vaccination rate from <u>July 2021 to June 2022</u> and we are only required to download the <u>first or last day of the month of study period</u>.</p>
+<p>For this assignment, I will be using data of the first day of each month of the study period with the exception of March 2021, I will be using March 2 instead of March 1 as March 1’s data is missing.</p>
+</section>
+<section id="importing-aspatial-data" class="level3">
+<h3 class="anchored" data-anchor-id="importing-aspatial-data">3.2.2 Importing Aspatial Data</h3>
+<p>In our ‘data/aspatial’ folder, we have multiple .xlsx files ranging from 1 July 2021 to 1 June 2022. But before we compile it togther, we need to understand each dataset and check for any discrepancies.</p>
+<p>The code chunk below uses the following functions:</p>
+<ul>
+<li><p><a href="https://readxl.tidyverse.org/reference/read_excel.html#:~:text=read_excel()%20calls%20excel_format(),file%20itself%2C%20in%20that%20order.">read_excel()</a>: to read the data in xlsx format</p></li>
+<li><p><a href="https://www.rdocumentation.org/packages/dplyr/versions/0.3/topics/glimpse">glimpse():</a> to see every column in the dataframe</p></li>
+</ul>
+<p>First, I stored each excel data in 1 variable.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>jkt2021_jul1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2022).xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>jkt2021_jul <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2021).xlsx"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>jkt2021_aug <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (1 Agustus 2021).xlsx"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>jkt2021_feb <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Februari 2022).xlsx"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#glimpse(jkt2021_jul1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>To get a better understanding of the data, we need to convert it from Indonesian language to Englishsian language to English</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#extract the column headers</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(jkt2021_jul1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>By using google translate, I am able to get the translations below:</p>
+<p>[1] “SOLUTION CODE” “CITY AREA”</p>
+<p>[3] “SUB-DISTRICT” “SUB-DISTRICT”</p>
+<p>[5] “TARGET” “YET’S VACCINE”</p>
+<p>[7] “TOTAL\r\nDOSE 1” “TOTAL\r\nDOSE 2”</p>
+<p>[9] “TOTAL VACCINE\r\nGiven” “ELDERLY\r\nDOSE 1”</p>
+<p>[11] “ELDERLY\r\nDOSE 2” “TOTAL ELDERLY \r\nVaccine Given”</p>
+<p>[13] “PUBLIC SERVANT\r\nDOSE 1” “PUBLIC SERVANT\r\nDOSE 2”</p>
+<p>[15] “TOTAL PUBLIC SERVICES\r\nVACCINES GRANTED” “GOTONG ROYONG\r\nDOSE 1”</p>
+<p>[17] “GOTONG ROYONG\r\nDOSE 2” “TOTAL COLLECTION\r\nVACCINES WERE GIVEN”</p>
+<p>[19] “HEALTH PERSONNEL\r\nDOSE 1” “HEALTH PERSONNEL\r\nDOSE 2”</p>
+<p>[21] “TOTAL HEALTH PERSONNEL\r\nVACCINE GRANTED”</p>
+<p>Next, I would like to check if there any duplicate columns</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>duplicated_columns <span class="ot">&lt;-</span> <span class="fu">duplicated</span>(<span class="fu">as.list</span>(jkt2021_jul1))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jkt2021_jul1[duplicated_columns])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>duplication_check <span class="ot">&lt;-</span> <span class="cf">function</span>(file_name) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  duplicated_columns <span class="ot">&lt;-</span> <span class="fu">duplicated</span>(<span class="fu">as.list</span>(file_name))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  duplicated_chara <span class="ot">&lt;-</span> <span class="fu">colnames</span>(file_name[duplicated_columns])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(duplicated_chara)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">duplication_check</span>(April_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The purpose of the code chunk below is to assign each excel file under the folder ‘data/aspatial’ to a variable name which is in the format of “month_year”. E.g April_2022 .</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#gets all files under the folder 'data/aspatial' which is in '.xlsx' format</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>study_period_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">'data/aspatial'</span>,<span class="at">pattern =</span> <span class="st">"*.xlsx"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#instantiate an empty list which will be used later to contain all the df names</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df_list <span class="ot">&lt;-</span><span class="fu">list</span>()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (x <span class="cf">in</span> study_period_data){</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a> <span class="co"># eg of x: Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a> <span class="co"># extract the year and month of the data file</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a> month_yr <span class="ot">&lt;-</span> <span class="fu">str_trim</span>(<span class="fu">substr</span>(x, <span class="dv">38</span>, <span class="fu">nchar</span>(x)<span class="sc">-</span><span class="dv">6</span>)) <span class="co">#e.g output: April 2022</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a> <span class="co">#print(month_yr)</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a> <span class="co">#split the month and year by the empty space inbetween</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a> split_month_yr <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(month_yr,<span class="st">" "</span>) <span class="co">#e.g output: [[1]][1]'April' '2022'</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a> <span class="co">#split_month_yr[[1]][1] shows the month, split_month_yr[[1]][2] shows the year </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a> <span class="co">#join the month and year with "_"</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a> join_month_yr <span class="ot">&lt;-</span> <span class="fu">paste</span>(split_month_yr[[<span class="dv">1</span>]][<span class="dv">1</span>],split_month_yr[[<span class="dv">1</span>]][<span class="dv">2</span>],<span class="at">sep=</span><span class="st">"_"</span>) </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a> <span class="co">#e.g output: April_2022</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a> <span class="co">#join_month_yr will be used as the variable name to store the df</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a> <span class="co"># get filepath that we need to read each month's data excel</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> filepath <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"data/aspatial/"</span>,x,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a> <span class="co"># eg output: "data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx"</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a> <span class="co">#assign each df to its variable name </span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a> <span class="fu">assign</span>(join_month_yr,<span class="fu">read_excel</span>(filepath))</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a> <span class="co">#df_list&lt;-append(df_list,join_month_yr)</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Next, I would like to check whether there are any duplicate columns for each dataset.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (df <span class="cf">in</span> df_list) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  duplicated_col <span class="ot">&lt;-</span> <span class="fu">duplication_check</span>(<span class="fu">get</span>(df))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#print(duplicated_col)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">identical</span>(duplicated_col, <span class="fu">character</span>(<span class="dv">0</span>))){</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    duplicated_col<span class="ot">=</span><span class="st">"no duplicates"</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Under df"</span>, df, <span class="st">"| duplicated col:"</span>, <span class="fu">toString</span>(duplicated_col)))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>we can observe that</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(April_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
 
 <!-- -->
 
+</section>
 </section>
 </section>
 
@@ -601,131 +765,305 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Take-home Assignment 2: Spatio-temporal Analysis of COVID-19 Vaccination Trends at the Sub-district Level, DKI Jakarta"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> true</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "20 february 2023"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="an">date-modified:</span><span class="co"> last-modified</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Rhonda Ho Kah Yee"</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">      code-fold: true</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">      code-tools: true</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: false</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Overview</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>Hello! This is Rhonda Ho's take-home Assignment 2 for IS415 module.</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>To view/hide all the code at once, please click on the "<span class="sc">\&lt;</span>/<span class="sc">\&gt;</span> code" tab beside the title of this html document and select the option to view/hide the code.</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>The full details of this assignment can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://is415-ay2022-23t2.netlify.app/th_ex2.html)</span>.</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.1 Objectives</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>Exploratory Spatial Data Analysis (ESDA) hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate Local Indicators of Spatial Association (LISA) and Emerging Hot Spot Analysis (EHSA) to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.2 The Data</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Aspatial data**</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>For the purpose of this assignment, data from <span class="co">[</span><span class="ot">Riwayat File Vaksinasi DKI Jakarta</span><span class="co">](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/)</span> will be used. Daily vaccination data are provides. You are only required to download either the first day of the month or last day of the month of the study period.</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Geospatial data**</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>For the purpose of this study, DKI Jakarta administration boundary 2019 will be used. The data set can be downloaded at Indonesia Geospatial portal, specifically at <span class="co">[</span><span class="ot">this page</span><span class="co">](https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html)</span>.</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1.</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Exclude all the outer islands from the DKI Jakarta sf data frame, and</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Retain the first nine fields in the DKI Jakarta sf data frame. The ninth field JUMLAH_PEN = Total Population.</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.3 Tasks</span></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>The specific tasks of this take-home exercise are as follows:</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Choropleth Mapping and Analysis**</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compute the monthly vaccination rate from July 2021 to June 2022 at sub-district (also known as kelurahan in Bahasa Indonesia) level,</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Prepare the monthly vaccination rate maps by using appropriate tmap functions,</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Describe the spatial patterns revealed by the choropleth maps (not more than 200 words).</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Local Gi\* Analysis**</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    With reference to the vaccination rate maps prepared in ESDA:</span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compute local Gi<span class="sc">\*</span> values of the monthly vaccination rate,</span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Display the Gi<span class="sc">\*</span> maps of the monthly vaccination rate. The maps should only display the significant (i.e.&nbsp;p-value <span class="sc">\&lt;</span> 0.05)</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With reference to the analysis results, draw statistical conclusions (not more than 250 words).</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Emerging Hot Spot Analysis(EHSA)**</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    With reference to the local Gi<span class="sc">\*</span> values of the vaccination rate maps prepared in the previous section:</span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Perform Mann-Kendall Test by using the spatio-temporal local Gi<span class="sc">\*</span> values,</span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Select three sub-districts and describe the temporal trends revealed (not more than 250 words), and</span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Prepared a EHSA map of the Gi<span class="sc">\*</span> values of vaccination rate. The maps should only display the significant (i.e.&nbsp;p-value <span class="sc">\&lt;</span> 0.05).\</span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With reference to the EHSA map prepared, describe the spatial patterns revealed. (not more than 250 words).</span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Getting Started</span></span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>For the purpose of this assignment, the following packages will be used:</span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**sf**</span><span class="co">](https://cran.r-project.org/web/packages/sf/index.html)</span>: used for importing, managing, and processing geospatial data</span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**tidyverse**</span><span class="co">](https://www.tidyverse.org/)</span>: a collection of packages for data science tasks</span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**tmap**</span><span class="co">](https://cran.r-project.org/web/packages/tmap/index.html)</span>: used for creating thematic maps, such as choropleth and bubble maps</span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**spatstat**</span><span class="co">](https://spatstat.org/)</span>: used for point pattern analysis</span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**raster**</span><span class="co">](https://cran.r-project.org/web/packages/raster/)</span>: reads, writes, manipulates, analyses and models gridded spatial data (i.e.&nbsp;raster-based geographical data)</span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**funModeling**</span><span class="co">](https://cran.r-project.org/web/packages/funModeling/index.html)</span>: contains a set of functions related to exploratory data analysis, data preparation, and model performance</span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**maptools**</span><span class="co">](https://cran.r-project.org/web/packages/maptools/index.html)</span>: a set of tools for manipulating geographic data and</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**sfdep**</span><span class="co">](https://cran.r-project.org/web/packages/spdep/index.html)</span>: for performing geospatial data wrangling and local colocation quotient analysis.</span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl, tidyverse)</span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Handling of Data</span></span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 Import shapefile into r environment</span></span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>As the national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1 we need to ensure that the crs information is <span class="co">[</span><span class="ot">EPSG:23830.</span><span class="co">](https://epsg.io/23830)</span></span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>jkt2019 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
-<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">23830</span>)</span>
-<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Importing Aspatial Data</span></span>
-<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>jkt2021_jul1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2022).xlsx"</span>)</span>
-<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Take-home Assignment 2: Spatio-temporal Analysis of COVID-19 Vaccination Trends at the Sub-district Level, DKI Jakarta"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> true</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "20 february 2023"</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="an">date-modified:</span><span class="co"> last-modified</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Rhonda Ho Kah Yee"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">      code-fold: true</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">      code-tools: true</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: false</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Overview</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>Hello! This is Rhonda Ho's take-home Assignment 2 for IS415 module.</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>To view/hide all the code at once, please click on the "<span class="sc">\&lt;</span>/<span class="sc">\&gt;</span> code" tab beside the title of this html document and select the option to view/hide the code.</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>The full details of this assignment can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://is415-ay2022-23t2.netlify.app/th_ex2.html)</span>.</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.1 Objectives</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>Exploratory Spatial Data Analysis (ESDA) hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate Local Indicators of Spatial Association (LISA) and Emerging Hot Spot Analysis (EHSA) to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.2 The Data</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Aspatial data**</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>For the purpose of this assignment, data from <span class="co">[</span><span class="ot">Riwayat File Vaksinasi DKI Jakarta</span><span class="co">](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/)</span> will be used. Daily vaccination data are provides. You are only required to download either the first day of the month or last day of the month of the study period.</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Geospatial data**</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>For the purpose of this study, DKI Jakarta administration boundary 2019 will be used. The data set can be downloaded at Indonesia Geospatial portal, specifically at <span class="co">[</span><span class="ot">this page</span><span class="co">](https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html)</span>.</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1.</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Exclude all the outer islands from the DKI Jakarta sf data frame, and</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Retain the first nine fields in the DKI Jakarta sf data frame. The ninth field JUMLAH_PEN = Total Population.</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1.3 Tasks</span></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>The specific tasks of this take-home exercise are as follows:</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Choropleth Mapping and Analysis**</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compute the monthly vaccination rate from July 2021 to June 2022 at sub-district (also known as kelurahan in Bahasa Indonesia) level,</span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Prepare the monthly vaccination rate maps by using appropriate tmap functions,</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Describe the spatial patterns revealed by the choropleth maps (not more than 200 words).</span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Local Gi\* Analysis**</span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    With reference to the vaccination rate maps prepared in ESDA:</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compute local Gi<span class="sc">\*</span> values of the monthly vaccination rate,</span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Display the Gi<span class="sc">\*</span> maps of the monthly vaccination rate. The maps should only display the significant (i.e.&nbsp;p-value <span class="sc">\&lt;</span> 0.05)</span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With reference to the analysis results, draw statistical conclusions (not more than 250 words).</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Emerging Hot Spot Analysis(EHSA)**</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>    With reference to the local Gi<span class="sc">\*</span> values of the vaccination rate maps prepared in the previous section:</span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Perform Mann-Kendall Test by using the spatio-temporal local Gi<span class="sc">\*</span> values,</span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Select three sub-districts and describe the temporal trends revealed (not more than 250 words), and</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Prepared a EHSA map of the Gi<span class="sc">\*</span> values of vaccination rate. The maps should only display the significant (i.e.&nbsp;p-value <span class="sc">\&lt;</span> 0.05).\</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With reference to the EHSA map prepared, describe the spatial patterns revealed. (not more than 250 words).</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Getting Started</span></span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>For the purpose of this assignment, the following packages will be used:</span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**sf**</span><span class="co">](https://cran.r-project.org/web/packages/sf/index.html)</span>: used for importing, managing, and processing geospatial data</span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**tidyverse**</span><span class="co">](https://www.tidyverse.org/)</span>: a collection of packages for data science tasks</span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**tmap**</span><span class="co">](https://cran.r-project.org/web/packages/tmap/index.html)</span>: used for creating thematic maps, such as choropleth and bubble maps</span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**spatstat**</span><span class="co">](https://spatstat.org/)</span>: used for point pattern analysis</span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**raster**</span><span class="co">](https://cran.r-project.org/web/packages/raster/)</span>: reads, writes, manipulates, analyses and models gridded spatial data (i.e.&nbsp;raster-based geographical data)</span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**funModeling**</span><span class="co">](https://cran.r-project.org/web/packages/funModeling/index.html)</span>: contains a set of functions related to exploratory data analysis, data preparation, and model performance</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**maptools**</span><span class="co">](https://cran.r-project.org/web/packages/maptools/index.html)</span>: a set of tools for manipulating geographic data and</span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">**sfdep**</span><span class="co">](https://cran.r-project.org/web/packages/spdep/index.html)</span>: for performing geospatial data wrangling and local colocation quotient analysis.</span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl,ivmte, tidyverse)</span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Data Wrangling</span></span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 Geospatial Data</span></span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1.1 Import shapefile into r environment</span></span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a>As the national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1 we need to ensure that the crs information is <span class="co">[</span><span class="ot">EPSG:23830.</span><span class="co">](https://epsg.io/23830)</span></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>jkt2019 <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, </span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>                 <span class="at">layer =</span> <span class="st">"BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA"</span>) </span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a><span class="co">#%&gt;% st_transform(crs = 23830)</span></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Aspatial Data</span></span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.2.1 Observations of Data Website</span></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>Examining DKI Jakarta Vaccination File History website where we were suppose to get our data, some of my observations were:</span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Entire page is in Indonesian</span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>To translate to English, simply right click anywhere on the webpage and click "Translate to English" button</span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Alternative solutions for translation can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://www.wikihow.com/Translate-a-Web-Page)</span>.</span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>There were two columns for DKI Jakarta Vaccination File History, one for "*Vaccination Data Based on Village and District*", another for "*RT-Based Vaccination Data*"</span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We will be focusing on the "V*accination Data Based on Village and District*"column as our task require us to analyse on a sub-district level.</span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Many instances of missing data!</span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>E.g 1) The hyperlink to March 1 2021 will direct you to March 2 2021 data and March 1 2021 cannot be found :(</span>
+<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>E.g 2) Certain months such as July 2021, August 2021, February 2022 were missing the record of the date written in the table and its respective data</span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>A few examples of missing records are 19 July 2021, 28 August 2022, 11 September, 28 February 2022, 17 March 2022</span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Upon further research and some of my assumptions, missing data can be due to:</span>
+<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>A glitch in the system, which prevents the data from being uploaded</span>
+<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>An update of the system which may prevent records from being uploaded on that day</span>
+<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>Data not recorded as there is no available data due to the day being a holiday</span>
+<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a><span class="ss">                -   </span>For e.g 28 February 2022 record and data is missing and that day so happens to be an Indonesian major holiday called <span class="co">[</span><span class="ot">Isra Mi'raj</span><span class="co">](https://publicholidays.co.id/isra-miraj/)</span>. Upon further <span class="co">[</span><span class="ot">research</span><span class="co">](https://www.3ecpa.co.id/resources/indonesia-public-holidays/isra-miraj/#:~:text=They%20walk%20in%20the%20city,Indonesia%20during%20Isra%20Mi'raj.)</span>, Indonesians celebrate that day by gathering at their local mosque for prayers and/or will be walking in the city going to the city hall while chanting the Salawat. Thus, there is a high possibility that people will not get vaccinated on this specific day.</span>
+<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a><span class="ss">                -   </span>For reference, the list of holidays for <span class="co">[</span><span class="ot">2021</span><span class="co">](https://www.officeholidays.com/countries/indonesia/2021)</span>and <span class="co">[</span><span class="ot">2022</span><span class="co">](https://publicholidays.co.id/2022-dates/)</span>.</span>
+<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a><span class="ss">                -   </span>However, there are also days where it is a holiday but vaccination data is still being recorded such as 1 January 2022 (New Year's Day) and 1 May 2022(Labour Day). A possible reason could be that, assuming Indonesia is similar to Singapore, certain clinics will still be opened but only for selected hours.</span>
+<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-167"><a href="#cb11-167" aria-hidden="true" tabindex="-1"></a>Under our task we are required to compute monthly vaccination rate from <span class="co">[</span><span class="ot">July 2021 to June 2022</span><span class="co">]</span>{.underline} and we are only required to download the <span class="co">[</span><span class="ot">first or last day of the month of study period</span><span class="co">]</span>{.underline}.</span>
+<span id="cb11-168"><a href="#cb11-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-169"><a href="#cb11-169" aria-hidden="true" tabindex="-1"></a>For this assignment, I will be using data of the first day of each month of the study period with the exception of March 2021, I will be using March 2 instead of March 1 as March 1's data is missing.</span>
+<span id="cb11-170"><a href="#cb11-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-171"><a href="#cb11-171" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.2.2 Importing Aspatial Data</span></span>
+<span id="cb11-172"><a href="#cb11-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-173"><a href="#cb11-173" aria-hidden="true" tabindex="-1"></a>In our 'data/aspatial' folder, we have multiple .xlsx files ranging from 1 July 2021 to 1 June 2022. But before we compile it togther, we need to understand each dataset and check for any discrepancies.</span>
+<span id="cb11-174"><a href="#cb11-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-175"><a href="#cb11-175" aria-hidden="true" tabindex="-1"></a>The code chunk below uses the following functions:</span>
+<span id="cb11-176"><a href="#cb11-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-177"><a href="#cb11-177" aria-hidden="true" tabindex="-1"></a><span class="ss">-    </span><span class="co">[</span><span class="ot">read_excel()</span><span class="co">]</span>(https://readxl.tidyverse.org/reference/read_excel.html#:~:text=read_excel()%20calls%20excel_format(),file%20itself%2C%20in%20that%20order.): to read the data in xlsx format</span>
+<span id="cb11-178"><a href="#cb11-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-179"><a href="#cb11-179" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">glimpse():</span><span class="co">](https://www.rdocumentation.org/packages/dplyr/versions/0.3/topics/glimpse)</span> to see every column in the dataframe</span>
+<span id="cb11-180"><a href="#cb11-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-181"><a href="#cb11-181" aria-hidden="true" tabindex="-1"></a>First, I stored each excel data in 1 variable.</span>
+<span id="cb11-182"><a href="#cb11-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-185"><a href="#cb11-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-186"><a href="#cb11-186" aria-hidden="true" tabindex="-1"></a>jkt2021_jul <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2021).xlsx"</span>)</span>
+<span id="cb11-187"><a href="#cb11-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-188"><a href="#cb11-188" aria-hidden="true" tabindex="-1"></a>jkt2021_aug <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (1 Agustus 2021).xlsx"</span>)</span>
+<span id="cb11-189"><a href="#cb11-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-190"><a href="#cb11-190" aria-hidden="true" tabindex="-1"></a>jkt2021_feb <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Februari 2022).xlsx"</span>)</span>
+<span id="cb11-191"><a href="#cb11-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a><span class="co">#glimpse(jkt2021_jul1)</span></span>
+<span id="cb11-193"><a href="#cb11-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-194"><a href="#cb11-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-195"><a href="#cb11-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-196"><a href="#cb11-196" aria-hidden="true" tabindex="-1"></a>To get a better understanding of the data, we need to convert it from Indonesian language to Englishsian language to English</span>
+<span id="cb11-197"><a href="#cb11-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-200"><a href="#cb11-200" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-201"><a href="#cb11-201" aria-hidden="true" tabindex="-1"></a><span class="co">#extract the column headers</span></span>
+<span id="cb11-202"><a href="#cb11-202" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(jkt2021_jul1)</span>
+<span id="cb11-203"><a href="#cb11-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a>By using google translate, I am able to get the translations below:</span>
+<span id="cb11-206"><a href="#cb11-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-207"><a href="#cb11-207" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>1<span class="sc">\]</span> "SOLUTION CODE" "CITY AREA"</span>
+<span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-209"><a href="#cb11-209" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>3<span class="sc">\]</span> "SUB-DISTRICT" "SUB-DISTRICT"</span>
+<span id="cb11-210"><a href="#cb11-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-211"><a href="#cb11-211" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>5<span class="sc">\]</span> "TARGET" "YET'S VACCINE"</span>
+<span id="cb11-212"><a href="#cb11-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-213"><a href="#cb11-213" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>7<span class="sc">\]</span> "TOTAL<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 1" "TOTAL<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 2"</span>
+<span id="cb11-214"><a href="#cb11-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-215"><a href="#cb11-215" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>9<span class="sc">\]</span> "TOTAL VACCINE<span class="sc">\\</span>r<span class="sc">\\</span>nGiven" "ELDERLY<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 1"</span>
+<span id="cb11-216"><a href="#cb11-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-217"><a href="#cb11-217" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>11<span class="sc">\]</span> "ELDERLY<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 2" "TOTAL ELDERLY <span class="sc">\\</span>r<span class="sc">\\</span>nVaccine Given"</span>
+<span id="cb11-218"><a href="#cb11-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-219"><a href="#cb11-219" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>13<span class="sc">\]</span> "PUBLIC SERVANT<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 1" "PUBLIC SERVANT<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 2"</span>
+<span id="cb11-220"><a href="#cb11-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-221"><a href="#cb11-221" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>15<span class="sc">\]</span> "TOTAL PUBLIC SERVICES<span class="sc">\\</span>r<span class="sc">\\</span>nVACCINES GRANTED" "GOTONG ROYONG<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 1"</span>
+<span id="cb11-222"><a href="#cb11-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-223"><a href="#cb11-223" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>17<span class="sc">\]</span> "GOTONG ROYONG<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 2" "TOTAL COLLECTION<span class="sc">\\</span>r<span class="sc">\\</span>nVACCINES WERE GIVEN"</span>
+<span id="cb11-224"><a href="#cb11-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-225"><a href="#cb11-225" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>19<span class="sc">\]</span> "HEALTH PERSONNEL<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 1" "HEALTH PERSONNEL<span class="sc">\\</span>r<span class="sc">\\</span>nDOSE 2"</span>
+<span id="cb11-226"><a href="#cb11-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-227"><a href="#cb11-227" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>21<span class="sc">\]</span> "TOTAL HEALTH PERSONNEL<span class="sc">\\</span>r<span class="sc">\\</span>nVACCINE GRANTED"</span>
+<span id="cb11-228"><a href="#cb11-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-229"><a href="#cb11-229" aria-hidden="true" tabindex="-1"></a>Next, I would like to check if there any duplicate columns</span>
+<span id="cb11-230"><a href="#cb11-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-233"><a href="#cb11-233" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-234"><a href="#cb11-234" aria-hidden="true" tabindex="-1"></a>duplicated_columns <span class="ot">&lt;-</span> <span class="fu">duplicated</span>(<span class="fu">as.list</span>(jkt2021_jul1))</span>
+<span id="cb11-235"><a href="#cb11-235" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jkt2021_jul1[duplicated_columns])</span>
+<span id="cb11-236"><a href="#cb11-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-237"><a href="#cb11-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-240"><a href="#cb11-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-241"><a href="#cb11-241" aria-hidden="true" tabindex="-1"></a>duplication_check <span class="ot">&lt;-</span> <span class="cf">function</span>(file_name) {</span>
+<span id="cb11-242"><a href="#cb11-242" aria-hidden="true" tabindex="-1"></a>  duplicated_columns <span class="ot">&lt;-</span> <span class="fu">duplicated</span>(<span class="fu">as.list</span>(file_name))</span>
+<span id="cb11-243"><a href="#cb11-243" aria-hidden="true" tabindex="-1"></a>  duplicated_chara <span class="ot">&lt;-</span> <span class="fu">colnames</span>(file_name[duplicated_columns])</span>
+<span id="cb11-244"><a href="#cb11-244" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(duplicated_chara)</span>
+<span id="cb11-245"><a href="#cb11-245" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-246"><a href="#cb11-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-247"><a href="#cb11-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-250"><a href="#cb11-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-251"><a href="#cb11-251" aria-hidden="true" tabindex="-1"></a><span class="fu">duplication_check</span>(April_2022)</span>
+<span id="cb11-252"><a href="#cb11-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-253"><a href="#cb11-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-254"><a href="#cb11-254" aria-hidden="true" tabindex="-1"></a>The purpose of the code chunk below is to assign each excel file under the folder 'data/aspatial' to a variable name which is in the format of "month_year". E.g April_2022 .</span>
+<span id="cb11-255"><a href="#cb11-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-258"><a href="#cb11-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-259"><a href="#cb11-259" aria-hidden="true" tabindex="-1"></a><span class="co">#gets all files under the folder 'data/aspatial' which is in '.xlsx' format</span></span>
+<span id="cb11-260"><a href="#cb11-260" aria-hidden="true" tabindex="-1"></a>study_period_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">'data/aspatial'</span>,<span class="at">pattern =</span> <span class="st">"*.xlsx"</span>)</span>
+<span id="cb11-261"><a href="#cb11-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-262"><a href="#cb11-262" aria-hidden="true" tabindex="-1"></a><span class="co">#instantiate an empty list which will be used later to contain all the df names</span></span>
+<span id="cb11-263"><a href="#cb11-263" aria-hidden="true" tabindex="-1"></a>df_list <span class="ot">&lt;-</span><span class="fu">list</span>()</span>
+<span id="cb11-264"><a href="#cb11-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-265"><a href="#cb11-265" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (x <span class="cf">in</span> study_period_data){</span>
+<span id="cb11-266"><a href="#cb11-266" aria-hidden="true" tabindex="-1"></a> <span class="co"># eg of x: Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx</span></span>
+<span id="cb11-267"><a href="#cb11-267" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-268"><a href="#cb11-268" aria-hidden="true" tabindex="-1"></a> <span class="co"># extract the year and month of the data file</span></span>
+<span id="cb11-269"><a href="#cb11-269" aria-hidden="true" tabindex="-1"></a> month_yr <span class="ot">&lt;-</span> <span class="fu">str_trim</span>(<span class="fu">substr</span>(x, <span class="dv">38</span>, <span class="fu">nchar</span>(x)<span class="sc">-</span><span class="dv">6</span>)) <span class="co">#e.g output: April 2022</span></span>
+<span id="cb11-270"><a href="#cb11-270" aria-hidden="true" tabindex="-1"></a> <span class="co">#print(month_yr)</span></span>
+<span id="cb11-271"><a href="#cb11-271" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-272"><a href="#cb11-272" aria-hidden="true" tabindex="-1"></a> <span class="co">#split the month and year by the empty space inbetween</span></span>
+<span id="cb11-273"><a href="#cb11-273" aria-hidden="true" tabindex="-1"></a> split_month_yr <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(month_yr,<span class="st">" "</span>) <span class="co">#e.g output: [[1]][1]'April' '2022'</span></span>
+<span id="cb11-274"><a href="#cb11-274" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-275"><a href="#cb11-275" aria-hidden="true" tabindex="-1"></a> <span class="co">#split_month_yr[[1]][1] shows the month, split_month_yr[[1]][2] shows the year </span></span>
+<span id="cb11-276"><a href="#cb11-276" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-277"><a href="#cb11-277" aria-hidden="true" tabindex="-1"></a> <span class="co">#join the month and year with "_"</span></span>
+<span id="cb11-278"><a href="#cb11-278" aria-hidden="true" tabindex="-1"></a> join_month_yr <span class="ot">&lt;-</span> <span class="fu">paste</span>(split_month_yr[[<span class="dv">1</span>]][<span class="dv">1</span>],split_month_yr[[<span class="dv">1</span>]][<span class="dv">2</span>],<span class="at">sep=</span><span class="st">"_"</span>) </span>
+<span id="cb11-279"><a href="#cb11-279" aria-hidden="true" tabindex="-1"></a> <span class="co">#e.g output: April_2022</span></span>
+<span id="cb11-280"><a href="#cb11-280" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-281"><a href="#cb11-281" aria-hidden="true" tabindex="-1"></a> <span class="co">#join_month_yr will be used as the variable name to store the df</span></span>
+<span id="cb11-282"><a href="#cb11-282" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-283"><a href="#cb11-283" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-284"><a href="#cb11-284" aria-hidden="true" tabindex="-1"></a> <span class="co"># get filepath that we need to read each month's data excel</span></span>
+<span id="cb11-285"><a href="#cb11-285" aria-hidden="true" tabindex="-1"></a> filepath <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"data/aspatial/"</span>,x,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb11-286"><a href="#cb11-286" aria-hidden="true" tabindex="-1"></a> <span class="co"># eg output: "data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx"</span></span>
+<span id="cb11-287"><a href="#cb11-287" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb11-288"><a href="#cb11-288" aria-hidden="true" tabindex="-1"></a> <span class="co">#assign each df to its variable name </span></span>
+<span id="cb11-289"><a href="#cb11-289" aria-hidden="true" tabindex="-1"></a> <span class="fu">assign</span>(join_month_yr,<span class="fu">read_excel</span>(filepath))</span>
+<span id="cb11-290"><a href="#cb11-290" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb11-291"><a href="#cb11-291" aria-hidden="true" tabindex="-1"></a> <span class="co">#df_list&lt;-append(df_list,join_month_yr)</span></span>
+<span id="cb11-292"><a href="#cb11-292" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-293"><a href="#cb11-293" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb11-294"><a href="#cb11-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-295"><a href="#cb11-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-296"><a href="#cb11-296" aria-hidden="true" tabindex="-1"></a>Next, I would like to check whether there are any duplicate columns for each dataset.</span>
+<span id="cb11-297"><a href="#cb11-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-300"><a href="#cb11-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-301"><a href="#cb11-301" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (df <span class="cf">in</span> df_list) {</span>
+<span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a>  duplicated_col <span class="ot">&lt;-</span> <span class="fu">duplication_check</span>(<span class="fu">get</span>(df))</span>
+<span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a>  <span class="co">#print(duplicated_col)</span></span>
+<span id="cb11-304"><a href="#cb11-304" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">identical</span>(duplicated_col, <span class="fu">character</span>(<span class="dv">0</span>))){</span>
+<span id="cb11-305"><a href="#cb11-305" aria-hidden="true" tabindex="-1"></a>    duplicated_col<span class="ot">=</span><span class="st">"no duplicates"</span></span>
+<span id="cb11-306"><a href="#cb11-306" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-307"><a href="#cb11-307" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-308"><a href="#cb11-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Under df"</span>, df, <span class="st">"| duplicated col:"</span>, <span class="fu">toString</span>(duplicated_col)))</span>
+<span id="cb11-309"><a href="#cb11-309" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-310"><a href="#cb11-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-311"><a href="#cb11-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-312"><a href="#cb11-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-313"><a href="#cb11-313" aria-hidden="true" tabindex="-1"></a>we can observe that</span>
+<span id="cb11-314"><a href="#cb11-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-317"><a href="#cb11-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb11-318"><a href="#cb11-318" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(April_2022)</span>
+<span id="cb11-319"><a href="#cb11-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
