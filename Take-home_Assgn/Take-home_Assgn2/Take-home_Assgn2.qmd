@@ -651,7 +651,7 @@ To get a clearer visualization of a specific month, I decided to use the classif
 The code chunk below is a map of vaccination rates in July 2021. By clicking on a certain location, it will show us the district name and respective vaccination rates. The darker the green, the higher the vaccination rates.
 
 ```{r}
-  tmap_mode("plot")
+  tmap_mode("view")
   tm_shape(vr)+
     tm_polygons("2021-07-01", 
             n= 6,
@@ -659,17 +659,17 @@ The code chunk below is a map of vaccination rates in July 2021. By clicking on 
             title = "Vaccination Rate(%)",
             palette = "YlGn",
             ) +
-    #tm_text("SUBDISTRICT")+
+  
     tm_layout(main.title = "Vaccination Rates in July 2021",
               main.title.position = "center",
               main.title.size = 1,
-              legend.height = 0.5, 
-              legend.width = 0.4,
-              frame = TRUE,
+              #legend.height = 0.5, 
+              #legend.width = 0.4,
+              
               ) +
-    tm_borders(alpha = 0.5) 
-    #+ tm_view(set.zoom.limits = c(10, 14),
-            #view.legend.position = c("right","bottom"))
+    tm_borders(alpha = 0.5) +
+    tm_view(set.zoom.limits = c(10, 14),
+            view.legend.position = c("right","bottom"))
 ```
 
 Insights:
@@ -683,7 +683,7 @@ Insights:
 The code chunk below is a map of vaccination rates in June 2022.
 
 ```{r}
-  tmap_mode("plot")
+  tmap_mode("view")
   tm_shape(vr)+
     tm_polygons("2022-06-01", 
             n= 6,
@@ -691,17 +691,20 @@ The code chunk below is a map of vaccination rates in June 2022.
             title = "Vaccination Rate(%)",
             palette = "YlGn",
             ) +
-    #tm_text("SUBDISTRICT")+
+    
     tm_layout(main.title = "Vaccination Rates in June 2022",
               main.title.position = "center",
               main.title.size = 1,
-              legend.height = 0.5, 
-              legend.width = 0.4,
-              frame = TRUE,
+              #legend.height = 0.5, 
+              #legend.width = 0.4,
               ) +
-    tm_borders(alpha = 0.5)
-    #+ tm_view(set.zoom.limits = c(10, 14),
-            #view.legend.position = c("right","bottom"))
+    tm_borders(alpha = 0.5) +
+    tm_view(set.zoom.limits = c(10, 14),
+            view.legend.position = c("right","bottom"))
+```
+
+```{r}
+tmap_mode("plot")
 ```
 
 Insights (as compared to July 2021):
@@ -712,9 +715,11 @@ Insights (as compared to July 2021):
 
 3.  The bottom half sub-districts tend to have a higher vaccination rate than the top half sub-districts.
 
-4.  Thus, we can infer that within a span of 1 year, the vaccination rates across the sub-districts in Jakarta have increased.
+4.  The range of vaccination rates have increased from range 25% to 55% to range 80% to 88%,
 
-The code chunk below plots the vaccination rate across the our study period of July 2021 to June 2022. The data is classified using manually. The breakpoints are 20, 40, 60, 80, 100.
+5.  Thus, we can infer that within a span of 1 year, the vaccination rates across the sub-districts in Jakarta have increased.
+
+The code chunk below plots the vaccination rate across the our study period of July 2021 to June 2022. The data is classified manually. The breakpoints are 20, 40, 60, 80, 100.
 
 ```{r}
 rate_cols <- colnames(st_set_geometry(vr[2:13], NULL))
