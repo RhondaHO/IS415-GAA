@@ -36,7 +36,7 @@ Exploratory Spatial Data Analysis (ESDA) hold tremendous potential to address co
 
 1.  **Aspatial data**
 
-For the purpose of this assignment, data from [Riwayat File Vaksinasi DKI Jakarta](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/) will be used. Daily vaccination data are provides. You are only required to download either the first day of the month or last day of the month of the study period.
+For the purpose of this assignment, data from [Riwayat File Vaksinasi DKI Jakarta](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/) will be used. Daily vaccination data are provided. We are only required to download either the first day of the month or last day of the month of the study period.
 
 2.  **Geospatial data**
 
@@ -84,7 +84,7 @@ The specific tasks of this take-home exercise are as follows:
 
 # 2. Getting Started
 
-For the purpose of this assignment, the following packages will be used:
+The following packages will be used:
 
 -   [**sf**](https://cran.r-project.org/web/packages/sf/index.html): used for importing, managing, and processing geospatial data
 
@@ -112,14 +112,9 @@ pacman::p_load(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl,
 
 ### 3.1.1 Import shapefile into r environment
 
-As the national Projected Coordinates Systems of Indonesia is DGN95 / Indonesia TM-3 zone 54.1 we need to ensure that the crs information is [EPSG:23830.](https://epsg.io/23830)
-
 ```{r}
 jkt2019 <- st_read(dsn = "data/geospatial", 
                  layer = "BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA") 
-#%>% st_transform(crs = 23830)
-
-
 ```
 
 From the output, we can observe that:
@@ -128,34 +123,52 @@ From the output, we can observe that:
 
 2.  CRS information is [WGS 84](https://epsg.io/4326) instead of the CRS for Indonesia, Jakarta.
 
+### 3.1.2 Identifying Relevant Columns
+
 ```{r}
 glimpse(jkt2019)
 ```
 
-Having a glimpse at our data, the relevant column(s) that we need for our task is `DESA_KELUR` which represents the village/sub districts in Jakarta.
+Having a glimpse at our data, some of relevant column(s) that we need for our task is:
+
+-   `KAB_KOTA` : represents the cities in Jakarta
+
+-   `KECAMATAN` : represents the district in Jakarta
+
+-   `DESA_KELUR` : represents the sub-districts in Jakarta.
+
+### 3.1.3 Data Pre-Processing
+
+#### 3.1.3.1 Check for Invalid Geometries
 
 ```{r}
 #check for invalid geometries
 length(which(st_is_valid(jkt2019) == FALSE))
 ```
 
+#### 3.1.3.2 Check for Missing Values
+
 ```{r}
 #check for missing values
 sum(is.na(jkt2019))
 ```
 
-Based on the output, we have discovered that there are 14 missing values in our dataset which may affect our analysis. Thus, I removed all missing values in the relevant column(s), using the code chunk below.
+Based on the output, we have discovered that there are 14 missing values in our dataset which may affect our analysis. Thus, I removed all missing values in the sub-districts(a part of our main study focus), using the code chunk below.
 
 ```{r}
 jkt2019 <- na.omit(jkt2019,c("DESA_KELUR"))
 ```
+
+#### 3.1.3.3 Transformation of Coordinates Information
+
+Earlier on, we discovered that the assigned coordinates system of our data is WGS 84 which is not appropriate for an Indonesian-specific geospatial dataset. Another way of checking it is using the function, [st_crs()](https://www.rdocumentation.org/packages/sf/versions/1.0-9/topics/st_crs).
 
 ```{r}
 #check whether need to transform
 st_crs(jkt2019)
 ```
 
-We can observe that the assigned coordinates system is WGS 84 which is not appropriate for this dataset. As this is an Indonesian-specific geospatial dataset, I will be using [EPSG:23845.](https://epsg.io/23845)
+As this is an Indonesian-specific geospatial dataset, I will be using [EPSG:23845.](https://epsg.io/23845)
 
 ```{r}
 # transforms the CRS to DGN95, ESPG code 23845
@@ -166,29 +179,30 @@ st_crs(jkt2019)
 
 Yay, we have successfully managed to transform our dataset to the appropriate coordinates system!
 
-**removal of outer islands**
+#### **3.1.3.4 Removal of Outer Islands**
 
-Let visualise our data!
+To start off, let visualise our data!
 
 ```{r}
-#removal of outer islands
 plot(st_geometry(jkt2019))
 ```
 
 The visualisation above shows that our data consist of outer islands beyond Jakarta. As this is not important for our analysis, we should remove it.
 
-Looking at our data, once again, there are 3 attributes which represents the divisions of Jakarta. They are `KAB_KOTA` (City), `KECAMATAN` (District) and `DESA_KELUR` (Village). Removing the outer islands by the City would help us to remove all the districts and villages within it, so I proceeded to check the unique values of it.
+Previously, we have identified 3 important attributes which represents the divisions of Jakarta. They are `KAB_KOTA` (City), `KECAMATAN` (District) and `DESA_KELUR` (Village). Removing the outer islands by the City would help us to remove all the districts and villages within it, so I proceeded to check the unique values of it.
 
 ```{r}
 unique(jkt2019$"KAB_KOTA")
 ```
 
-From this, we can observe that all the values has "JAKARTA" in it except "KEPULAUAN SERIBU"(Thousand Island). The code chunk below highlights the different cities in Jakarta.
+From this, we can observe that all the values has "JAKARTA" in it except "KEPULAUAN SERIBU"(Thousand Island). The code chunk below visualises the different cities in Jakarta.
 
 ```{r}
 tm_shape(jkt2019) + 
   tm_polygons("KAB_KOTA")
 ```
+
+Next, we will need to remove the outer islands by using the [filter()](https://www.educative.io/answers/what-is-the-filter-method-in-r) function to filter out the outer islands.
 
 ```{r}
 # accepts only if the value of KAB_KOTA is NOT KEPULAUAN SERIBU
@@ -219,11 +233,13 @@ jkt2019 <- jkt2019 %>%
     )
 ```
 
+With that, we are done for our geospatial data!
+
 ## 3.2 Aspatial Data
 
 ### 3.2.1 Observations of Data Website
 
-Examining DKI Jakarta Vaccination File History website where we were suppose to get our data, some of my observations were:
+Examining DKI Jakarta Vaccination File History [website](https://riwayat-file-vaksinasi-dki-jakarta-jakartagis.hub.arcgis.com/), some of my observations were:
 
 -   Entire page is in Indonesian
 
@@ -263,63 +279,21 @@ For this assignment, I will be using data of the first day of each month of the 
 
 ### 3.2.2 Importing Aspatial Data
 
-In our 'data/aspatial' folder, we have multiple .xlsx files ranging from 1 July 2021 to 1 June 2022. But before we compile it togther, we need to understand each dataset and check for any discrepancies.
+In our 'data/aspatial' folder, we have downloaded multiple .xlsx files ranging from 1 July 2021 to 1 June 2022. But before we compile it together, we need to understand each dataset and check for any discrepancies.
 
-The code chunk below uses the following functions:
+The purpose of the code chunk below is to reach each excel file under the folder 'data/aspatial' , create its dataframe(df) and assign it to a variable name which is in the format of "month_year". E.g April_2022 . The following functions are used:
+
+-   [list.files():](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/list.files) creates a list of the files in a directory/folder
+
+-   [substr():](https://www.digitalocean.com/community/tutorials/substring-function-in-r) extract the characters present in the data
+
+-   [str_trim():](https://stringr.tidyverse.org/reference/str_trim.html) remove whitespace
+
+-   [paste():](https://www.digitalocean.com/community/tutorials/paste-in-r) concatenate strings and values into a single element
 
 -   [read_excel()](https://readxl.tidyverse.org/reference/read_excel.html#:~:text=read_excel()%20calls%20excel_format(),file%20itself%2C%20in%20that%20order.): to read the data in xlsx format
 
--   [glimpse():](https://www.rdocumentation.org/packages/dplyr/versions/0.3/topics/glimpse) to see every column in the dataframe
-
-First, I stored each excel data in 1 variable.
-
-```{r}
-
-
-jkt2021_jul <- read_excel("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2021).xlsx")
-
-jkt2021_aug <- read_excel("data/aspatial/Data Vaksinasi Berbasis Kelurahan (1 Agustus 2021).xlsx")
-
-jkt2021_feb <- read_excel("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Februari 2022).xlsx")
-
-#glimpse(jkt2021_jul1)
-
-```
-
-To get a better understanding of the data, we need to convert it from Indonesian language to Englishsian language to English
-
-```{r}
-#extract the column headers
-names(jkt2021_jul1)
-```
-
-By using google translate, I am able to get the translations below:
-
-\[1\] "SOLUTION CODE" "CITY AREA"
-
-\[3\] "SUB-DISTRICT" "SUB-DISTRICT"
-
-\[5\] "TARGET" "YET'S VACCINE"
-
-\[7\] "TOTAL\\r\\nDOSE 1" "TOTAL\\r\\nDOSE 2"
-
-\[9\] "TOTAL VACCINE\\r\\nGiven" "ELDERLY\\r\\nDOSE 1"
-
-\[11\] "ELDERLY\\r\\nDOSE 2" "TOTAL ELDERLY \\r\\nVaccine Given"
-
-\[13\] "PUBLIC SERVANT\\r\\nDOSE 1" "PUBLIC SERVANT\\r\\nDOSE 2"
-
-\[15\] "TOTAL PUBLIC SERVICES\\r\\nVACCINES GRANTED" "GOTONG ROYONG\\r\\nDOSE 1"
-
-\[17\] "GOTONG ROYONG\\r\\nDOSE 2" "TOTAL COLLECTION\\r\\nVACCINES WERE GIVEN"
-
-\[19\] "HEALTH PERSONNEL\\r\\nDOSE 1" "HEALTH PERSONNEL\\r\\nDOSE 2"
-
-\[21\] "TOTAL HEALTH PERSONNEL\\r\\nVACCINE GRANTED"
-
-\_\_\_\_\_
-
-The purpose of the code chunk below is to reach each excel file under the folder 'data/aspatial' , create its df and assign it to a variable name which is in the format of "month_year". E.g April_2022 .
+-   [nchar():](https://www.geeksforgeeks.org/finding-the-length-of-string-in-r-programming-nchar-method/#:~:text=nchar()%20method%20in%20R,character%20in%20a%20string%20object.&text=Where%3A%20String%20is%20object.,the%20length%20of%20a%20string.) gets the length of string
 
 ```{r}
 #gets all files under the folder 'data/aspatial' which is in '.xlsx' format
@@ -331,7 +305,7 @@ df_list <-list()
 for (x in study_period_data){
  # eg of x: Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx
  
- # extract the year and month of the data file
+ # extract the year and month from the data file name
  month_yr <- str_trim(substr(x, 38, nchar(x)-6)) #e.g output: April 2022
  
  #split the month and year by the empty space inbetween
@@ -342,28 +316,28 @@ for (x in study_period_data){
  #join the month and year with "_"
  join_month_yr <- paste(split_month_yr[[1]][1],split_month_yr[[1]][2],sep="_") 
  #e.g output: April_2022
- 
  #join_month_yr will be used as the variable name to store the df
  
+ #add each month name to list
+ df_list<-append(df_list,join_month_yr)
  
- # get filepath that we need to read each month's data excel
+ # get filepath that we need to read each month's excel file
  filepath <- paste("data/aspatial/",x,sep="")
  # eg output: "data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx"
    
- #assign each df to its variable name 
+ #reach each excel file and assign it to its variable name 
  assign(join_month_yr,read_excel(filepath))
- 
- #a list which containes the name of all the df
- df_list<-append(df_list,join_month_yr)
  
  
 }
    
 ```
 
-Next, I would like to check whether there are any duplicate columns for each dataset.
+### 3.2.3 Data Pre-processing
 
-1\) I created a function called duplication_check() which takes in the df filename as a variable.
+#### 3.2.3.1 Check for Duplicated Values
+
+To check for any duplicate columns for each dataset, I created a function called duplication_check() which takes in the df filename as a variable.
 
 ```{r}
 duplication_check <- function(file_name) {
@@ -373,7 +347,7 @@ duplication_check <- function(file_name) {
 }
 ```
 
-2\) I made use of df_list which I populated earlier on to contain all of our df names and looped through it to determine which df has duplicated columns
+I then made use of df_list which I populated earlier on to contain all of our df names and looped through it. This allows me to check for each time period df, which df has duplicated columns using the function I created.
 
 ```{r}
 for (df in df_list) {
@@ -399,11 +373,13 @@ glimpse(April_2022)
 
 Upon translation, i discovered that `LANSIA\r\nDOSIS` refers to elderly dosage.
 
-This means that in our datasets with duplicated columns, there is 4 related columns - Elderly Dosage 1, Elderly Dosage 2, Elderly Dosage 3, Total Elderly Dosage where Dosage 3 values are a repeat of Dosage 2 avlues.
+This means that in our datasets with duplicated columns, there is 4 related columns - Elderly Dosage 1, Elderly Dosage 2, Elderly Dosage 3, Total Elderly Dosage where Dosage 3 values are a repeat of Dosage 2 values.
 
 I suspected that the Total elderly vaccine delivered should be the sum of Elderly Dosage 1, 2 and 3. However, according to April_2022 df, total elderly vaccine delivered is 1536442 which is neither the sum of elderly dosage 1, 2 and 3 nor the sum of elderly dosage 1 and 2. This suggests that either the total sum is wrongly added or the values for elderly dosage 3 was input wrongly. Regardless, this reduces the reliability of those data columns.
 
-Next, I decided to check our missing values.
+#### 3.2.3.2 Check for Missing Values
+
+To check for missing values, I created a function, check_missing_value() and used it to check for each df.
 
 ```{r}
 check_missing_value <- function(filename){
@@ -415,9 +391,11 @@ for (df in df_list) {
 }
 ```
 
-Based on the output, I realised that all the df were missing 3 fields. Looking deeper, I realised it was the same 3 fields (1st row, first 3 columns) that were blank. The reason why it is empty is due to the fact that is was merged with the top column in the excel and the row was meant to represent the total dosages across all district. Thus, we will be removing it later.
+Based on the output, I realised that all the df were missing 3 fields. Looking deeper, I realised it was the same 3 fields (1st row, first 3 columns) for all the df that were blank. The reason why it is empty is due to the fact that is was merged with the top column in the excel and the 1st row of each excel file was meant to represent the total dosages across all districts. Thus, we will be removing it later.
 
-Next, we need to combine our dataset.
+#### 3.2.3.3 Combination of every .xlsx Files
+
+Now, we need to combine the data files for every time period of our study period.
 
 **What are the relevant columns?**
 
@@ -461,7 +439,6 @@ for (df_str in df_list) {
   combined_df <- rbind(combined_df,get(df_str))
 }
 
-
 ```
 
 ```{r}
@@ -469,16 +446,23 @@ for (df_str in df_list) {
 colnames(combined_df) <- c("CITY_AREA", "DISTRICT","SUBDISTRICT", "TARGET", "YET_TO_BE_VACINATED", "TIME_PERIOD")
 
 
-#translate the months into english
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Desember_2021'] <- 'December_2021'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Februari_2022'] <- 'February_2022'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Januari_2022'] <- 'January_2022'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Juli_2021'] <- 'July_2021'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Juni_2022'] <- 'June_2022'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Mei_2022'] <- 'May_2022'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Oktober_2021'] <- 'October_2021'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Maret_2022'] <- 'March_2022'
-combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Agustus_2021'] <- 'August_2021'
+#convert into date format yyyy-mm-dd
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Desember_2021'] <- '2021-12-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Februari_2022'] <- '2022-02-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Januari_2022'] <- '2022-01-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Juli_2021'] <- '2021-07-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Juni_2022'] <- '2022-06-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Mei_2022'] <- '2022-05-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Oktober_2021'] <- '2021-10-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Maret_2022'] <- '2022-03-02'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Agustus_2021'] <- '2021-08-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'September_2021'] <- '2021-09-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'November_2021'] <- '2021-11-01'
+combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'April_2022'] <- '2022-04-01'
+
+#convert to date format
+combined_df$TIME_PERIOD <-as.Date(combined_df$TIME_PERIOD, format="%Y-%m-%d")
+class(combined_df$TIME_PERIOD)
 ```
 
 ```{r}
@@ -524,7 +508,7 @@ colnames(combined_df)
 Analyzing the columns headers, columns related to the city, district and subdistrictshould match.
 
 ```{r}
-# joins based on Province, Sub_District and City
+# joins based on district, Sub_District and City
 combined_jakarta <- left_join(jkt2019, combined_df,
                               by=c(
                                 "City"="CITY_AREA", 
@@ -609,9 +593,6 @@ combined_jakarta <- left_join(jkt2019, combined_df,
 # double check of any missing values
 sum(is.na(combined_jakarta))
 #which(is.na(combined_jakarta))
-
-#tmp <- combined_jakarta %>% 
-#  filter(if_any(everything(), is.na))
 ```
 
 Once again, let's visualise it!\
@@ -654,16 +635,6 @@ vr <- combined_df %>%
 
 The output of the code chunk below shows monthly vaccination rates across each sub-district from a study period of July 2021 to June 2022.
 
-```{r}
-#sort it in ascending time order
-
-reference = c("SUBDISTRICT","July_2021","August_2021","September_2021","October_2021","November_2021","December_2021","January_2022","February_2022","March_2022","April_2022","May_2022","June_2022")
-
-vr <- vr[,reference]
-
-vr
-```
-
 Convert our dataframes into sf objects
 
 ```{r}
@@ -680,37 +651,20 @@ There are different [methods](https://storymaps.arcgis.com/stories/bcb8e509f3194
 The code chunk below shows the decreasing variance as time passes through the period of July 2021 to June 2022.
 
 ```{r}
-
-
-for (i in time_period){
-  print(vr[i])
-  #x_num <- as.numeric(unlist(x))
-  #print(var(get(vr[i])))
-}
-
-
-#vr['April_2022']
-
+var(vr$`2021-07-01`)
+var(vr$`2021-10-01`)
+var(vr$`2022-02-01`)
+var(vr$`2022-06-01`)
 ```
 
-```{r}
-var(vr$`July_2021`)
-var(vr$`August_2021`)
-var(vr$`October_2021`)
-var(vr$`December_2021`)
-var(vr$`February_2022`)
-var(vr$`June_2022`)
-
-```
-
-Instead, to get a clearer visualization of a specific month, I decided to use the classification method, cont as it creates a smooth, linear gradient in which the change in values is proportionally related to the change in colors. For the color palette, i decided to go with a sequential scheme from yellow to green as it more suited for ordered data that progress from low to high.
+To get a clearer visualization of a specific month, I decided to use the classification method, cont as it creates a smooth, linear gradient in which the change in values is proportionally related to the change in colors. For the color palette, i decided to go with a sequential scheme from yellow to green as it more suited for ordered data that progress from low to high.
 
 The code chunk below is an interactive map of vaccination rates in July 2021. By clicking on a certain location, it will show us the district name and respective vaccination rates. The darker the green, the higher the vaccination rates.
 
 ```{r}
   tmap_mode("view")
   tm_shape(vr)+
-    tm_polygons("July_2021", 
+    tm_polygons("2021-07-01", 
             n= 6,
             style = "cont",
             title = "Vaccination Rate(%)",
@@ -747,14 +701,14 @@ The code chunk below is an interactive map of vaccination rates in June 2022.
 ```{r}
   tmap_mode("view")
   tm_shape(vr)+
-    tm_polygons("June_2022", 
+    tm_polygons("2022-06-01", 
             n= 6,
             style = "cont",
             title = "Vaccination Rate(%)",
             palette = "YlGn",
             ) +
     #tm_text("SUBDISTRICT")+
-    tm_layout(main.title = "Vaccination Rates in July 2021",
+    tm_layout(main.title = "Vaccination Rates in June 2022",
               main.title.position = "center",
               main.title.size = 1,
               legend.height = 0.5, 
@@ -817,3 +771,251 @@ Insights:
 1.  We can actually see Jakarta's vaccination rate increase steadily across the period of July 2021 to February 2022.
 
 2.  However, from February 2022 to June 2022, there is not much difference in the vaccination rates across all sub-districts.
+
+# 7. Local Gi\* Analysis
+
+To detect hot spot areas with high vaccination rates, and cold spot areas with high vaccination rates in Jakarta, we will be using Getis-Ord Gi\* statistics.
+
+For Interpretation of Gi\* values:
+
+$Gi∗>0$ : indicates grouping of areas with values higher than average
+
+$Gi∗<0$ : indicates grouping of areas with values lower than average
+
+A larger magnitude represents a greater intensity of grouping.
+
+For significant Gi\* statistic values, two spatial associations can be inferred:
+
+-   **Hot spot areas:** where $Gi∗>0$, significant and positive, if location is associated with relatively high values of the surrounding locations.
+
+-   **Cold spot areas:** where $Gi∗<0$, significant and negative, if location is associated with relatively low values in surrounding locations
+
+**Compute local Gi\* of vaccination rates in July 2022**
+
+# 7. Local Gi Analysis
+
+## 7.1 Computing local Gi\* Values of Monthly Vaccination Rates
+
+Before we compute our local GI, I would like to rearange our data for better clarity. The data will be organised in the following format: Date, Sub_District and Vaccination_Rate.
+
+```{r}
+#Extract relevant columns
+copy_cjkt_df <- combined_jakarta[8:14]
+
+# calculate vaccination rates
+copy_cjkt_df <- copy_cjkt_df %>% 
+  mutate(
+    VACCINATION_RATES = (TARGET - YET_TO_BE_VACINATED)/TARGET *100,
+    )
+
+#drop not impt col
+copy_cjkt_df = subset(copy_cjkt_df, select = -c(Total_Population,CITY_AREA,DISTRICT,TARGET,YET_TO_BE_VACINATED) )
+
+#for clarity, reorder the columns to data, subdistrict, vaccination rate
+copy_cjkt_df<- copy_cjkt_df %>% relocate(VACCINATION_RATES, .after=Sub_District)
+copy_cjkt_df<- copy_cjkt_df %>% relocate(TIME_PERIOD)
+
+colnames(copy_cjkt_df) <- c("Date", "Sub_District","Vaccination_Rate","geometry")
+```
+
+```{r}
+glimpse(copy_cjkt_df)
+
+```
+
+The code chunk below creates a time series cube using spacetime() of sfdep package:
+
+```{r}
+vr_st<- as_spacetime(copy_cjkt_df,
+                                .loc_col = "Sub_District",
+                                .time_col = "Date")
+```
+
+By using is_spacetime_cube() of sfdep package, we can check if vacc_rate_st is indeed a space-time cube object.
+
+```{r}
+is_spacetime_cube(vr_st)
+```
+
+To compute the local Gi\* statistics, we need to derive the spatial weights first:
+
+```{r}
+
+vr_nb <- vr_st %>%
+  activate("geometry") %>%
+  mutate(nb = include_self(st_contiguity(geometry)),
+         wt = st_inverse_distance(nb, geometry,
+                                  scale=1,
+                                  alpha=1),
+         .before=1) %>%
+  set_wts("wt") %>%
+  set_nbs("nb")
+```
+
+Our df now has neigbours (nb) and weights(wt) for each date.
+
+```{r}
+head(vr_nb)
+```
+
+Before computing Gi\*, we need to set the seed value so that the results of the simulations will be reproducible and constant:
+
+```{r}
+set.seed(123)
+```
+
+The code chunk below computes Gi\* for each location, grouping by Date and using local_gstar_perm() of sfdep package:
+
+```{r}
+gi_stars <- vr_nb %>%
+  group_by(Date) %>%
+  mutate(gi_star = local_gstar_perm(
+    Vaccination_Rate, nb, wt, nsim=99)) %>%
+      tidyr::unnest(gi_star)
+```
+
+After running 100 simulations, the code chunk below shows our newly created df.
+
+```{r}
+gi_stars
+```
+
+## 7.2 Mapping of Gi\* and Monthly Vaccination Rates
+
+```{r}
+combined_cjkt_gi_stars <- copy_cjkt_df %>%
+  left_join(gi_stars)
+```
+
+Taking a look at the Gi\* values and its p-value of the vaccination rates of July 2021:
+
+```{r}
+tmap_mode("plot")
+gi_star_map = tm_shape(filter(combined_cjkt_gi_stars, Date == '2021-07-01')) +
+  tm_fill("gi_star") +
+  tm_borders(alpha=0.5) +
+  tm_layout(main.title = "Gi* values for vaccination rates in July 2021", main.title.size=0.8)
+
+p_sim_map = tm_shape(filter(combined_cjkt_gi_stars, Date == '2021-07-01')) +
+  tm_fill("p_sim", breaks = c(0, 0.05, 1)) +
+  tm_borders(alpha=0.5) + 
+  tm_layout(main.title = "p-values of Gi* for vaccination rates in July 2021", main.title.size=0.8)
+
+tmap_arrange(gi_star_map, p_sim_map)
+```
+
+```{r}
+psig_july2021 <- combined_cjkt_gi_stars  %>%
+  filter(p_sim < 0.05 & Date == '2021-07-01')
+
+tmap_mode("plot")
+tm_shape(combined_cjkt_gi_stars) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(psig_july2021) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.4) +
+   tm_layout(main.title="Hot and Cold Spot Areas of Vaccination Rates in July 2021", main.title.size = 0.8)
+
+
+```
+
+To compare the hot and cold spot over our study period, I will break the period into 4 quarters which are July 2021, October 2021, February 2022, June 2022.
+
+```{r}
+# july 2021
+psig_july <- combined_cjkt_gi_stars  %>%
+  #filter significant values(<0.05) and the according date
+  filter(p_sim < 0.05 & Date == '2021-07-01')
+
+#tmap_mode("plot")
+hcs_july2021<- tm_shape(combined_cjkt_gi_stars) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(psig_july) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.4) +
+   tm_layout(
+     main.title="Hot and Cold Spot Areas of Vaccination Rates in July 2021",
+     main.title.size = 0.5)
+
+# october 2021
+psig_oct <- combined_cjkt_gi_stars  %>%
+  #filter significant values(<0.05) and the according date
+  filter(p_sim < 0.05 & Date == '2021-10-01')
+
+hcs_oct2021 <-tm_shape(combined_cjkt_gi_stars) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(psig_oct) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.4) +
+   tm_layout(
+     main.title="Hot and Cold Spot Areas of Vaccination Rates in October 2021",
+     main.title.size = 0.5)
+
+#february 2022
+psig_feb <- combined_cjkt_gi_stars  %>%
+  #filter significant values(<0.05) and the according date
+  filter(p_sim < 0.05 & Date == '2022-02-01')
+
+hcs_feb2022<- tm_shape(combined_cjkt_gi_stars) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(psig_feb) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.4) +
+   tm_layout(
+     main.title="Hot and Cold Spot Areas of Vaccination Rates in February 2022",
+     main.title.size = 0.5)
+
+# june 2022
+psig_june <- combined_cjkt_gi_stars  %>%
+  #filter significant values(<0.05) and the according date
+  filter(p_sim < 0.05 & Date == '2022-06-01')
+
+hcs_june2022 <- tm_shape(combined_cjkt_gi_stars) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(psig_june) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.4) +
+   tm_layout(
+     main.title="Hot and Cold Spot Areas of Vaccination Rates in June 2022",
+     main.title.size = 0.5)
+
+tmap_arrange(hcs_july2021,hcs_oct2021,hcs_feb2022,hcs_june2022)
+```
+
+**Statistical Conclusion:**
+
+1.  Based on our maps, areas colored "red" are significant hot spots, while areas colored "green" are significant cold spots.
+
+2.  Overall, we can observe that there is spatial clustering in our data. The no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. From July 2021 to June 2022, the lowest range of Gi\* value changed from from -4 to -2 to -8 to -6.
+
+3.   In October 2021, there is an unusual large number of hot and cold spots which signifies 5 grouping of hot spot areas with values higher than average and 7 significant groupings of cold spot areas with values lower than average.
+
+4.  Hot Spots Analysis: The distribution of the hots pots started from 6 clusters in eastern side of Jakarta to only 1 cluster in the middle of Jakarta from July 2021 to June 2022.
+
+5.  Cold Spots Analysis: The distribution of the cold spots appeared randomly and shifted towards the southern area of Jakarta from July 2021 to June 2022.
+
+# 8. Emerging Hot Spot Analysis(EHSA)
+
+```{r}
+
+KEAGUNGAN <- gi_stars %>% 
+  ungroup() %>% 
+  filter(Sub_District == "KEAGUNGAN") |> 
+  select(Sub_District, Date, gi_star)
+```
+
+```{r}
+ggplot(data = KEAGUNGAN, 
+       aes(x = Date, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+
+```
+
+# 
