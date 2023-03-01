@@ -753,7 +753,7 @@ tmap_arrange(map_list, ncol = 4)
 
 Insights:
 
-1.  We can actually see Jakarta's vaccination rate increase steadily across the period of July 2021 to February 2022 as more sub-districts shift from a lighter shade of green to a darker one.
+1.  We can actually see Jakarta's vaccination rate increase steadily across the period of July 2021 to February 2022 as more sub-districts shift from a lighter shade of green to a darker one. This could be due to Indonesia's efforts in encouraging their citizens to get vaccinated.
 
 2.  However, from February 2022 to June 2022, there is not much difference in the vaccination rates across all sub-districts.
 
@@ -812,7 +812,7 @@ vr_st<- as_spacetime(copy_cjkt_df,
                                 .time_col = "Date")
 ```
 
-By using [is_spacetime_cube()](https://gisgeography.com/space-time-cubes/#:~:text=Space%2Dtime%20cubes%20show%20how,bottom%20cubes%20have%20older%20timestamps.) of sfdep package, we can check if vacc_rate_st is indeed a space-time cube object. If it returns TRUE, vacc_rate_st is a space-time cube object.
+By using [is_spacetime_cube()](https://gisgeography.com/space-time-cubes/#:~:text=Space%2Dtime%20cubes%20show%20how,bottom%20cubes%20have%20older%20timestamps.) of sfdep package, we can check if vr_st is indeed a space-time cube object. If it returns TRUE, vr_st is a space-time cube object.
 
 ```{r}
 is_spacetime_cube(vr_st)
@@ -839,7 +839,7 @@ Our df now has neigbours (nb) and weights(wt) for each date.
 head(vr_nb)
 ```
 
-Before computing Gi\*, we need to set the seed value so that the results of the simulations will be reproducible and constant. I willbe using seed 123.
+Before computing Gi\*, we need to set the seed value so that the results of the simulations will be reproducible and constant. I will be using seed 123.
 
 ```{r}
 set.seed(123)
@@ -989,13 +989,21 @@ get_significant_locations <- function(date) {
   temp <-data.frame(sub_d,gi_star_value)
   #print(temp)
   
+  #sub districts with significant p-values in date
+  sig_sd<- temp$sub_d
+  
+  #max gi star value in date
   max_gi_sd<- temp$sub_d[temp$gi_star_value ==max(temp$gi_star_value)]
+  
+  # min gi star value in date
   min_gi_sd<- temp$sub_d[temp$gi_star_value ==min(temp$gi_star_value)]
   
   print(paste("Date: ", date))
   print("For siginificant sub-district with the")
   print(paste("highest gi* value: ",max_gi_sd))
   print(paste("lowest gi* value: ",min_gi_sd))
+  print(paste("Number of Significant sub_districts:",length(sig_sd)))
+  
 }
 
 get_significant_locations("2021-07-01")
@@ -1008,13 +1016,15 @@ get_significant_locations("2022-06-01")
 
 1.  Based on our maps, areas colored "red" are significant hot spots, while areas colored "green" are significant cold spots.
 
-2.  Overall, we can observe that there is spatial clustering in our data. From July 2021 to June 2022, the no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. The lowest range of Gi\* value decreased from -4 to -2 to -8 to -6.
+2.  Overall, we can observe that there is spatial clustering in our data. From July 2021 to June 2022, the no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. The lowest range of Gi\* value decreased from range -4 to -2 to range -8 to -6.
 
-3.  In October 2021, there is an unusual large number of hot and cold spots which signifies 5 grouping of hot spot areas with values higher than average and 7 significant groupings of cold spot areas with values lower than average.
+3.  In October 2021, there is an unusual large number of hot and cold spots which signifies 5 significant clusters of hot spot areas with values higher than average and 7 significant clustersof cold spot areas with values lower than average.
 
 4.  Hot Spots Analysis: The distribution of the hots pots started from 6 clusters (most of it was around the eastern side of Jakarta) to only 1 cluster in the middle of Jakarta from July 2021 to June 2022.
 
 5.  Cold Spots Analysis: The distribution of the cold spots appeared randomly and shifted towards the southern area of Jakarta from July 2021 to June 2022.
+
+6.  We can also see that the number of significant sub-districts increased from 52 (July 2021) to 55 (October 2021) and then decreased to 47 (June 2021) and this aligns with the changes in the number of hot and cold spot areas.
 
 # 7. Emerging Hot Spot Analysis(EHSA)
 
@@ -1026,7 +1036,7 @@ We will be conducting the Mann-Kendall Test using the spatio-temporal local Gi\*
 
 2.  SRENGSENG SAWAH
 
-3.  HALIM PERDANA KUSUMAH
+3.  KOJA
 
 **What is the Mann-Kendall test?**
 
@@ -1075,7 +1085,7 @@ KEBON_KACANG %>%
   tidyr::unnest_wider(mk)
 ```
 
-Based on the output above, we can observe that the tau is highly negative suggesting that the trend is decreasing. The sl, which represents the p-value, is smaller than our level of significance, 0.05. Hence, we reject the null hypothesis as there is significant evidence that a decreasing trend is present in the time series data.
+Based on the output above, we can observe that the tau (-0.758) is highly negative suggesting that the trend is decreasing. The sl (0.000779), which represents the p-value, is smaller than our level of significance(0.05). Hence, we reject the null hypothesis as there is significant evidence that a decreasing trend is present in the time series data.
 
 ### 7.1.2 For SRENGSENG SAWAH
 
@@ -1106,7 +1116,7 @@ SRENGSENG_SAWAH %>%
   tidyr::unnest_wider(mk)
 ```
 
-Based on the output above, we can observe that the tau is positive suggesting that the trend is increasing. The sl, which represents the p-value, is smaller than our level of significance, 0.05. Hence, we reject the null hypothesis as there is significant evidence that an increasing trend is present in the time series data.
+Based on the output above, we can observe that the tau(0.697) is positive suggesting that the trend is increasing. The sl(0.00203), which represents the p-value, is smaller than our level of significance(0.05). Hence, we reject the null hypothesis as there is significant evidence that an increasing trend is present in the time series data.
 
 ### 7.1.3 For KOJA
 
@@ -1136,7 +1146,7 @@ KOJA %>%
   tidyr::unnest_wider(mk)
 ```
 
-Based on the output above, we can observe that the tau is slightly positive, suggesting that the trend is increasing. The sl, which represents the p-value, is larger than our level of significance, 0.05. Hence, we do reject the null hypothesis as there is insufficient evidence that a trend is present in the time series data.
+Based on the output above, we can observe that the tau(-0.0606) is slightly negative, suggesting that the trend is increasing. The sl(0.837), which represents the p-value, is larger than our level of significance(0.05). Hence, we reject the null hypothesis as there is insufficient evidence that a trend is present in the time series data.
 
 # 7.2 Performing Emerging Hotspot Analysis
 
@@ -1179,7 +1189,7 @@ ggplot(data = ehsa,
 Below is a table explaining what each class means.
 
 | EHSA Class Name      | Definition                                                                                                                                                                                                                                                                                                                 |
-|----------------------|--------------------------------------------------|
+|-----------------------|-------------------------------------------------|
 | Oscillating coldspot | A statistically significant cold spot for the final time-step interval that has a history of also being a statistically significant hot spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant cold spots.                                                     |
 | Oscillating hotspot  | A statistically significant hot spot for the final time-step interval that has a history of also being a statistically significant cold spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant hot spots.                                                      |
 | Sporadic cold spot   | A statistically significant cold spot for the final time-step interval with a history of also being an on-again and off-again cold spot. Less than 90 percent of the time-step intervals have been statistically significant cold spots and none of the time-step intervals have been statistically significant hot spots. |
