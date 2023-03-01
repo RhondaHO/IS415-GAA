@@ -15,7 +15,7 @@ format:
 execute: 
   message: false
   warning: false
-  eval: false
+  #eval: false
 
 editor: visual
 ---
@@ -86,24 +86,22 @@ The specific tasks of this take-home exercise are as follows:
 
 The following packages will be used:
 
--   [**sf**](https://cran.r-project.org/web/packages/sf/index.html): used for importing, managing, and processing geospatial data
+-   [sf](https://r-spatial.github.io/sf/): to import, manage, and process geospatial data
 
--   [**tidyverse**](https://www.tidyverse.org/): a collection of packages for data science tasks
+-   [tmap](https://cran.r-project.org/web/packages/tmap/): provides functions for plotting cartographic quality static point patterns maps or interactive maps
 
--   [**tmap**](https://cran.r-project.org/web/packages/tmap/index.html): used for creating thematic maps, such as choropleth and bubble maps
+-   [plotly](https://cran.r-project.org/package=plotly): for creating interactive web-based graphs
 
--   [**spatstat**](https://spatstat.org/): used for point pattern analysis
+-   [sfdep](https://cran.r-project.org/web/packages/sfdep/): for spatial dependence of simple features
 
--   [**raster**](https://cran.r-project.org/web/packages/raster/): reads, writes, manipulates, analyses and models gridded spatial data (i.e. raster-based geographical data)
+-   [readxl](https://readxl.tidyverse.org/reference/read_excel.html): to import Excel worksheets(.xlsx)
 
--   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/index.html): contains a set of functions related to exploratory data analysis, data preparation, and model performance
+-   [Kendall](https://cran.r-project.org/package=Kendall): for Mann-Kendall Test
 
--   [**maptools**](https://cran.r-project.org/web/packages/maptools/index.html): a set of tools for manipulating geographic data and
-
--   [**sfdep**](https://cran.r-project.org/web/packages/spdep/index.html): for performing geospatial data wrangling and local colocation quotient analysis.
+-   [tidyverse](https://www.tidyverse.org/): a collection of packages for data science tasks
 
 ```{r}
-pacman::p_load(sf, tmap, spatstat, raster, funModeling, maptools, sfdep, readxl, tidyverse)
+pacman::p_load(sf, tmap, plotly, sfdep, readxl, kendall, tidyverse)
 ```
 
 # 3. Data Wrangling
@@ -146,6 +144,8 @@ Having a glimpse at our data, some of relevant column(s) that we need for our ta
 length(which(st_is_valid(jkt2019) == FALSE))
 ```
 
+There is no invalid geometries!
+
 #### 3.1.3.2 Check for Missing Values
 
 ```{r}
@@ -177,9 +177,9 @@ jkt2019 <- st_transform(jkt2019, 23845)
 st_crs(jkt2019)
 ```
 
-Yay, we have successfully managed to transform our dataset to the appropriate coordinates system!
+We have successfully managed to transform our dataset to the appropriate coordinates system!
 
-#### **3.1.3.4 Removal of Outer Islands**
+#### 3.1.3.4 Removal of Outer Islands
 
 To start off, let visualise our data!
 
@@ -245,15 +245,13 @@ Examining DKI Jakarta Vaccination File History [website](https://riwayat-file-va
 
     -   To translate to English, simply right click anywhere on the webpage and click "Translate to English" button
 
-    -   Alternative solutions for translation can be found [here](https://www.wikihow.com/Translate-a-Web-Page).
-
 -   There were two columns for DKI Jakarta Vaccination File History, one for "*Vaccination Data Based on Village and District*", another for "*RT-Based Vaccination Data*"
 
     -   We will be focusing on the "V*accination Data Based on Village and District*"column as our task require us to analyse on a sub-district level.
 
 -   Many instances of missing data!
 
-    -   E.g 1) The hyperlink to March 1 2022 will direct you to March 2 2022 data and March 1 2022 cannot be found :(
+    -   E.g 1) The hyperlink to March 1 2022 will direct you to March 2 2022 data and March 1 2022 cannot be found
 
     -   E.g 2) Certain months such as July 2021, August 2021, February 2022 were missing the record of the date written in the table and its respective data
 
@@ -265,17 +263,9 @@ Examining DKI Jakarta Vaccination File History [website](https://riwayat-file-va
 
             -   An update of the system which may prevent records from being uploaded on that day
 
-            -   Data not recorded as there is no available data due to the day being a holiday
-
-                -   For e.g 28 February 2022 record and data is missing and that day so happens to be an Indonesian major holiday called [Isra Mi'raj](https://publicholidays.co.id/isra-miraj/). Upon further [research](https://www.3ecpa.co.id/resources/indonesia-public-holidays/isra-miraj/#:~:text=They%20walk%20in%20the%20city,Indonesia%20during%20Isra%20Mi'raj.), Indonesians celebrate that day by gathering at their local mosque for prayers and/or will be walking in the city going to the city hall while chanting the Salawat. Thus, there is a high possibility that people will not get vaccinated on this specific day.
-
-                -   For reference, the list of holidays for [2021](https://www.officeholidays.com/countries/indonesia/2021)and [2022](https://publicholidays.co.id/2022-dates/).
-
-                -   However, there are also days where it is a holiday but vaccination data is still being recorded such as 1 January 2022 (New Year's Day) and 1 May 2022(Labour Day). A possible reason could be that, assuming Indonesia is similar to Singapore, certain clinics will still be opened but only for selected hours.
-
 Under our task we are required to compute monthly vaccination rate from [July 2021 to June 2022]{.underline} and we are only required to download the [first or last day of the month of study period]{.underline}.
 
-For this assignment, I will be using data of the first day of each month of the study period with the exception of March 2021, I will be using March 2 instead of March 1 as March 1's data is missing.
+For this assignment, I will be using data of the [first day of each month]{.underline} of the study period with the exception of March 2021, I will be using March 2 instead of March 1 as March 1's data is missing.
 
 ### 3.2.2 Importing Aspatial Data
 
@@ -397,15 +387,9 @@ Based on the output, I realised that all the df were missing 3 fields. Looking d
 
 Now, we need to combine the data files for every time period of our study period.
 
-**What are the relevant columns?**
-
-I would need to add the date and year in a new column
-
-need to convert to english language for easier comprehension
+First, I would need to add the date in a new column called `Time_Period` .
 
 ```{r}
-
-# we can derive count of people who were vacinated by target - yet to be vacinated
 for (df_str in df_list) {
   df<-get(df_str)
   
@@ -423,9 +407,6 @@ for (df_str in df_list) {
   assign(df_str,new_df)
 }
 
-```
-
-```{r}
 combined_df <- setNames(data.frame(matrix(ncol = 6, nrow = 0)), 
                         c('WILAYAH KOTA',
                           'KECAMATAN',
@@ -441,11 +422,17 @@ for (df_str in df_list) {
 
 ```
 
+Next, I translated the Indonesian column headers into English so we can understand it better.
+
 ```{r}
 #translate  colnames into eng
 colnames(combined_df) <- c("CITY_AREA", "DISTRICT","SUBDISTRICT", "TARGET", "YET_TO_BE_VACINATED", "TIME_PERIOD")
 
+```
 
+Afterwards, I wanted to convert our time period into the date format yyyy-mm-dd.
+
+```{r}
 #convert into date format yyyy-mm-dd
 combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Desember_2021'] <- '2021-12-01'
 combined_df$TIME_PERIOD[combined_df$TIME_PERIOD == 'Februari_2022'] <- '2022-02-01'
@@ -480,6 +467,8 @@ combined_df <- na.omit(combined_df)
 ```{r}
 sum(is.na(combined_df))
 ```
+
+#### 3.2.3.4 Removal of Outer Islands
 
 Next, we need to check whether this data consist of any outer islands and remove it accordingly. The code chunk below follow the steps earlier shown in the removal of outer islands.
 
@@ -546,7 +535,6 @@ bd_subdistrict <- c(jkt2019$Sub_District)
 cat("Unique Aspatial SUBDISTRICT:\n__________________________________________________________\n")
 unique(count_subdistrict[!(count_subdistrict %in% bd_subdistrict)])
 
-cat("__________________________________________________________\n")
 cat("\nUnique Geospatial Sub_District:\n__________________________________________________________\n")
 unique(bd_subdistrict[!(bd_subdistrict %in% count_subdistrict)])
 ```
@@ -592,7 +580,6 @@ combined_jakarta <- left_join(jkt2019, combined_df,
 ```{r}
 # double check of any missing values
 sum(is.na(combined_jakarta))
-#which(is.na(combined_jakarta))
 ```
 
 Once again, let's visualise it!\
@@ -611,7 +598,9 @@ updated_yet_to_be_count = tm_shape(combined_jakarta)+
 tmap_arrange(updated_target_count, updated_yet_to_be_count)
 ```
 
-# 5. Calculation: Monthly Vaccination Rates
+# 5. Choropleth Mapping and Analysis
+
+## 5.1 Calculation of Monthly Vaccination Rates
 
 To calculate the monthly vaccination rates, I will be using this formula:
 
@@ -630,12 +619,12 @@ vr <- combined_df %>%
   #afterwards, pivots the table based on the Dates, showing the cumulative death rate
   ungroup() %>% pivot_wider(names_from = TIME_PERIOD,
               values_from = vaccination_rates)
-
+vr
 ```
 
 The output of the code chunk below shows monthly vaccination rates across each sub-district from a study period of July 2021 to June 2022.
 
-Convert our dataframes into sf objects
+**Convert our dataframes into sf objects**
 
 ```{r}
 combined_jakarta <- st_as_sf(combined_jakarta)
@@ -644,7 +633,7 @@ vr <- vr%>% left_join(jkt2019, by=c("SUBDISTRICT"="Sub_District"))
 vr <- st_as_sf(vr)
 ```
 
-# 6. Mapping of Monthly Vaccination Rates
+## 5.2 Mapping of Monthly Vaccination Rates
 
 There are different [methods](https://storymaps.arcgis.com/stories/bcb8e509f319436786a2481c722bc218) to classify the vaccination rates in choropleth maps. Initially, I considered Jenks classification method as it can minimize variation in each group which allows map readers to easily witness the trends presented by the map. However, this method is not very suitable for our data as it has low variance.
 
@@ -659,10 +648,10 @@ var(vr$`2022-06-01`)
 
 To get a clearer visualization of a specific month, I decided to use the classification method, cont as it creates a smooth, linear gradient in which the change in values is proportionally related to the change in colors. For the color palette, i decided to go with a sequential scheme from yellow to green as it more suited for ordered data that progress from low to high.
 
-The code chunk below is an interactive map of vaccination rates in July 2021. By clicking on a certain location, it will show us the district name and respective vaccination rates. The darker the green, the higher the vaccination rates.
+The code chunk below is a map of vaccination rates in July 2021. By clicking on a certain location, it will show us the district name and respective vaccination rates. The darker the green, the higher the vaccination rates.
 
 ```{r}
-  tmap_mode("view")
+  tmap_mode("plot")
   tm_shape(vr)+
     tm_polygons("2021-07-01", 
             n= 6,
@@ -678,12 +667,9 @@ The code chunk below is an interactive map of vaccination rates in July 2021. By
               legend.width = 0.4,
               frame = TRUE,
               ) +
-    tm_borders(alpha = 0.5)+
-    tm_view(set.zoom.limits = c(10, 14))
-```
-
-```{r}
-tmap_mode("plot")
+    tm_borders(alpha = 0.5) 
+    #+ tm_view(set.zoom.limits = c(10, 14),
+            #view.legend.position = c("right","bottom"))
 ```
 
 Insights:
@@ -692,14 +678,12 @@ Insights:
 
 2.  The sub-district with the highest vaccination rate is HALIM PERDANA KUSUMAH (55.24%).
 
-3.  Not much clusters can be identified.
+3.  Sub-districts with lower vaccination rates can try to learn/adopt strategies from sub districts with higher vaccination rates' to increase their own vaccination rates.
 
-4.  Sub-districts with lower vaccination rates can try to learn/adopt strategies from sub districts with higher vaccination rates' to increase their own vaccination rates.
-
-The code chunk below is an interactive map of vaccination rates in June 2022.
+The code chunk below is a map of vaccination rates in June 2022.
 
 ```{r}
-  tmap_mode("view")
+  tmap_mode("plot")
   tm_shape(vr)+
     tm_polygons("2022-06-01", 
             n= 6,
@@ -715,12 +699,9 @@ The code chunk below is an interactive map of vaccination rates in June 2022.
               legend.width = 0.4,
               frame = TRUE,
               ) +
-    tm_borders(alpha = 0.5)+
-    tm_view(set.zoom.limits = c(10, 14))
-```
-
-```{r}
-tmap_mode("plot")
+    tm_borders(alpha = 0.5)
+    #+ tm_view(set.zoom.limits = c(10, 14),
+            #view.legend.position = c("right","bottom"))
 ```
 
 Insights (as compared to July 2021):
@@ -737,7 +718,6 @@ The code chunk below plots the vaccination rate across the our study period of J
 
 ```{r}
 rate_cols <- colnames(st_set_geometry(vr[2:13], NULL))
-rate_cols
 
 map_list <- vector(mode = "list", length = length(rate_cols))
 
@@ -768,11 +748,11 @@ tmap_arrange(map_list, ncol = 4)
 
 Insights:
 
-1.  We can actually see Jakarta's vaccination rate increase steadily across the period of July 2021 to February 2022.
+1.  We can actually see Jakarta's vaccination rate increase steadily across the period of July 2021 to February 2022 as more sub-districts shift from a lighter shade of green to a darker one.
 
 2.  However, from February 2022 to June 2022, there is not much difference in the vaccination rates across all sub-districts.
 
-# 7. Local Gi\* Analysis
+# 6. Local Gi\* Analysis
 
 To detect hot spot areas with high vaccination rates, and cold spot areas with high vaccination rates in Jakarta, we will be using Getis-Ord Gi\* statistics.
 
@@ -790,13 +770,9 @@ For significant Gi\* statistic values, two spatial associations can be inferred:
 
 -   **Cold spot areas:** where $Gi∗<0$, significant and negative, if location is associated with relatively low values in surrounding locations
 
-**Compute local Gi\* of vaccination rates in July 2022**
+## 6.1 Computing local Gi\* Values of Monthly Vaccination Rates
 
-# 7. Local Gi Analysis
-
-## 7.1 Computing local Gi\* Values of Monthly Vaccination Rates
-
-Before we compute our local GI, I would like to rearange our data for better clarity. The data will be organised in the following format: Date, Sub_District and Vaccination_Rate.
+Before we compute our local Gi\*, I would like to rearange our data for better clarity. The data will be organised in the following format: Date, Sub_District and Vaccination_Rate.
 
 ```{r}
 #Extract relevant columns
@@ -823,7 +799,7 @@ glimpse(copy_cjkt_df)
 
 ```
 
-The code chunk below creates a time series cube using spacetime() of sfdep package:
+The code chunk below creates a time series cube using [spacetime()](https://cran.r-project.org/web/packages/spacetime/index.html) of sfdep package:
 
 ```{r}
 vr_st<- as_spacetime(copy_cjkt_df,
@@ -831,7 +807,7 @@ vr_st<- as_spacetime(copy_cjkt_df,
                                 .time_col = "Date")
 ```
 
-By using is_spacetime_cube() of sfdep package, we can check if vacc_rate_st is indeed a space-time cube object.
+By using [is_spacetime_cube()](https://gisgeography.com/space-time-cubes/#:~:text=Space%2Dtime%20cubes%20show%20how,bottom%20cubes%20have%20older%20timestamps.) of sfdep package, we can check if vacc_rate_st is indeed a space-time cube object. If it returns TRUE, vacc_rate_st is a space-time cube object.
 
 ```{r}
 is_spacetime_cube(vr_st)
@@ -858,13 +834,13 @@ Our df now has neigbours (nb) and weights(wt) for each date.
 head(vr_nb)
 ```
 
-Before computing Gi\*, we need to set the seed value so that the results of the simulations will be reproducible and constant:
+Before computing Gi\*, we need to set the seed value so that the results of the simulations will be reproducible and constant. I willbe using seed 123.
 
 ```{r}
 set.seed(123)
 ```
 
-The code chunk below computes Gi\* for each location, grouping by Date and using local_gstar_perm() of sfdep package:
+The code chunk below computes Gi\* for each location, grouping by Date and using [local_gstar_perm()](https://sfdep.josiahparry.com/reference/local_gstar.html) of sfdep package:
 
 ```{r}
 gi_stars <- vr_nb %>%
@@ -880,12 +856,16 @@ After running 100 simulations, the code chunk below shows our newly created df.
 gi_stars
 ```
 
-## 7.2 Mapping of Gi\* and Monthly Vaccination Rates
+## 6.2 Mapping of Gi\* and Monthly Vaccination Rates
+
+To map our local gi\*, we first need to include the geometry values by joining copy_cjkt_df with gi_stars.
 
 ```{r}
 combined_cjkt_gi_stars <- copy_cjkt_df %>%
   left_join(gi_stars)
 ```
+
+### 6.2.1 Mapping for July 2021
 
 Taking a look at the Gi\* values and its p-value of the vaccination rates of July 2021:
 
@@ -919,6 +899,8 @@ tm_shape(psig_july2021) +
 
 
 ```
+
+### 6.2.1 Mapping for 4 Time Periods
 
 To compare the hot and cold spot over our study period, I will break the period into 4 quarters which are July 2021, October 2021, February 2022, June 2022.
 
@@ -987,35 +969,265 @@ tm_shape(psig_june) +
 tmap_arrange(hcs_july2021,hcs_oct2021,hcs_feb2022,hcs_june2022)
 ```
 
-**Statistical Conclusion:**
+The code chunk below creates a function to check the sub-district with the highest and lowest siginificant gi\* value for July 2021, October 2021, February 2022, June 2022.
+
+```{r}
+get_significant_locations <- function(date) {
+  #print(paste("Sub-Districts with p-value of Gi* < 0.05 in", month))
+  
+  #sub district name
+  sub_d<- filter(combined_cjkt_gi_stars, Date == date & p_sim<0.05)$Sub_District
+  
+  #gi star value
+  gi_star_value <- filter(combined_cjkt_gi_stars, Date == date & p_sim<0.05)$gi_star
+
+  temp <-data.frame(sub_d,gi_star_value)
+  #print(temp)
+  
+  max_gi_sd<- temp$sub_d[temp$gi_star_value ==max(temp$gi_star_value)]
+  min_gi_sd<- temp$sub_d[temp$gi_star_value ==min(temp$gi_star_value)]
+  
+  print(paste("Date: ", date))
+  print("For siginificant sub-district with the")
+  print(paste("highest gi* value: ",max_gi_sd))
+  print(paste("lowest gi* value: ",min_gi_sd))
+}
+
+get_significant_locations("2021-07-01")
+get_significant_locations("2021-10-01")
+get_significant_locations("2022-02-01")
+get_significant_locations("2022-06-01")
+```
+
+### 6.2.3 Statistical Conclusion
 
 1.  Based on our maps, areas colored "red" are significant hot spots, while areas colored "green" are significant cold spots.
 
-2.  Overall, we can observe that there is spatial clustering in our data. The no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. From July 2021 to June 2022, the lowest range of Gi\* value changed from from -4 to -2 to -8 to -6.
+2.  Overall, we can observe that there is spatial clustering in our data. From July 2021 to June 2022, the no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. The lowest range of Gi\* value decreased from -4 to -2 to -8 to -6.
 
-3.   In October 2021, there is an unusual large number of hot and cold spots which signifies 5 grouping of hot spot areas with values higher than average and 7 significant groupings of cold spot areas with values lower than average.
+3.  In October 2021, there is an unusual large number of hot and cold spots which signifies 5 grouping of hot spot areas with values higher than average and 7 significant groupings of cold spot areas with values lower than average.
 
-4.  Hot Spots Analysis: The distribution of the hots pots started from 6 clusters in eastern side of Jakarta to only 1 cluster in the middle of Jakarta from July 2021 to June 2022.
+4.  Hot Spots Analysis: The distribution of the hots pots started from 6 clusters (most of it was around the eastern side of Jakarta) to only 1 cluster in the middle of Jakarta from July 2021 to June 2022.
 
 5.  Cold Spots Analysis: The distribution of the cold spots appeared randomly and shifted towards the southern area of Jakarta from July 2021 to June 2022.
 
-# 8. Emerging Hot Spot Analysis(EHSA)
+# 7. Emerging Hot Spot Analysis(EHSA)
+
+## 7.1 Mann-Kendall Test
+
+We will be conducting the Mann-Kendall Test using the spatio-temporal local Gi\* values on 3 Sub-Districts which are:
+
+1.  KEBON KACANG
+
+2.  SRENGSENG SAWAH
+
+3.  HALIM PERDANA KUSUMAH
+
+**What is the Mann-Kendall test?**
+
+In a [Mann-Kendall Test](https://www.statology.org/mann-kendall-trend-test-r/#:~:text=A%20Mann%2DKendall%20Trend%20Test%20is%20used%20to%20determine%20whether,trend%20present%20in%20the%20data.), it is used to determine whether or not a trend exists in time series data. It is a non-parametric test, meaning there is no underlying assumption made about the normality of the data.
+
+The hypotheses for the test are as follows:
+
+-   H0 (null hypothesis): There is no trend present in the data.
+
+-   HA (alternative hypothesis): A trend is present in the data. (This could be a positive or negative trend)
+
+If the p-value of the test is lower than the significance level of 0.05, then there is statistically significant evidence that a trend is present in the time series data.
+
+This method mainly gives 3 type of [information:](https://acp.copernicus.org/preprints/acp-2019-109/acp-2019-109-AC2-supplement.pdf)
+
+-   Tau: varies between -1 and 1; it is positive when the trend increases and negative when the trend decreases
+
+-   The Sen slope: which estimates the overall slope of the time series. This slope corresponds to the median of all the slopes calculated between each pair of points in the series.
+
+-   The significance, which represents the threshold for which the hypothesis that there is no trend is accepted. The trend is statistically significant when the p-value is less than 0.05.
+
+### 7.1.1 For KEBON KACANG
 
 ```{r}
-
-KEAGUNGAN <- gi_stars %>% 
+KEBON_KACANG <- gi_stars %>% 
   ungroup() %>% 
-  filter(Sub_District == "KEAGUNGAN") |> 
+  filter(Sub_District == "KEBON KACANG") |> 
   select(Sub_District, Date, gi_star)
+
+KEBON_KACANG_plot<- ggplot(data = KEBON_KACANG, 
+       aes(x = Date, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+  
+  plot<- KEBON_KACANG_plot+ggtitle("Local Gi* values of KEBON KACANG")
+
+  ggplotly(plot)  
 ```
 
 ```{r}
-ggplot(data = KEAGUNGAN, 
+KEBON_KACANG %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>% 
+  tidyr::unnest_wider(mk)
+```
+
+Based on the output above, we can observe that the tau is highly negative suggesting that the trend is decreasing. The sl, which represents the p-value, is smaller than our level of significance, 0.05. Hence, we reject the null hypothesis as there is significant evidence that a decreasing trend is present in the time series data.
+
+### 7.1.2 For SRENGSENG SAWAH
+
+```{r}
+
+SRENGSENG_SAWAH <- gi_stars %>% 
+  ungroup() %>% 
+  filter(Sub_District == "SRENGSENG SAWAH") |> 
+  select(Sub_District, Date, gi_star)
+
+SRENGSENG_SAWAH_plot<- ggplot(data = SRENGSENG_SAWAH, 
+       aes(x = Date, 
+           y = gi_star)) +
+  geom_line() +
+  theme_light()
+  
+  plot<- SRENGSENG_SAWAH_plot+ggtitle("Local Gi* values of SRENGSENG SAWAH")
+
+  ggplotly(plot)  
+
+```
+
+```{r}
+SRENGSENG_SAWAH %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>% 
+  tidyr::unnest_wider(mk)
+```
+
+Based on the output above, we can observe that the tau is positive suggesting that the trend is increasing. The sl, which represents the p-value, is smaller than our level of significance, 0.05. Hence, we reject the null hypothesis as there is significant evidence that an increasing trend is present in the time series data.
+
+### 7.1.3 For KOJA
+
+```{r}
+KOJA <- gi_stars %>% 
+  ungroup() %>% 
+  filter(Sub_District == "KOJA") |> 
+  select(Sub_District, Date, gi_star)
+
+KOJA_plot<- ggplot(data = KOJA, 
        aes(x = Date, 
            y = gi_star)) +
   geom_line() +
   theme_light()
 
+  plot<- KOJA_plot+ggtitle("Local Gi* values of KOJA")
+
+  ggplotly(plot)  
+  
 ```
 
-# 
+```{r}
+KOJA %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>% 
+  tidyr::unnest_wider(mk)
+```
+
+Based on the output above, we can observe that the tau is slightly positive, suggesting that the trend is increasing. The sl, which represents the p-value, is larger than our level of significance, 0.05. Hence, we do reject the null hypothesis as there is insufficient evidence that a trend is present in the time series data.
+
+# 7.2 Performing Emerging Hotspot Analysis
+
+Before we perform our emerging hotspot anlaysis, we will be using the new columns created earlier on to manually calculate the local Gi\* for each location. We can do this by grouping by Date and using [local_gstar_perm()](https://sfdep.josiahparry.com/reference/local_gstar.html) of sfdep package. After which, we use [unnest()](https://tidyr.tidyverse.org/reference/nest.html) to unnest gi_star column of the newly created gi_start data.frame.
+
+```{r}
+ehsa <- gi_stars %>%
+  group_by(Sub_District) %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>%
+  tidyr::unnest_wider(mk)
+
+emerging <- ehsa %>% 
+  arrange(sl, abs(tau)) %>% 
+  slice(1:5)
+```
+
+We will then perform EHSA analysis by using [emerging_hotspot_analysis()](https://pro.arcgis.com/en/pro-app/latest/tool-reference/space-time-pattern-mining/learnmoreemerging.htm) of sfdep package. It takes a spacetime object x (i.e. vr_st), and the quoted name of the variable of interest (i.e. Vaccination_Rate) for .var argument. The k argument is used to specify the number of time lags which is set to 1 by default. Lastly, nsim map numbers of simulation to be performed(we will be performing 100).
+
+```{r}
+ehsa <- emerging_hotspot_analysis(
+  x = vr_st, 
+  .var = "Vaccination_Rate", 
+  k = 1, 
+  nsim = 99
+)
+```
+
+### 7.2.1 Visualising the distribution of EHSA classes
+
+In the code chunk below, [ggplot2](https://ggplot2.tidyverse.org/) functions is used to reveal the distribution of EHSA classes as a bar chart.
+
+```{r}
+ggplot(data = ehsa,
+       aes(x = classification)) +
+  geom_bar()
+```
+
+Below is a table explaining what each class means.
+
+| EHSA Class Name      | Definition                                                                                                                                                                                                                                                                                                                 |
+|----------------------|--------------------------------------------------|
+| Oscillating coldspot | A statistically significant cold spot for the final time-step interval that has a history of also being a statistically significant hot spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant cold spots.                                                     |
+| Oscillating hotspot  | A statistically significant hot spot for the final time-step interval that has a history of also being a statistically significant cold spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant hot spots.                                                      |
+| Sporadic cold spot   | A statistically significant cold spot for the final time-step interval with a history of also being an on-again and off-again cold spot. Less than 90 percent of the time-step intervals have been statistically significant cold spots and none of the time-step intervals have been statistically significant hot spots. |
+
+source: [esri](https://pro.arcgis.com/en/pro-app/latest/tool-reference/space-time-pattern-mining/learnmoreemerging.htm#:~:text=Oscillating%20Hot%20Spot,been%20statistically%20significant%20hot%20spots.)
+
+### 7.2.2 Visualising EHSA
+
+Before we can visualise EHSA, we need to join both copy_cjkt_df and ehsa together by using the code chunk below.
+
+```{r}
+cjkt_ehsa <- copy_cjkt_df %>%
+  left_join(ehsa,
+            by = c("Sub_District" = "location"))
+
+```
+
+The code chunk below plots a categorical choropleth map for the significant(p-value\<0.05) locations using tmap functions.
+
+```{r}
+ehsa_sig <- cjkt_ehsa  %>%
+  filter(p_value < 0.05)
+
+tmap_mode("plot")
+tm_shape(cjkt_ehsa) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(ehsa_sig) +
+  tm_fill("classification") + 
+  tm_borders(alpha = 0.4) + 
+  tm_layout(
+     main.title="Significant Classifications of EHSA",
+     main.title.size = 0.7)
+```
+
+### 7.2.3 Statistical Conclusion
+
+Based on the graph visualising **the distribution of EHSA classes**, we can observe:
+
+1.  Oscillating hot spots has the highest numbers of sub-districts in Jakarta.
+
+2.  As there is more oscillating hot spots than oscillating cold spots, it suggests that the data has an overall positive trend. This can be explained by the increasing vaccination rates across our study time period.
+
+Based on the **Significant Classifications of EHSA map**, we can observe that
+
+1.  Majority of the Oscillating hot spots tend to be spread around the central area of Jakarta.
+
+2.  Sporadic cold spots are more clustered around the central area of Jakarta.
+
+3.  Oscillating cold spots are quite spread out and tend to represent only 1 sub district
+
+4.  There seem to only be 1 sub-district in the central area where no patterns are detected.
+
+# 8. Acknowledgment
+
+To conclude, I would like to thank Prof. Kam for our IS415 Geospatial Analytics and Applications course materials & resources. I would also like to thank my seniors, [Xiao Rong Wong](https://rpubs.com/xiaorongw/IS415_Take-home_Ex02) and [Megan Sim](https://is415-msty.netlify.app/posts/2021-09-10-take-home-exercise-1/#joining-eda) as I have referenced their codes.
