@@ -1114,7 +1114,7 @@ KOJA %>%
   tidyr::unnest_wider(mk)
 ```
 
-Based on the output above, we can observe that the tau(-0.0606) is slightly negative, suggesting that the trend is increasing. The sl(0.837), which represents the p-value, is larger than our level of significance(0.05). Hence, we reject the null hypothesis as there is insufficient evidence that a trend is present in the time series data.
+Based on the output above, we can observe that the tau(-0.0606) is slightly negative, suggesting that the trend is increasing. The sl(0.837), which represents the p-value, is larger than our level of significance(0.05). Hence, we do not reject the null hypothesis as there is insufficient evidence that a trend is present in the time series data.
 
 # 7.2 Performing Emerging Hotspot Analysis
 
@@ -1157,7 +1157,7 @@ ggplot(data = ehsa,
 Below is a table explaining what each class means.
 
 | EHSA Class Name      | Definition                                                                                                                                                                                                                                                                                                                 |
-|------------------------|------------------------------------------------|
+|------------------------|-----------------------------------------------|
 | Oscillating coldspot | A statistically significant cold spot for the final time-step interval that has a history of also being a statistically significant hot spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant cold spots.                                                     |
 | Oscillating hotspot  | A statistically significant hot spot for the final time-step interval that has a history of also being a statistically significant cold spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant hot spots.                                                      |
 | Sporadic cold spot   | A statistically significant cold spot for the final time-step interval with a history of also being an on-again and off-again cold spot. Less than 90 percent of the time-step intervals have been statistically significant cold spots and none of the time-step intervals have been statistically significant hot spots. |
