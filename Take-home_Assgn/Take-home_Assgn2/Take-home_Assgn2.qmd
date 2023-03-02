@@ -96,12 +96,10 @@ The following packages will be used:
 
 -   [readxl](https://readxl.tidyverse.org/reference/read_excel.html): to import Excel worksheets(.xlsx)
 
--   [Kendall](https://cran.r-project.org/package=Kendall): for Mann-Kendall Test
-
 -   [tidyverse](https://www.tidyverse.org/): a collection of packages for data science tasks
 
 ```{r}
-pacman::p_load(sf, tmap, plotly, sfdep, readxl, kendall, tidyverse)
+pacman::p_load(sf, tmap, plotly, sfdep, readxl, tidyverse)
 ```
 
 # 3. Data Wrangling
@@ -905,73 +903,41 @@ tm_shape(psig_july2021) +
 
 ```
 
-### 6.2.1 Mapping for 4 Time Periods
+### 6.2.1 Mapping for All Time Periods
 
-To compare the hot and cold spot over our study period, I will break the period into 4 quarters which are July 2021, October 2021, February 2022, June 2022.
+The code chunk below creates a function called gi_plot() which takes in a date value and display the respective maps.
 
 ```{r}
-# july 2021
-psig_july <- combined_cjkt_gi_stars  %>%
+gi_plot <- function(date) {
+  psig <- combined_cjkt_gi_stars  %>%
   #filter significant values(<0.05) and the according date
   filter(p_sim < 0.05 & Date == '2021-07-01')
 
-#tmap_mode("plot")
-hcs_july2021<- tm_shape(combined_cjkt_gi_stars) +
-  tm_polygons() +
-  tm_borders(alpha = 0.5) +
-tm_shape(psig_july) +
-  tm_fill("gi_star") + 
-  tm_borders(alpha = 0.4) +
-   tm_layout(
-     main.title="Hot and Cold Spot Areas of Vaccination Rates in July 2021",
-     main.title.size = 0.5)
+    tmap_mode("plot")
+    hcs<- tm_shape(combined_cjkt_gi_stars) +
+      tm_polygons() +
+      tm_borders(alpha = 0.5) +
+    tm_shape(psig) +
+    tm_fill("gi_star") + 
+    tm_borders(alpha = 0.4) +
+     tm_layout(
+       main.title=paste("Hot and Cold Spot Areas of Vaccination Rates in",date),
+       main.title.size = 0.6)
 
-# october 2021
-psig_oct <- combined_cjkt_gi_stars  %>%
-  #filter significant values(<0.05) and the according date
-  filter(p_sim < 0.05 & Date == '2021-10-01')
+}
+```
 
-hcs_oct2021 <-tm_shape(combined_cjkt_gi_stars) +
-  tm_polygons() +
-  tm_borders(alpha = 0.5) +
-tm_shape(psig_oct) +
-  tm_fill("gi_star") + 
-  tm_borders(alpha = 0.4) +
-   tm_layout(
-     main.title="Hot and Cold Spot Areas of Vaccination Rates in October 2021",
-     main.title.size = 0.5)
+```{r}
+tmap_arrange(gi_plot("2021-07-01"), gi_plot("2021-08-01"))
 
-#february 2022
-psig_feb <- combined_cjkt_gi_stars  %>%
-  #filter significant values(<0.05) and the according date
-  filter(p_sim < 0.05 & Date == '2022-02-01')
+```
 
-hcs_feb2022<- tm_shape(combined_cjkt_gi_stars) +
-  tm_polygons() +
-  tm_borders(alpha = 0.5) +
-tm_shape(psig_feb) +
-  tm_fill("gi_star") + 
-  tm_borders(alpha = 0.4) +
-   tm_layout(
-     main.title="Hot and Cold Spot Areas of Vaccination Rates in February 2022",
-     main.title.size = 0.5)
-
-# june 2022
-psig_june <- combined_cjkt_gi_stars  %>%
-  #filter significant values(<0.05) and the according date
-  filter(p_sim < 0.05 & Date == '2022-06-01')
-
-hcs_june2022 <- tm_shape(combined_cjkt_gi_stars) +
-  tm_polygons() +
-  tm_borders(alpha = 0.5) +
-tm_shape(psig_june) +
-  tm_fill("gi_star") + 
-  tm_borders(alpha = 0.4) +
-   tm_layout(
-     main.title="Hot and Cold Spot Areas of Vaccination Rates in June 2022",
-     main.title.size = 0.5)
-
-tmap_arrange(hcs_july2021,hcs_oct2021,hcs_feb2022,hcs_june2022)
+```{r}
+tmap_arrange(gi_plot("2021-09-01"), gi_plot("2021-10-01"))
+tmap_arrange(gi_plot("2021-11-01"), gi_plot("2021-12-01"))
+tmap_arrange(gi_plot("2022-01-01"), gi_plot("2022-02-01"))
+tmap_arrange(gi_plot("2022-03-02"), gi_plot("2022-04-01"))
+tmap_arrange(gi_plot("2022-05-01"), gi_plot("2022-06-01"))
 ```
 
 The code chunk below creates a function to check the sub-district with the highest and lowest siginificant gi\* value for July 2021, October 2021, February 2022, June 2022.
@@ -1189,7 +1155,7 @@ ggplot(data = ehsa,
 Below is a table explaining what each class means.
 
 | EHSA Class Name      | Definition                                                                                                                                                                                                                                                                                                                 |
-|-----------------------|-------------------------------------------------|
+|-----------------------|------------------------------------------------|
 | Oscillating coldspot | A statistically significant cold spot for the final time-step interval that has a history of also being a statistically significant hot spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant cold spots.                                                     |
 | Oscillating hotspot  | A statistically significant hot spot for the final time-step interval that has a history of also being a statistically significant cold spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant hot spots.                                                      |
 | Sporadic cold spot   | A statistically significant cold spot for the final time-step interval with a history of also being an on-again and off-again cold spot. Less than 90 percent of the time-step intervals have been statistically significant cold spots and none of the time-step intervals have been statistically significant hot spots. |
