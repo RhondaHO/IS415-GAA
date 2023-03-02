@@ -905,7 +905,7 @@ tm_shape(psig_july2021) +
 
 ### 6.2.1 Mapping for All Time Periods
 
-The code chunk below creates a function called gi_plot() which takes in a date value and display the respective maps.
+The code chunk below creates a function called gi_plot() which takes in a date value and display the respective maps for that specific date with the gi\* values that is significant.
 
 ```{r}
 gi_plot <- function(date) {
@@ -1155,7 +1155,7 @@ ggplot(data = ehsa,
 Below is a table explaining what each class means.
 
 | EHSA Class Name      | Definition                                                                                                                                                                                                                                                                                                                 |
-|-----------------------|------------------------------------------------|
+|------------------------|------------------------------------------------|
 | Oscillating coldspot | A statistically significant cold spot for the final time-step interval that has a history of also being a statistically significant hot spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant cold spots.                                                     |
 | Oscillating hotspot  | A statistically significant hot spot for the final time-step interval that has a history of also being a statistically significant cold spot during a prior time step. Less than 90 percent of the time-step intervals have been statistically significant hot spots.                                                      |
 | Sporadic cold spot   | A statistically significant cold spot for the final time-step interval with a history of also being an on-again and off-again cold spot. Less than 90 percent of the time-step intervals have been statistically significant cold spots and none of the time-step intervals have been statistically significant hot spots. |
