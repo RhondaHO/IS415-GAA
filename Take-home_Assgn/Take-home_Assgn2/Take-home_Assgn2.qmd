@@ -905,15 +905,17 @@ tm_shape(psig_july2021) +
 
 ### 6.2.1 Mapping for All Time Periods
 
-The code chunk below creates a function called gi_plot() which takes in a date value and display the respective maps for that specific date with the gi\* values that is significant.
+The code chunk below creates a function called gi_plot() which takes in a date value and displays the respective maps for that specific date with the gi\* values that is significant.
 
 ```{r}
+tmap_mode("plot")
+
 gi_plot <- function(date) {
   psig <- combined_cjkt_gi_stars  %>%
   #filter significant values(<0.05) and the according date
-  filter(p_sim < 0.05 & Date == '2021-07-01')
+  filter(p_sim < 0.05 & Date == date)
 
-    tmap_mode("plot")
+    
     hcs<- tm_shape(combined_cjkt_gi_stars) +
       tm_polygons() +
       tm_borders(alpha = 0.5) +
@@ -980,15 +982,15 @@ get_significant_locations("2022-06-01")
 
 ### 6.2.3 Statistical Conclusion
 
-1.  Based on our maps, areas colored "red" are significant hot spots, while areas colored "green" are significant cold spots.
+1.  Based on our maps, areas colored greenish are significant hot spots, while areas colored orange to reddish are significant cold spots.
 
-2.  Overall, we can observe that there is spatial clustering in our data. From July 2021 to June 2022, the no. of hot and cold spot areas have changed and that the intensity of Gi\* value has changed. The lowest range of Gi\* value decreased from range -4 to -2 to range -8 to -6.
+2.  Overall, we can observe that there is spatial clustering in our data. From July 2021 to June 2022, the intensity of Gi\* value has changed. The lowest range of Gi\* value decreased from range -4 to -2 to range -8 to -6.
 
-3.  In October 2021, there is an unusual large number of hot and cold spots which signifies 5 significant clusters of hot spot areas with values higher than average and 7 significant clustersof cold spot areas with values lower than average.
+3.  In October 2021, there are unusually highly significant 7 hot and 5 cold spots.
 
-4.  Hot Spots Analysis: The distribution of the hots pots started from 6 clusters (most of it was around the eastern side of Jakarta) to only 1 cluster in the middle of Jakarta from July 2021 to June 2022.
+4.  Hot Spots Analysis: From July 2021 to June 2022, the distribution of the hot spots started from 6 clusters (most of it was around the northern central side of Jakarta) and remained with 6 clusters at the end but it shifted downwards to the southern side of Jakarta. By June 2022, the most significant cluster was the the south-west section of Jakarta.
 
-5.  Cold Spots Analysis: The distribution of the cold spots appeared randomly and shifted towards the southern area of Jakarta from July 2021 to June 2022.
+5.  Cold Spots Analysis: The distribution of the cold spots started from 6 clusters and ended with 4 clusters. Besides the most significant cluster which mainly stayed in the middle of Jakarta, the other clusters started to shift from central area to the outer corners of Jakarta.
 
 6.  We can also see that the number of significant sub-districts increased from 52 (July 2021) to 55 (October 2021) and then decreased to 47 (June 2021) and this aligns with the changes in the number of hot and cold spot areas.
 
