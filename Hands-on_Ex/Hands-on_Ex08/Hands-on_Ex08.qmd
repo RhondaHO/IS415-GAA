@@ -3,7 +3,7 @@ title: "Hands-on Ex 8: Calibrating Hedonic Pricing Model for Private Highrise Pr
 
 title-block-banner: true
 
-date: "6 marcg 2023" 
+date: "6 march 2023" 
 date-modified: last-modified 
 author: "Rhonda Ho Kah Yee"
 
@@ -19,8 +19,6 @@ execute:
 
 editor: visual
 ---
-
-# Global Local Measures of Spatial Autocorrelation
 
 ## 13.1 Overview
 
