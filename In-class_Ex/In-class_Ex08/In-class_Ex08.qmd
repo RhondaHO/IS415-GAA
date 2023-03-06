@@ -1,9 +1,9 @@
 ---
-title: "In-class Ex 7"
+title: "In-class Ex 8"
 
 title-block-banner: true
 
-date: "6 february 2023" 
+date: "6 march 2023" 
 date-modified: last-modified 
 author: "Rhonda Ho Kah Yee"
 
@@ -20,213 +20,73 @@ execute:
 editor: visual
 ---
 
+Notes on takehome ex2
+
+```{r}
+# timeline map should make 1 legend outside
+
+#increase fig width
+#| fig-width: 10
+```
+
 # Getting Started
 
 ```{r}
-pacman::p_load(sf, sfdep, tmap, tidyverse)
+pacman::p_load(readr,dplyr,vctrs, olsrr, corrplot, ggpubr, sf, spdep, GWmodel, tmap, tidyverse, gtsummary)
+
+#for corrplot, advised not to load it in first and to install seperately as it has conflicts with tidyverse  
+
+# when needed can write like this
+#corrplot::corrplot(cor(condo_resale[, 5:23]), diag = FALSE, order = "AOE",
+#         tl.pos = "td", tl.cex = 0.5, method = "number", type = "upper")
+
+# but i added readr,dplyr,vctrs to resolve the loading issue during the handson ex
 ```
 
 # Importing the Data
 
+## Geospatial Data
+
 ```{r}
-hunan <- st_read(dsn = "data/geospatial", 
-                 layer = "Hunan") 
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
 
-hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
-#head(hunan,5) colnames(hunan2012)
+#update crs
+mpsz_svy21 <- st_transform(mpsz, 3414)
 
-hunan_GDPC <- left_join(hunan,hunan2012)%>%
-  select(1:4, 7, 15)
+st_bbox(mpsz_svy21) #view extent
 ```
 
-```{r}
-wm_q <- hunan_GDPC %>%
-  mutate(nb= st_contiguity(geometry),
-         wt = st_weights(nb,
-                         style="W"), 
-                          #W refers to row standardisation
-         .before=1)
-```
-
-**Computing global moran'I** (redundant step)
+## Aspatial Data
 
 ```{r}
-moranI <- global_moran(wm_q$GDPPC,
-                       wm_q$nb,
-                       wm_q$wt)
-```
-
-**Performing global moran'I test** -\> gives test results and statistics
-
-```{r}
-global_moranI <- global_moran_test(wm_q$GDPPC,
-                       wm_q$nb,
-                       wm_q$wt)
-
-global_moranI
-```
-
-p-value = 1.095e-06 less that 0.05,
-
-```{r}
-global_moranI$I
-
-global_moranI$K
-```
-
-We should set a seed number to make our results reproducible.
-
-```{r}
-
-set.seed(1234)
-```
-
-**Performing global moran'I test with permutations** The code chunk below intends to run 100 simulations (total simulations = 1+ nsim=99).
-
-```{r}
-# with permutations, 
-
-global_moran_perm(wm_q$GDPPC,
-                       wm_q$nb,
-                       wm_q$wt,
-                  nsim=99)
-```
-
-It shows 2 sided because it is a large sample test.
-
-**Computing Local Moran'I**
-
-```{r}
-lisa <- wm_q %>% 
-  mutate(local_moran =local_moran(
-    GDPPC, nb, wt, nsim=99),
-    .before=1)%>%
-  unnest(local_moran) 
-  #need to unnest the list to be able to use the values
-
-lisa
-
-#z ii is standardised
-# p ii is the permutations
-
-# This step is helpful as we dont hve to manually integrate like we did in the handson exercise (handson ex7 steps 10.7.3 - qunadrant <- vector....)
-
-#general way: mean and pysal(python lib that does the same thing as finding the mean) should be the same
-
-#can use the mean for the takehome assgn , dont hve worry about the median and pysal (feel free to explore)
-
-```
-
-```{r}
-tmap_mode("plot")
-tm_shape(lisa) +
-  tm_fill("p_ii_sim") + #using the simulations is btr than p_ii cos results will be more stable
-  tm_borders(alpha=0.5)
-  #tm_view(set.zoom.limits=c(6,8))
-```
-
-```{r}
-# takehome assgn should use gstar instead of lisa 
-
-lisa_sig <-lisa %>%
-  filter(p_ii<0.05)
-
-tmap_mode("plot")
-tm_shape(lisa) +
-  tm_polygons() + 
-  tm_borders(alpha=0.5)+
-
-tm_shape(lisa_sig) +
-  tm_fill("mean") + 
-  tm_borders(alpha=0.4)
-  #tm_view(set.zoom.limits=c(6,8))
-
-```
-
-Computing local Moran's I
-
-```{r}
-HCSA <- wm_q %>%
-  mutate(local_Gi = local_gstar_perm(
-    GDPPC, nb, wt, nsim=99),
-    .before=1) %>%
-  unnest(local_Gi)
-
-HCSA
-```
-
-```{r}
-tmap_mode("plot")
-tm_shape(HCSA) +
-  tm_fill("p_sim") +
-  tm_borders(alpha=0.05)
-
-# need to make sure to be able to see the significance level
-```
-
-```{r}
-
-# GDPPC_nb <- GDPPC_st %>% 
-  #activate("geometry") %>%
-  #mutate(
-   # nb = include_self(st_continuity(geometry)),
-    #wt = st_weights(nb)
-  #) %>%
-  #set_nbs("nb") %>%
-  #set_wts("wt")
-
-```
-
-```{r}
+condo_resale = read_csv("data/aspatial/Condo_resale_2015.csv")
 
 
 ```
 
 ```{r}
-
-hunan <- st_read(dsn = "data/geospatial", 
-                 layer = "Hunan")
-
-GDPPC <- read_csv("data/aspatial/Hunan_GDPPC.csv")
-
+# to check for excessive no. of 0, check the spread to determine whether we can use the variable (cannot use if min median mean ALL 0 or ALL same value)
+summary(condo_resale)
 ```
 
+**Converting aspatial data frame into a sf object**
+
 ```{r}
-GDPPC_st <- spacetime(GDPPC, hunan,
-                      .loc_col = "County",
-                      .time_col = "Year")
+condo_resale.sf <- st_as_sf(condo_resale,
+                            coords = c("LONGITUDE", "LATITUDE"),
+                            crs=4326) %>%
+  st_transform(crs=3414)
 ```
 
-```{r}
-is_spacetime_cube(GDPPC_st)
-```
+Save entire model into condo.mlr . Note that condo.mlr is an lm object (contains all impt variables for least square model).
 
 ```{r}
-glimpse(GDPPC)
-class(GDPPC$Year)
-typeof(GDPPC$Year)
-```
-
-```{r}
-GDPPC_nb <- GDPPC_st %>%
-  activate("geometry") %>%
-  mutate(nb = include_self(st_contiguity(geometry)),
-         wt = st_inverse_distance(nb, geometry,
-                                  scale = 1,
-                                  alpha = 1),
-         .before = 1) %>%
-  set_nbs("nb") %>%
-  set_wts("wt")
-
-gi_stars <- GDPPC_nb %>% 
-  group_by(Year) %>% 
-  mutate(gi_star = local_gstar_perm(
-    GDPPC, nb, wt)) %>% 
-  tidyr::unnest(gi_star)
-
-
-cbg <- gi_stars %>% 
-  ungroup() %>% 
-  filter(County == "Changsha") |> 
-  select(County, Year, gi_star)
+condo.mlr <- lm(formula = SELLING_PRICE ~ AREA_SQM + AGE    + 
+                  PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE +
+                  PROX_URA_GROWTH_AREA + PROX_HAWKER_MARKET + PROX_KINDERGARTEN + 
+                  PROX_MRT  + PROX_PARK + PROX_PRIMARY_SCH + 
+                  PROX_TOP_PRIMARY_SCH + PROX_SHOPPING_MALL + PROX_SUPERMARKET + 
+                  PROX_BUS_STOP + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, 
+                data=condo_resale.sf)
+summary(condo.mlr)
 ```
