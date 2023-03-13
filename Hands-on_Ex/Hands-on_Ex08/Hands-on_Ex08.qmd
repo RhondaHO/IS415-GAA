@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Ex 8: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Methodn"
+title: "Hands-on Ex 8: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method"
 
 title-block-banner: true
 
