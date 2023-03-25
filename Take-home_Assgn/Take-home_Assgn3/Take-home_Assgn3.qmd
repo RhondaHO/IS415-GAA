@@ -1,0 +1,645 @@
+---
+title: "Take-home Assignment 3: Predicting HDB Public Housing Resale Pricies using Geographically Weighted Methods"
+
+title-block-banner: true
+
+date: "9 March 2023"
+date-modified: last-modified
+author: "Rhonda Ho Kah Yee"
+
+format:
+  html:
+      code-fold: true
+      code-tools: true
+
+execute: 
+  message: false
+  warning: false
+  
+
+editor: visual
+---
+
+# Overview
+
+Hello! This is Rhonda Ho's take-home Assignment 3 for IS415 module.
+
+To view/hide all the code at once, please click on the "\</\> code" tab beside the title of this html document and select the option to view/hide the code.
+
+The full details of this assignment can be found [here](https://is415-ay2022-23t2.netlify.app/th_ex3.html).
+
+## Task
+
+In this take-home exercise, I am tasked to predict HDB resale prices at the sub-market level (i.e. HDB 3-room, HDB 4-room and HDB 5-room) for the month of January and February 2023 in Singapore. The predictive models must be built by using by using conventional OLS method and GWR methods. I am also required to compare the performance of the conventional OLS method versus the geographical weighted methods.
+
+## The Data
+
+| Dataset                                                                                                                                                                            | Description                                      | File Format |
+|----------------------|--------------------------------|------------------|
+| [Master Plan 2019 Region Boundary (No Sea) (KML)](https://dataportal.asia/dataset/203030733_master-plan-2019-region-boundary-no-sea/resource/338757d4-16b7-4c4f-a7ab-9f327bbf0dde) |                                                  | .kml        |
+| [Resale Flat Prices](https://data.gov.sg/dataset/resale-flat-prices)                                                                                                               | HDB resale flat prices from January 2017 onwards | .           |
+| [Bus Stop Location](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=bus%20stop)                                                                    |                                                  |             |
+| [Train Station](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=Train)                                                                             |                                                  |             |
+| [School Directory and Information](https://data.gov.sg/dataset/school-directory-and-information)                                                                                   | Used General Information of School dataset       |             |
+| Child Care Services                                                                                                                                                                | Extracted via onemapAPI                          |             |
+| Eldercare Services                                                                                                                                                                 | Extracted via onemapAPI                          |             |
+| Hawker Centres                                                                                                                                                                     | Extracted via onemapAPI                          |             |
+| Kindergarterns                                                                                                                                                                     | Extracted via onemapAPI                          |             |
+| Parks                                                                                                                                                                              | Extracted via onemapAPI                          |             |
+| [Supermarket](https://data.gov.sg/dataset/supermarkets)                                                                                                                            |                                                  |             |
+| [Shopping Malls](https://github.com/ValaryLim/Mall-Coordinates-Web-Scraper)                                                                                                        |                                                  |             |
+
+## Tasks
+
+In this take-home exercise, we are tasked to predict HDB resale prices at the sub-market level (i.e. HDB 3-room, HDB 4-room and HDB 5-room) for the month of January and February 2023 in Singapore. The predictive models must be built by using by using conventional OLS method and GWR methods. You are also required to compare the performance of the conventional OLS method versus the geographical weighted methods.
+
+# Getting Started
+
+The following packages will be used:
+
+-   [sf](https://r-spatial.github.io/sf/): to import, manage, and process geospatial data
+
+-   [tmap](https://cran.r-project.org/web/packages/tmap/): provides functions for plotting cartographic quality static point patterns maps or interactive maps
+
+-   [plotly](https://cran.r-project.org/package=plotly): for creating interactive web-based graphs
+
+-   [sfdep](https://cran.r-project.org/web/packages/sfdep/): for spatial dependence of simple features
+
+-   [readxl](https://readxl.tidyverse.org/reference/read_excel.html): to import Excel worksheets(.xlsx)
+
+-   [tidyverse](https://www.tidyverse.org/): a collection of packages for data science tasks
+
+```{r}
+pacman::p_load(readxl, sf, tidyverse, tmap, sfdep, gifski, httr, jsonlite, onemapsgapi, rvest,readxl )
+```
+
+# Importing Data and Wrangling
+
+## Aspatial Data
+
+### Resale Flat Prices
+
+```{r}
+resale <- read_csv("data/aspatial/resale-flat-prices-based-on-registration-date-from-jan-2017-onwards.csv")
+
+glimpse(resale)
+```
+
+Having a glimpse of our data, we can observe that this dataset has a total of 11 columns and 149071 rows. The columns consist of month, town, flat_type, block, street_name, storey_range, floor_area_sqm, flat_model, lease_commence_date, remaining_lease, resale_price.
+
+For this assignment, the dataset will focus on:
+
+-   Transaction period: October 2022 to February 2023
+
+-   Training dataset period: October 2022 to December 2023
+
+-   Test dataset period: October 2022 to December 2023
+
+-   Type of rook flat: 5-room flats
+
+The code chunk filters our dataset accordingly.
+
+```{r}
+resale<- resale %>% 
+  filter(flat_type == "5 ROOM") %>%
+  filter(month >= "2022-10" & month < "2023-02")
+```
+
+Based on my [senior's](https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/?panelset1=extracted2&panelset2=base3&panelset3=base4&panelset=base&panelset4=sg) experience, "ST." is usually written as "SAINT" instead - for example, St. Luke's Primary School is written as Saint Luke's Primary School. To address, this, we'll replace such occurrences:
+
+```{r}
+resale$street_name <- gsub("ST\\.", "SAINT", resale$street_name)
+```
+
+Subsequently, as our dataset is missing the coordinates for the location, I created a function, `geocode()`, which calls onemapAPI to retrieve the geometry of each location.
+
+```{r}
+#library(httr)
+geocode <- function(block, streetname) {
+  base_url <- "https://developers.onemap.sg/commonapi/search"
+  address <- paste(block, streetname, sep = " ")
+  query <- list("searchVal" = address, 
+                "returnGeom" = "Y",
+                "getAddrDetails" = "N",
+                "pageNum" = "1")
+  
+  res <- GET(base_url, query = query)
+  restext<-content(res, as="text")
+  
+  output <- fromJSON(restext)  %>% 
+    as.data.frame %>%
+    select(results.LATITUDE, results.LONGITUDE)
+
+  return(output)
+}
+
+```
+
+While exploring the [API](https://app.swaggerhub.com/apis/onemap-sg/new-onemap-api/1.0.4#/OneMap%20REST%20APIs/search), I realised that the best search parameter would be to combine the column block with its street_name. Thus, the function `geocode()` takes in both the block and street name .
+
+```{r}
+#| eval: false
+
+resale$LATITUDE <- 0
+resale$LONGITUDE <- 0
+
+for (i in 1:nrow(resale)){
+  temp_output <- geocode(resale[i, 4], resale[i, 5])
+  
+  resale$LATITUDE[i] <- temp_output$results.LATITUDE
+  resale$LONGITUDE[i] <- temp_output$results.LONGITUDE
+}
+```
+
+To reuse the resale dataset, without calling the API, I saved it into a rds file.
+
+```{r}
+#| eval: false
+write_rds(resale, "data/rds/resale.rds")
+```
+
+```{r}
+resale_rds<-readRDS("data/rds/resale.rds")
+```
+
+#### Structural Data
+
+##### Floor Level
+
+let's first take a look at the storey_range values
+
+```{r}
+unique(resale_rds$storey_range)
+```
+
+To use this in our model, we need to perform dummy coding on it. Based on the unique values, there are 17 storey range categories. pivot_wider() is then used to create duplicate variables representing every storey range, with the value being 1 if the observation belongs in said storey range, and 0 if otherwise.
+
+```{r}
+resale_rds <- resale_rds %>%
+  pivot_wider(names_from = storey_range, values_from = storey_range, 
+              values_fn = list(storey_range = ~1), values_fill = 0) 
+```
+
+##### Remaining Lease
+
+Currently, the remaining_lease is in string format but we need it to be numeric. Thus, we need to split the string into month and year and then replace the original values with the calculated value of the remaining lease in years.
+
+```{r}
+#e.g of resale$remaining_lease - 53 years 10 months
+str_list <- str_split(resale_rds$remaining_lease, " ")
+
+#after spliting, [53, years, 10, months]
+for (i in 1:length(str_list)){
+  if (length(unlist(str_list[i])) > 2) {
+      year <- as.numeric(unlist(str_list[i])[1])
+      month <- as.numeric(unlist(str_list[i])[3])
+      resale_rds$remaining_lease[i] <- year + round(month/12, 2)
+  }
+  else {
+    year <- as.numeric(unlist(str_list[i])[1])
+    resale_rds$remaining_lease[i] <- year
+  }
+}
+```
+
+##### Age of Unit
+
+To get the age of the unit, I decided to take the current year i.e 2023 and minus the lease commence date year of the the unit.
+
+```{r}
+str_list <- resale_rds$lease_commence_date
+
+for (i in 1:length(str_list)){
+    resale_rds$lease_commence_date[i] <- 2023 -
+      resale_rds$lease_commence_date[i]
+}
+```
+
+Finally, we can convert it into a sf.
+
+```{r}
+resale_sf <- st_as_sf(resale_rds, 
+                      coords = c("LONGITUDE", 
+                                 "LATITUDE"), 
+                      crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+### Primary School
+
+While searching for a dataset for primary school locations, i've crossed upon this dataset from [data.gov.sg](https://data.gov.sg/) which has the general information of schools in Singapore. By filtering out `themainlevel_code` which represents the different types of schools to be Primary, i will be able to extract out the address and postal codes of primary schools in Singapore.
+
+```{r}
+primary_school <- read_csv("data/aspatial/general-information-of-schools.csv")
+
+primary_school <- primary_school %>%
+  filter(mainlevel_code == "PRIMARY") %>%
+  select(school_name, address, postal_code)
+
+glimpse(primary_school)
+```
+
+Based on the output, we can observe that there are 183 primary schools in Singapore. However, in 2022, the primary school, Juying Primary School was merged together with Pioneer Primary School and it cannot be found via the API . Thus, I decided to remove it out of our data.
+
+```{r}
+primary_school<-primary_school %>%  
+  filter(school_name!='JUYING PRIMARY SCHOOL')
+```
+
+Once again, we can use geocode() function we created earlier to help us extract the geometry of each primary school by its school name.
+
+```{r}
+#| eval: false
+
+primary_school$LATITUDE <- 0
+primary_school$LONGITUDE <- 0
+
+for (i in 1:nrow(primary_school)){
+  temp_output <- geocode(primary_school[i, 1],"")
+
+  primary_school$LATITUDE[i] <- temp_output$results.LATITUDE
+  primary_school$LONGITUDE[i] <- temp_output$results.LONGITUDE
+}
+```
+
+To reuse the primary school data without recalling the API, I saved it in an rds file.
+
+```{r}
+#| eval: false
+write_rds(primary_school, "data/rds/primary_school.rds")
+```
+
+```{r}
+primary_school_rds<-readRDS("data/rds/primary_school.rds")
+```
+
+Next, we can convert our df into a sf.
+
+```{r}
+primary_school_sf <- st_as_sf(primary_school_rds,
+                    coords = c("LONGITUDE", 
+                               "LATITUDE"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+However, besides this, we need to determine what is a good primary school (which is necessary for 1 of our tasks). Based on the assumption that a good primary school is a popular one, I picked out the top 10 popular primary schools, referencing its popularity from this [website](https://schoolbell.sg/primary-school-ranking/).
+
+```{r}
+popular_primary_schools <-c("Pei Hwa Presbyterian Primary School",
+                            "Gongshang Primary School",
+                            "Riverside Primary School",
+                            "Red Swastika School",
+                            "Punggol Green Primary School",
+                            "Princess Elizabeth Primary School",
+                            "Westwood Primary School",
+                            "St. Hilda’s Primary School",
+                            "Catholic High School (Primary Section)",
+                            "Ai Tong School")
+popular_primary_schools
+```
+
+Next, I need to check whether the top 10 most popular primary schools can be found in the primary school data i extracted earlier. But before that, to make things consistent, I used lapply() function and make the schools names I picked out from the website to be all in uppercase.
+
+```{r}
+#make school names all uppercase
+popular_primary_schools <- lapply(popular_primary_schools, toupper) 
+
+# to check both primary school datasets matches
+popular_primary_schools_sf <- primary_school_sf %>%
+  filter(school_name %in% popular_primary_schools)
+```
+
+```{r}
+nrow(popular_primary_schools_sf)
+```
+
+Based on the output above, out of the 10 primary schools, only 8 can be found. The code chunk below tells us which primary schools are missing.
+
+```{r}
+unique(popular_primary_schools[!(popular_primary_schools %in% popular_primary_schools_sf$school_name)])
+```
+
+Looking further into our dataset, I found out that in the original primary school dataset, the schools names of the output above is written different. For eg, CANOSSA CATHOLIC PRIMARY SCHOOL is the same as CATHOLIC HIGH SCHOOL (PRIMARY SECTION). Thus, I decided to use rbind() function to manually add both records to popular_primary_schools_sf.
+
+```{r}
+popular_primary_schools_sf <- popular_primary_schools_sf %>%
+  rbind(primary_school_sf %>% filter(school_name == "CANOSSA CATHOLIC PRIMARY SCHOOL"))
+
+popular_primary_schools_sf <- popular_primary_schools_sf %>%
+  rbind(primary_school_sf %>% filter(school_name == "ST. HILDA'S PRIMARY SCHOOL"))
+```
+
+```{r}
+nrow(popular_primary_schools_sf)
+```
+
+### Shopping Mall
+
+For shopping malls, I used the dataset extracted by [Valery Lim](https://github.com/ValaryLim/Mall-Coordinates-Web-Scraper) who webscrapped the shopping malls data from its [wikipedia](https://en.wikipedia.org/wiki/List_of_shopping_malls_in_Singapore) in 2019.
+
+```{r}
+shopping_mall <- read.csv("data/aspatial/mall_coordinates_updated.csv")
+
+shopping_mall <- shopping_mall %>%
+  select(name, latitude, longitude)
+
+glimpse(shopping_mall)
+```
+
+Taking a glimpse in our data, there is a total of 184 shopping malls in 2019.
+
+Next, the code chunk below transforms our data with the correct Singapore coordinates system.
+
+```{r}
+shopping_mall_sf <- st_as_sf(shopping_mall,
+                        coords = c("longitude",
+                                   "latitude"),
+                        crs = 4326) %>%
+  st_transform(crs = 3414)
+```
+
+## Data Pre-processing
+
+Under this section, we will check for:
+
+-   missing values
+
+-   check correct coordinates system
+
+-   check for invalid geometries
+
+-   remove unnecessary columns
+
+### Missing Values
+
+For resale_sf:
+
+```{r}
+
+sum(is.na(resale_rds))
+sum(is.na(shopping_mall_sf))
+sum(is.na(primary_school_sf))
+sum(is.na(popular_primary_schools_sf))
+
+
+#st_crs(resale_sf)
+```
+
+::: panel-tabset
+## resale_sf
+
+``` r
+sum(is.na(resale_rds))
+```
+
+## shopping_mall_sf
+
+``` r
+sum(is.na(shopping_mall_sf))
+```
+
+## primary_school_sf
+
+``` r
+sum(is.na(primary_school_sf))
+```
+
+## popular_primary_schools_sf
+
+``` r
+sum(is.na(popular_primary_schools_sf))
+```
+:::
+
+We can observe that we have no missing values.
+
+## Geospatial Data
+
+### Master Plan 2019 Boundary
+
+The code chunk below retrieves the geospatial polygon data for Singapore's region in 2019.
+
+```{r}
+mpsz <- st_read(dsn="data/geospatial/MP14_SUBZONE_WEB_PL.kml") %>%
+  st_transform(crs = 3414)
+```
+
+### Locational Factors Extracted via onemapAPI token
+
+For some of the locational factors, I will be utilising onemapAPI to retrieve its geometry data.
+
+One method I discovered was the usage of a token to retrieve geometry of locational factors based on its related theme.
+
+But before we can proceed on, we need to register for account [here](https://www.onemap.gov.sg/docs/#register-free-account) and retrieve the token.
+
+#:\| eval: false
+
+```{r}
+#| eval: false
+token <- get_token("user@example.com", "password")
+```
+
+```{r}
+#| eval: false
+#rmb to take out my token, should be hidden for security purposes
+token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDc2LCJ1c2VyX2lkIjoxMDA3NiwiZW1haWwiOiJyaGt5MjAwMEBnbWFpbC5jb20iLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiaHR0cDpcL1wvb20yLmRmZS5vbmVtYXAuc2dcL2FwaVwvdjJcL3VzZXJcL3Nlc3Npb24iLCJpYXQiOjE2Nzk0MTUxOTgsImV4cCI6MTY3OTg0NzE5OCwibmJmIjoxNjc5NDE1MTk4LCJqdGkiOiJhN2Q0ZjBhYjI0NmEzMjMyZjY3MWJiNjMzZTJhNzhhYSJ9.ei3qIo8LzWvrbgVOaTuyieIGMHl-g4tgFujXppFl01c"
+
+```
+
+The code chunk below helps us view the available themes. As a token is needed, I first saved the output in an rds file.
+
+```{r}
+#| eval: false
+#retrieve available themes that we can refer to
+avail_themes <-search_themes(token)
+write_rds(avail_themes, "data/rds/available_themes.rds")
+```
+
+By reading the according file, I sorted the themes in alphabetical order, for easier reference.
+
+```{r}
+#read the file for available themes
+avail_themes<-readRDS("data/rds/available_themes.rds")
+
+#sort by alphabetical order
+avail_themes<-avail_themes[order(avail_themes$THEMENAME),]
+avail_themes
+```
+
+Looking through the available themes from onemapapi, some of the themes relevant to our tasks is:
+
+| Theme Name                                                                                                    | Query Name       |
+|------------------------------------------------|------------------------|
+| Child Care Services                                                                                           | childcare        |
+| Eldercare Services                                                                                            | eldercare        |
+| Hawker Centres_New (Note: there are other similar themes such as Hawker Centres and Healthier Hawker Centres) | hawkercentre_new |
+| Kindergartens                                                                                                 | kindergartens    |
+| Parks (Note: there are other similar themes such as Parks\@SG and NParks Parks and Nature Reserves)           | nationalparks    |
+
+For the following code chunks, I created a shapefile for each locational factor I am interested in.
+
+The steps taken are:
+
+1.  Retrieve data such as the geometry and name of the place/amenity by using onemap's get_theme() function which takes in a theme (i.e query name) and the store the data in a df
+
+2.  Convert the df to a sf object by using the st_as_sf() function
+
+3.  Transform crs information to [Singapore coordinates system](https://epsg.io/3414) i.e 3414 by using st_transform() function
+
+4.  Write to a shapefile using st_write() function
+
+::: panel-tabset
+## Childcare
+
+``` r
+#| eval: false
+#theme: childcare
+
+#retrieve the data such as the geometry and name  accordingly to the theme
+childcare_tibble <- get_theme(token, "childcare")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+childcare_sf <- st_as_sf(childcare_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = childcare_sf,
+         dsn = "data/geospatial",
+         layer = "childcare",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+
+## Eldercare
+
+``` r
+#| eval: false
+#theme: eldercare
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+eldercare_tibble <- get_theme(token, "eldercare")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+eldercare_sf <- st_as_sf(eldercare_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = eldercare_sf,
+         dsn = "data/geospatial",
+         layer = "eldercare",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+
+## Hawker Centres
+
+``` r
+#| eval: false
+#theme: new hawker centres
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+hawkercentre_new_tibble <- get_theme(token, "hawkercentre_new")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+hawkercentre_new_sf <- st_as_sf(hawkercentre_new_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = hawkercentre_new_sf,
+         dsn = "data/geospatial",
+         layer = "hawkercentre_new",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+
+## Kindergartens
+
+``` r
+#| eval: false
+#theme: kindergartens
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+kindergartens_tibble <- get_theme(token, "kindergartens")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+kindergartens_sf <- st_as_sf(kindergartens_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = kindergartens_sf,
+         dsn = "data/geospatial",
+         layer = "kindergartens",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+
+## Parks
+
+``` r
+#| eval: false
+#theme: parks
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+nationalparks_tibble <- get_theme(token, "nationalparks")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+nationalparks_sf <- st_as_sf(nationalparks_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = nationalparks_sf,
+         dsn = "data/geospatial",
+         layer = "nationalparks",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+:::
+
+### CBD Area
+
+For this assignment, I consider the CBD area to be in the Downtown Core so I will be using the [coordinates of Downtown Core](https://www.latlong.net/place/downtown-core-singapore-20616.html) .
+
+```{r}
+lat= c(1.287953)
+lng= c(103.851784)
+
+cbd_sf <- data.frame(lat, lng) %>%
+  st_as_sf(coords = c("lng", "lat"), crs=4326) %>%
+  st_transform(crs=3414)
+```
+
+### Supermarket
+
+```{r}
+supermarket_sf <- st_read("data/geospatial/supermarkets-geojson.geojson") 
+supermarket_sf <- supermarket_sf %>%
+  st_transform(crs = 3414)
+```
+
+### Bus Stop
+
+```{r}
+bus_stop<- st_read(dsn = "data/geospatial", layer = "BusStop")
+bus_stop_sf <- bus_stop %>%
+  st_transform(crs = 3414)
+```
+
+### MRT
+
+```{r}
+#mrt = st_read(dsn = "data/geospatial/", layer = "RapidTransitSystemStation")
+
+
+#mrt_sf <- mrt %>%
+  #st_transform(mrt, 3414)
+```
+
+## Data-Pre Processing
+
+```{r}
+
+```
+
+## Formulated Functions
+
+### Proximity Functions
+
+### Count Functions
+
+### 
