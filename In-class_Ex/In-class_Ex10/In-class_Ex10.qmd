@@ -15,6 +15,7 @@ format:
 execute: 
   message: false 
   warning: false 
+  eval: false
 
 editor: visual
 ---
@@ -69,7 +70,7 @@ Notice that for the purpose of this hands-on exercise, a constant value of 100 i
 
 ## Apsaital Data Handling and Wrangling
 
-###  Importing Distance Matrix
+### Importing Distance Matrix
 
 ```{r}
 ODMatrix <- read_csv("data/aspatial/OD_Matrix.csv", skip = 0)
@@ -87,7 +88,25 @@ distmat <- ODMatrix %>%
 ```
 
 ```{r}
+#from metres to km
 distmat_km <- as.matrix(distmat/1000)
+
+
+```
+
+### Computing Distance Matrix (Optional)
+
+```{r}
+
+eldercare_coord<- st_coordinates(eldercare)
+hexagon_coord <- st_coordinates(hexagons
+                                )
+```
+
+```{r}
+EucMatrix <- SpatialAcc::distance(hexagon_coord,
+                                  eldercare_coord,
+                                  type="euclidean")
 ```
 
 ## Modelling and Visualising Accessibility using Hansen Method

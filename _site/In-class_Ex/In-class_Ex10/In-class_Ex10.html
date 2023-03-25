@@ -240,7 +240,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  <span class="dropdown-text">Take-home Assignment 2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../Take-home_Assgn/Take-home_Assgn3/Take-home_Assgn3.qmd">
+    <a class="dropdown-item" href="../../Take-home_Assgn/Take-home_Assgn3/Take-home_Assgn3.html">
  <span class="dropdown-text">Take-home Assignment 3</span></a>
   </li>  
     </ul>
@@ -279,7 +279,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">March 20, 2023</p>
+        <p class="date-modified">March 22, 2023</p>
       </div>
     </div>
       
@@ -303,6 +303,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#apsaital-data-handling-and-wrangling" id="toc-apsaital-data-handling-and-wrangling" class="nav-link" data-scroll-target="#apsaital-data-handling-and-wrangling">Apsaital Data Handling and Wrangling</a>
   <ul class="collapse">
   <li><a href="#importing-distance-matrix" id="toc-importing-distance-matrix" class="nav-link" data-scroll-target="#importing-distance-matrix">Importing Distance Matrix</a></li>
+  <li><a href="#computing-distance-matrix-optional" id="toc-computing-distance-matrix-optional" class="nav-link" data-scroll-target="#computing-distance-matrix-optional">Computing Distance Matrix (Optional)</a></li>
   </ul></li>
   <li><a href="#modelling-and-visualising-accessibility-using-hansen-method" id="toc-modelling-and-visualising-accessibility-using-hansen-method" class="nav-link" data-scroll-target="#modelling-and-visualising-accessibility-using-hansen-method">Modelling and Visualising Accessibility using Hansen Method</a>
   <ul class="collapse">
@@ -347,105 +348,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_NO_SEA_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_NO_SEA_PL"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"hexagons"</span>) </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"ELDERCARE"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `MP14_SUBZONE_NO_SEA_PL' from data source 
-  `C:\RhondaHO\IS415-GAA\In-class_Ex\In-class_Ex10\data\geospatial' 
-  using driver `ESRI Shapefile'
-Simple feature collection with 323 features and 15 fields
-Geometry type: MULTIPOLYGON
-Dimension:     XY
-Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
-Projected CRS: SVY21</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"hexagons"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `hexagons' from data source 
-  `C:\RhondaHO\IS415-GAA\In-class_Ex\In-class_Ex10\data\geospatial' 
-  using driver `ESRI Shapefile'
-Simple feature collection with 3125 features and 6 fields
-Geometry type: POLYGON
-Dimension:     XY
-Bounding box:  xmin: 2667.538 ymin: 21506.33 xmax: 50010.26 ymax: 50256.33
-Projected CRS: SVY21 / Singapore TM</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"ELDERCARE"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `ELDERCARE' from data source 
-  `C:\RhondaHO\IS415-GAA\In-class_Ex\In-class_Ex10\data\geospatial' 
-  using driver `ESRI Shapefile'
-Simple feature collection with 120 features and 19 fields
-Geometry type: POINT
-Dimension:     XY
-Bounding box:  xmin: 14481.92 ymin: 28218.43 xmax: 41665.14 ymax: 46804.9
-Projected CRS: SVY21 / Singapore TM</code></pre>
-</div>
 </div>
 <section id="updating-crs-information" class="level3">
 <h3 class="anchored" data-anchor-id="updating-crs-information">Updating CRS information</h3>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(eldercare, <span class="dv">3414</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(hexagons, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(eldercare, <span class="dv">3414</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(hexagons, <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Coordinate Reference System:
-  User input: EPSG:3414 
-  wkt:
-PROJCRS["SVY21 / Singapore TM",
-    BASEGEOGCRS["SVY21",
-        DATUM["SVY21",
-            ELLIPSOID["WGS 84",6378137,298.257223563,
-                LENGTHUNIT["metre",1]]],
-        PRIMEM["Greenwich",0,
-            ANGLEUNIT["degree",0.0174532925199433]],
-        ID["EPSG",4757]],
-    CONVERSION["Singapore Transverse Mercator",
-        METHOD["Transverse Mercator",
-            ID["EPSG",9807]],
-        PARAMETER["Latitude of natural origin",1.36666666666667,
-            ANGLEUNIT["degree",0.0174532925199433],
-            ID["EPSG",8801]],
-        PARAMETER["Longitude of natural origin",103.833333333333,
-            ANGLEUNIT["degree",0.0174532925199433],
-            ID["EPSG",8802]],
-        PARAMETER["Scale factor at natural origin",1,
-            SCALEUNIT["unity",1],
-            ID["EPSG",8805]],
-        PARAMETER["False easting",28001.642,
-            LENGTHUNIT["metre",1],
-            ID["EPSG",8806]],
-        PARAMETER["False northing",38744.572,
-            LENGTHUNIT["metre",1],
-            ID["EPSG",8807]]],
-    CS[Cartesian,2],
-        AXIS["northing (N)",north,
-            ORDER[1],
-            LENGTHUNIT["metre",1]],
-        AXIS["easting (E)",east,
-            ORDER[2],
-            LENGTHUNIT["metre",1]],
-    USAGE[
-        SCOPE["Cadastre, engineering survey, topographic mapping."],
-        AREA["Singapore - onshore and offshore."],
-        BBOX[1.13,103.59,1.47,104.07]],
-    ID["EPSG",3414]]</code></pre>
-</div>
 </div>
 </section>
 <section id="cleaning-and-updating-attribute-fields-of-the-geospatial-data" class="level3">
@@ -453,16 +377,16 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> eldercare <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid, ADDRESSPOS) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">destination_id=</span>fid,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">postal_code=</span> ADDRESSPOS) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capacity =</span> <span class="dv">100</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> hexagons <span class="sc">%&gt;%</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid) <span class="sc">%&gt;%</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">origin_id=</span>fid) <span class="sc">%&gt;%</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">demand =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> eldercare <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid, ADDRESSPOS) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">destination_id=</span>fid,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">postal_code=</span> ADDRESSPOS) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capacity =</span> <span class="dv">100</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> hexagons <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">origin_id=</span>fid) <span class="sc">%&gt;%</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">demand =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Notice that for the purpose of this hands-on exercise, a constant value of 100 is used. In practice, actual demand of the hexagon and capacity of the eldercare centre should be used.</p>
@@ -475,25 +399,45 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ODMatrix <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/OD_Matrix.csv"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ODMatrix <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/OD_Matrix.csv"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#row is origin, col is destination</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for fca, it is the opposite</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>distmat <span class="ot">&lt;-</span> ODMatrix <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(origin_id, destination_id, total_cost) <span class="sc">%&gt;%</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(destination_id, total_cost)<span class="sc">%&gt;%</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'origin_id'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#row is origin, col is destination</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for fca, it is the opposite</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>distmat <span class="ot">&lt;-</span> ODMatrix <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(origin_id, destination_id, total_cost) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(destination_id, total_cost)<span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'origin_id'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(distmat<span class="sc">/</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#from metres to km</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(distmat<span class="sc">/</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="computing-distance-matrix-optional" class="level3">
+<h3 class="anchored" data-anchor-id="computing-distance-matrix-optional">Computing Distance Matrix (Optional)</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>eldercare_coord<span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(eldercare)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hexagon_coord <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(hexagons</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>EucMatrix <span class="ot">&lt;-</span> SpatialAcc<span class="sc">::</span><span class="fu">distance</span>(hexagon_coord,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                                  eldercare_coord,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">type=</span><span class="st">"euclidean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -506,50 +450,50 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The default field name is very messy, we will rename it to accHansen by using the code chunk below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Next, we will convert the data table into tibble format by using the code chunk below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Warning: `tbl_df()` was deprecated in dplyr 1.0.0.</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Warning: `tbl_df()` was deprecated in dplyr 1.0.0.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Lastly, bind_cols() of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called hexagon_Hansen.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The steps above can be perform by using a single code chunk as shown below.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="fl">0.5</span>, </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="fl">0.5</span>, </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -558,23 +502,97 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mapex <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(hexagons)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mapex <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(hexagons)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_Hansen,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accHansen"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: Hansen method"</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="statistical-graphic-visualisation" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-graphic-visualisation">Statistical graphic visualisation</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_Hansen, mpsz, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_Hansen, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(accHansen), </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="modelling-and-visualising-accessibility-using-kd2sfca-method" class="level2">
+<h2 class="anchored" data-anchor-id="modelling-and-visualising-accessibility-using-kd2sfca-method">Modelling and Visualising Accessibility using KD2SFCA Method</h2>
+<section id="computing-kd2sfcas-accessibility" class="level3">
+<h3 class="anchored" data-anchor-id="computing-kd2sfcas-accessibility">Computing KD2SFCA’s accessibility</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">50</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="visualising-kd2sfcas-accessibility" class="level3">
+<h3 class="anchored" data-anchor-id="visualising-kd2sfcas-accessibility">Visualising KD2SFCA’s accessibility</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_Hansen,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_KD2SFCA,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accHansen"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accKD2SFCA"</span>,</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: Hansen method"</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: KD2SFCA method"</span>,</span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
@@ -587,89 +605,6 @@ PROJCRS["SVY21 / Singapore TM",
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="statistical-graphic-visualisation" class="level3">
-<h3 class="anchored" data-anchor-id="statistical-graphic-visualisation">Statistical graphic visualisation</h3>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_Hansen, mpsz, </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_Hansen, </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(accHansen), </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-</section>
-<section id="modelling-and-visualising-accessibility-using-kd2sfca-method" class="level2">
-<h2 class="anchored" data-anchor-id="modelling-and-visualising-accessibility-using-kd2sfca-method">Modelling and Visualising Accessibility using KD2SFCA Method</h2>
-<section id="computing-kd2sfcas-accessibility" class="level3">
-<h3 class="anchored" data-anchor-id="computing-kd2sfcas-accessibility">Computing KD2SFCA’s accessibility</h3>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">50</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="visualising-kd2sfcas-accessibility" class="level3">
-<h3 class="anchored" data-anchor-id="visualising-kd2sfcas-accessibility">Visualising KD2SFCA’s accessibility</h3>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_KD2SFCA,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accKD2SFCA"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: KD2SFCA method"</span>,</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 </section>
 <section id="statistical-graphic-visualisation-1" class="level3">
@@ -677,25 +612,22 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_KD2SFCA, mpsz, </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_KD2SFCA, mpsz, </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_KD2SFCA, </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accKD2SFCA, </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_KD2SFCA, </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accKD2SFCA, </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 </section>
 </section>
@@ -706,16 +638,16 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                         eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                         distmat_km, </span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">d0 =</span> <span class="dv">50</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family =</span> <span class="st">"SAM"</span>))</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_SAM) <span class="ot">&lt;-</span> <span class="st">"accSAM"</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_SAM)</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_SAM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                         eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                         distmat_km, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">d0 =</span> <span class="dv">50</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family =</span> <span class="st">"SAM"</span>))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_SAM) <span class="ot">&lt;-</span> <span class="st">"accSAM"</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_SAM)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_SAM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -724,32 +656,29 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_SAM,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accSAM"</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: SAM method"</span>,</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">3</span>),</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_SAM,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accSAM"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: SAM method"</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">3</span>),</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 </section>
 <section id="statistical-graphic-visualisation-2" class="level3">
@@ -757,25 +686,22 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_SAM, mpsz, </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_SAM, mpsz, </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_SAM, </span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accSAM, </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_SAM, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accSAM, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="In-class_Ex10_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 
 
@@ -969,320 +895,338 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb32" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "In-class Ex 10"</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> true</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "20 march 2023" </span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="an">date-modified:</span><span class="co"> last-modified </span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Rhonda Ho Kah Yee"</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">  html: </span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true </span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false </span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false </span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tmap, SpatialAcc, sf, readr, tidyr, fca,</span>
-<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>               ggstatsplot, reshape2,</span>
-<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span>
-<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Geospatial Data Wrangling</span></span>
-<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_NO_SEA_PL"</span>)</span>
-<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"hexagons"</span>) </span>
-<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"ELDERCARE"</span>) </span>
-<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### Updating CRS information</span></span>
-<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span>
-<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(eldercare, <span class="dv">3414</span>)</span>
-<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(hexagons, <span class="dv">3414</span>)</span>
-<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz)</span>
-<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cleaning and updating attribute fields of the geospatial data</span></span>
-<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> eldercare <span class="sc">%&gt;%</span></span>
-<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid, ADDRESSPOS) <span class="sc">%&gt;%</span></span>
-<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">destination_id=</span>fid,</span>
-<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a>         <span class="at">postal_code=</span> ADDRESSPOS) <span class="sc">%&gt;%</span></span>
-<span id="cb32-70"><a href="#cb32-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capacity =</span> <span class="dv">100</span>)</span>
-<span id="cb32-71"><a href="#cb32-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-72"><a href="#cb32-72" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> hexagons <span class="sc">%&gt;%</span></span>
-<span id="cb32-73"><a href="#cb32-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid) <span class="sc">%&gt;%</span></span>
-<span id="cb32-74"><a href="#cb32-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">origin_id=</span>fid) <span class="sc">%&gt;%</span></span>
-<span id="cb32-75"><a href="#cb32-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">demand =</span> <span class="dv">100</span>)</span>
-<span id="cb32-76"><a href="#cb32-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-77"><a href="#cb32-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-78"><a href="#cb32-78" aria-hidden="true" tabindex="-1"></a>Notice that for the purpose of this hands-on exercise, a constant value of 100 is used. In practice, actual demand of the hexagon and capacity of the eldercare centre should be used.</span>
-<span id="cb32-79"><a href="#cb32-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-80"><a href="#cb32-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## Apsaital Data Handling and Wrangling</span></span>
-<span id="cb32-81"><a href="#cb32-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-82"><a href="#cb32-82" aria-hidden="true" tabindex="-1"></a><span class="fu">###  Importing Distance Matrix</span></span>
-<span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-86"><a href="#cb32-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-87"><a href="#cb32-87" aria-hidden="true" tabindex="-1"></a>ODMatrix <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/OD_Matrix.csv"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span>
-<span id="cb32-88"><a href="#cb32-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-89"><a href="#cb32-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-90"><a href="#cb32-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-93"><a href="#cb32-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-94"><a href="#cb32-94" aria-hidden="true" tabindex="-1"></a><span class="co">#row is origin, col is destination</span></span>
-<span id="cb32-95"><a href="#cb32-95" aria-hidden="true" tabindex="-1"></a><span class="co"># for fca, it is the opposite</span></span>
-<span id="cb32-96"><a href="#cb32-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-97"><a href="#cb32-97" aria-hidden="true" tabindex="-1"></a>distmat <span class="ot">&lt;-</span> ODMatrix <span class="sc">%&gt;%</span></span>
-<span id="cb32-98"><a href="#cb32-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(origin_id, destination_id, total_cost) <span class="sc">%&gt;%</span></span>
-<span id="cb32-99"><a href="#cb32-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(destination_id, total_cost)<span class="sc">%&gt;%</span></span>
-<span id="cb32-100"><a href="#cb32-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'origin_id'</span>)))</span>
-<span id="cb32-101"><a href="#cb32-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-102"><a href="#cb32-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-105"><a href="#cb32-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-106"><a href="#cb32-106" aria-hidden="true" tabindex="-1"></a>distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(distmat<span class="sc">/</span><span class="dv">1000</span>)</span>
-<span id="cb32-107"><a href="#cb32-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-108"><a href="#cb32-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-109"><a href="#cb32-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using Hansen Method</span></span>
-<span id="cb32-110"><a href="#cb32-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-111"><a href="#cb32-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing Hansen's accessibility</span></span>
-<span id="cb32-112"><a href="#cb32-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-113"><a href="#cb32-113" aria-hidden="true" tabindex="-1"></a>The code chunk below calculates Hansen's accessibility using ac() of SpatialAcc and data.frame() is used to save the output in a data frame called acc_Handsen.</span>
-<span id="cb32-114"><a href="#cb32-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-117"><a href="#cb32-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-118"><a href="#cb32-118" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb32-119"><a href="#cb32-119" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb32-120"><a href="#cb32-120" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb32-121"><a href="#cb32-121" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
-<span id="cb32-122"><a href="#cb32-122" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb32-123"><a href="#cb32-123" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
-<span id="cb32-124"><a href="#cb32-124" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-125"><a href="#cb32-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-126"><a href="#cb32-126" aria-hidden="true" tabindex="-1"></a>The default field name is very messy, we will rename it to accHansen by using the code chunk below.</span>
-<span id="cb32-127"><a href="#cb32-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-130"><a href="#cb32-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-131"><a href="#cb32-131" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
-<span id="cb32-132"><a href="#cb32-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-133"><a href="#cb32-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-134"><a href="#cb32-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-135"><a href="#cb32-135" aria-hidden="true" tabindex="-1"></a>Next, we will convert the data table into tibble format by using the code chunk below.</span>
-<span id="cb32-136"><a href="#cb32-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-139"><a href="#cb32-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-140"><a href="#cb32-140" aria-hidden="true" tabindex="-1"></a><span class="co">#Warning: `tbl_df()` was deprecated in dplyr 1.0.0.</span></span>
-<span id="cb32-141"><a href="#cb32-141" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
-<span id="cb32-142"><a href="#cb32-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-143"><a href="#cb32-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-144"><a href="#cb32-144" aria-hidden="true" tabindex="-1"></a>Lastly, bind_cols() of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called hexagon_Hansen.</span>
-<span id="cb32-145"><a href="#cb32-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-148"><a href="#cb32-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-149"><a href="#cb32-149" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span>
-<span id="cb32-150"><a href="#cb32-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-151"><a href="#cb32-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-152"><a href="#cb32-152" aria-hidden="true" tabindex="-1"></a>The steps above can be perform by using a single code chunk as shown below.</span>
-<span id="cb32-153"><a href="#cb32-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-156"><a href="#cb32-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-157"><a href="#cb32-157" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb32-158"><a href="#cb32-158" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb32-159"><a href="#cb32-159" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb32-160"><a href="#cb32-160" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
-<span id="cb32-161"><a href="#cb32-161" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="fl">0.5</span>, </span>
-<span id="cb32-162"><a href="#cb32-162" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
-<span id="cb32-163"><a href="#cb32-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-164"><a href="#cb32-164" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
-<span id="cb32-165"><a href="#cb32-165" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
-<span id="cb32-166"><a href="#cb32-166" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span>
-<span id="cb32-167"><a href="#cb32-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-168"><a href="#cb32-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-169"><a href="#cb32-169" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising Hansen's accessibility</span></span>
-<span id="cb32-170"><a href="#cb32-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-173"><a href="#cb32-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-174"><a href="#cb32-174" aria-hidden="true" tabindex="-1"></a>mapex <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(hexagons)</span>
-<span id="cb32-175"><a href="#cb32-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-176"><a href="#cb32-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-179"><a href="#cb32-179" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-180"><a href="#cb32-180" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb32-181"><a href="#cb32-181" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_Hansen,</span>
-<span id="cb32-182"><a href="#cb32-182" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb32-183"><a href="#cb32-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accHansen"</span>,</span>
-<span id="cb32-184"><a href="#cb32-184" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
-<span id="cb32-185"><a href="#cb32-185" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
-<span id="cb32-186"><a href="#cb32-186" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb32-187"><a href="#cb32-187" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb32-188"><a href="#cb32-188" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
-<span id="cb32-189"><a href="#cb32-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb32-190"><a href="#cb32-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: Hansen method"</span>,</span>
-<span id="cb32-191"><a href="#cb32-191" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
-<span id="cb32-192"><a href="#cb32-192" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
-<span id="cb32-193"><a href="#cb32-193" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb32-194"><a href="#cb32-194" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
-<span id="cb32-195"><a href="#cb32-195" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
-<span id="cb32-196"><a href="#cb32-196" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
-<span id="cb32-197"><a href="#cb32-197" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
-<span id="cb32-198"><a href="#cb32-198" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb32-199"><a href="#cb32-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb32-200"><a href="#cb32-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb32-201"><a href="#cb32-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
-<span id="cb32-202"><a href="#cb32-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-203"><a href="#cb32-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-204"><a href="#cb32-204" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
-<span id="cb32-205"><a href="#cb32-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-208"><a href="#cb32-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-209"><a href="#cb32-209" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_Hansen, mpsz, </span>
-<span id="cb32-210"><a href="#cb32-210" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span>
-<span id="cb32-211"><a href="#cb32-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-212"><a href="#cb32-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-215"><a href="#cb32-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-216"><a href="#cb32-216" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_Hansen, </span>
-<span id="cb32-217"><a href="#cb32-217" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(accHansen), </span>
-<span id="cb32-218"><a href="#cb32-218" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb32-219"><a href="#cb32-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb32-220"><a href="#cb32-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb32-221"><a href="#cb32-221" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb32-222"><a href="#cb32-222" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb32-223"><a href="#cb32-223" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
-<span id="cb32-224"><a href="#cb32-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-225"><a href="#cb32-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-226"><a href="#cb32-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using KD2SFCA Method</span></span>
-<span id="cb32-227"><a href="#cb32-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-228"><a href="#cb32-228" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing KD2SFCA's accessibility</span></span>
-<span id="cb32-229"><a href="#cb32-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-232"><a href="#cb32-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-233"><a href="#cb32-233" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb32-234"><a href="#cb32-234" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb32-235"><a href="#cb32-235" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
-<span id="cb32-236"><a href="#cb32-236" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">50</span>,</span>
-<span id="cb32-237"><a href="#cb32-237" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb32-238"><a href="#cb32-238" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
-<span id="cb32-239"><a href="#cb32-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-240"><a href="#cb32-240" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
-<span id="cb32-241"><a href="#cb32-241" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
-<span id="cb32-242"><a href="#cb32-242" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span>
-<span id="cb32-243"><a href="#cb32-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-244"><a href="#cb32-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-245"><a href="#cb32-245" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising KD2SFCA's accessibility</span></span>
-<span id="cb32-246"><a href="#cb32-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-249"><a href="#cb32-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-250"><a href="#cb32-250" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb32-251"><a href="#cb32-251" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_KD2SFCA,</span>
-<span id="cb32-252"><a href="#cb32-252" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb32-253"><a href="#cb32-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accKD2SFCA"</span>,</span>
-<span id="cb32-254"><a href="#cb32-254" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
-<span id="cb32-255"><a href="#cb32-255" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
-<span id="cb32-256"><a href="#cb32-256" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb32-257"><a href="#cb32-257" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb32-258"><a href="#cb32-258" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
-<span id="cb32-259"><a href="#cb32-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb32-260"><a href="#cb32-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: KD2SFCA method"</span>,</span>
-<span id="cb32-261"><a href="#cb32-261" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
-<span id="cb32-262"><a href="#cb32-262" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
-<span id="cb32-263"><a href="#cb32-263" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb32-264"><a href="#cb32-264" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
-<span id="cb32-265"><a href="#cb32-265" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
-<span id="cb32-266"><a href="#cb32-266" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
-<span id="cb32-267"><a href="#cb32-267" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
-<span id="cb32-268"><a href="#cb32-268" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb32-269"><a href="#cb32-269" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb32-270"><a href="#cb32-270" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb32-271"><a href="#cb32-271" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
-<span id="cb32-272"><a href="#cb32-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-273"><a href="#cb32-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-274"><a href="#cb32-274" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
-<span id="cb32-275"><a href="#cb32-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-278"><a href="#cb32-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-279"><a href="#cb32-279" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_KD2SFCA, mpsz, </span>
-<span id="cb32-280"><a href="#cb32-280" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span>
-<span id="cb32-281"><a href="#cb32-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-282"><a href="#cb32-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-285"><a href="#cb32-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-286"><a href="#cb32-286" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_KD2SFCA, </span>
-<span id="cb32-287"><a href="#cb32-287" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accKD2SFCA, </span>
-<span id="cb32-288"><a href="#cb32-288" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb32-289"><a href="#cb32-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb32-290"><a href="#cb32-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb32-291"><a href="#cb32-291" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb32-292"><a href="#cb32-292" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb32-293"><a href="#cb32-293" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
-<span id="cb32-294"><a href="#cb32-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-295"><a href="#cb32-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-296"><a href="#cb32-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using Spatial Accessibility Measure (SAM) Method</span></span>
-<span id="cb32-297"><a href="#cb32-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-298"><a href="#cb32-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing SAM accessibility</span></span>
-<span id="cb32-299"><a href="#cb32-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-302"><a href="#cb32-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-303"><a href="#cb32-303" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb32-304"><a href="#cb32-304" aria-hidden="true" tabindex="-1"></a>                         eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb32-305"><a href="#cb32-305" aria-hidden="true" tabindex="-1"></a>                         distmat_km, </span>
-<span id="cb32-306"><a href="#cb32-306" aria-hidden="true" tabindex="-1"></a>                         <span class="at">d0 =</span> <span class="dv">50</span>,</span>
-<span id="cb32-307"><a href="#cb32-307" aria-hidden="true" tabindex="-1"></a>                         <span class="at">power =</span> <span class="dv">2</span>, </span>
-<span id="cb32-308"><a href="#cb32-308" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family =</span> <span class="st">"SAM"</span>))</span>
-<span id="cb32-309"><a href="#cb32-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-310"><a href="#cb32-310" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_SAM) <span class="ot">&lt;-</span> <span class="st">"accSAM"</span></span>
-<span id="cb32-311"><a href="#cb32-311" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_SAM)</span>
-<span id="cb32-312"><a href="#cb32-312" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_SAM)</span>
-<span id="cb32-313"><a href="#cb32-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-314"><a href="#cb32-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-315"><a href="#cb32-315" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising SAM's accessibility</span></span>
-<span id="cb32-316"><a href="#cb32-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-319"><a href="#cb32-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-320"><a href="#cb32-320" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb32-321"><a href="#cb32-321" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_SAM,</span>
-<span id="cb32-322"><a href="#cb32-322" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
-<span id="cb32-323"><a href="#cb32-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accSAM"</span>,</span>
-<span id="cb32-324"><a href="#cb32-324" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
-<span id="cb32-325"><a href="#cb32-325" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
-<span id="cb32-326"><a href="#cb32-326" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb32-327"><a href="#cb32-327" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb32-328"><a href="#cb32-328" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
-<span id="cb32-329"><a href="#cb32-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb32-330"><a href="#cb32-330" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: SAM method"</span>,</span>
-<span id="cb32-331"><a href="#cb32-331" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
-<span id="cb32-332"><a href="#cb32-332" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
-<span id="cb32-333"><a href="#cb32-333" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb32-334"><a href="#cb32-334" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
-<span id="cb32-335"><a href="#cb32-335" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
-<span id="cb32-336"><a href="#cb32-336" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">3</span>),</span>
-<span id="cb32-337"><a href="#cb32-337" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
-<span id="cb32-338"><a href="#cb32-338" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb32-339"><a href="#cb32-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb32-340"><a href="#cb32-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb32-341"><a href="#cb32-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
-<span id="cb32-342"><a href="#cb32-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-343"><a href="#cb32-343" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-344"><a href="#cb32-344" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
-<span id="cb32-345"><a href="#cb32-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-348"><a href="#cb32-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-349"><a href="#cb32-349" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_SAM, mpsz, </span>
-<span id="cb32-350"><a href="#cb32-350" aria-hidden="true" tabindex="-1"></a>                       <span class="at">join =</span> st_intersects)</span>
-<span id="cb32-351"><a href="#cb32-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-352"><a href="#cb32-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-355"><a href="#cb32-355" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb32-356"><a href="#cb32-356" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_SAM, </span>
-<span id="cb32-357"><a href="#cb32-357" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accSAM, </span>
-<span id="cb32-358"><a href="#cb32-358" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
-<span id="cb32-359"><a href="#cb32-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb32-360"><a href="#cb32-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
-<span id="cb32-361"><a href="#cb32-361" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
-<span id="cb32-362"><a href="#cb32-362" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
-<span id="cb32-363"><a href="#cb32-363" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
-<span id="cb32-364"><a href="#cb32-364" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "In-class Ex 10"</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> true</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "20 march 2023" </span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="an">date-modified:</span><span class="co"> last-modified </span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Rhonda Ho Kah Yee"</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">  html: </span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true </span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false </span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false </span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: false</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tmap, SpatialAcc, sf, readr, tidyr, fca,</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>               ggstatsplot, reshape2,</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Geospatial Data Wrangling</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_NO_SEA_PL"</span>)</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"hexagons"</span>) </span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"ELDERCARE"</span>) </span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Updating CRS information</span></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(mpsz, <span class="dv">3414</span>)</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(eldercare, <span class="dv">3414</span>)</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(hexagons, <span class="dv">3414</span>)</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(mpsz)</span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cleaning and updating attribute fields of the geospatial data</span></span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>eldercare <span class="ot">&lt;-</span> eldercare <span class="sc">%&gt;%</span></span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid, ADDRESSPOS) <span class="sc">%&gt;%</span></span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">destination_id=</span>fid,</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a>         <span class="at">postal_code=</span> ADDRESSPOS) <span class="sc">%&gt;%</span></span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capacity =</span> <span class="dv">100</span>)</span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a>hexagons <span class="ot">&lt;-</span> hexagons <span class="sc">%&gt;%</span></span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fid) <span class="sc">%&gt;%</span></span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">origin_id=</span>fid) <span class="sc">%&gt;%</span></span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">demand =</span> <span class="dv">100</span>)</span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a>Notice that for the purpose of this hands-on exercise, a constant value of 100 is used. In practice, actual demand of the hexagon and capacity of the eldercare centre should be used.</span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Apsaital Data Handling and Wrangling</span></span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### Importing Distance Matrix</span></span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a>ODMatrix <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/OD_Matrix.csv"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span>
+<span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a><span class="co">#row is origin, col is destination</span></span>
+<span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a><span class="co"># for fca, it is the opposite</span></span>
+<span id="cb28-97"><a href="#cb28-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-98"><a href="#cb28-98" aria-hidden="true" tabindex="-1"></a>distmat <span class="ot">&lt;-</span> ODMatrix <span class="sc">%&gt;%</span></span>
+<span id="cb28-99"><a href="#cb28-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(origin_id, destination_id, total_cost) <span class="sc">%&gt;%</span></span>
+<span id="cb28-100"><a href="#cb28-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(destination_id, total_cost)<span class="sc">%&gt;%</span></span>
+<span id="cb28-101"><a href="#cb28-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'origin_id'</span>)))</span>
+<span id="cb28-102"><a href="#cb28-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-103"><a href="#cb28-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-106"><a href="#cb28-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-107"><a href="#cb28-107" aria-hidden="true" tabindex="-1"></a><span class="co">#from metres to km</span></span>
+<span id="cb28-108"><a href="#cb28-108" aria-hidden="true" tabindex="-1"></a>distmat_km <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(distmat<span class="sc">/</span><span class="dv">1000</span>)</span>
+<span id="cb28-109"><a href="#cb28-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-110"><a href="#cb28-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-111"><a href="#cb28-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-112"><a href="#cb28-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-113"><a href="#cb28-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing Distance Matrix (Optional)</span></span>
+<span id="cb28-114"><a href="#cb28-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-117"><a href="#cb28-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-118"><a href="#cb28-118" aria-hidden="true" tabindex="-1"></a>eldercare_coord<span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(eldercare)</span>
+<span id="cb28-119"><a href="#cb28-119" aria-hidden="true" tabindex="-1"></a>hexagon_coord <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(hexagons</span>
+<span id="cb28-120"><a href="#cb28-120" aria-hidden="true" tabindex="-1"></a>                                )</span>
+<span id="cb28-121"><a href="#cb28-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-122"><a href="#cb28-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-125"><a href="#cb28-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-126"><a href="#cb28-126" aria-hidden="true" tabindex="-1"></a>EucMatrix <span class="ot">&lt;-</span> SpatialAcc<span class="sc">::</span><span class="fu">distance</span>(hexagon_coord,</span>
+<span id="cb28-127"><a href="#cb28-127" aria-hidden="true" tabindex="-1"></a>                                  eldercare_coord,</span>
+<span id="cb28-128"><a href="#cb28-128" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">type=</span><span class="st">"euclidean"</span>)</span>
+<span id="cb28-129"><a href="#cb28-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-130"><a href="#cb28-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-131"><a href="#cb28-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using Hansen Method</span></span>
+<span id="cb28-132"><a href="#cb28-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-133"><a href="#cb28-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing Hansen's accessibility</span></span>
+<span id="cb28-134"><a href="#cb28-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-135"><a href="#cb28-135" aria-hidden="true" tabindex="-1"></a>The code chunk below calculates Hansen's accessibility using ac() of SpatialAcc and data.frame() is used to save the output in a data frame called acc_Handsen.</span>
+<span id="cb28-136"><a href="#cb28-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-139"><a href="#cb28-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-140"><a href="#cb28-140" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb28-141"><a href="#cb28-141" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb28-142"><a href="#cb28-142" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
+<span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb28-145"><a href="#cb28-145" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
+<span id="cb28-146"><a href="#cb28-146" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-147"><a href="#cb28-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-148"><a href="#cb28-148" aria-hidden="true" tabindex="-1"></a>The default field name is very messy, we will rename it to accHansen by using the code chunk below.</span>
+<span id="cb28-149"><a href="#cb28-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-152"><a href="#cb28-152" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-153"><a href="#cb28-153" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
+<span id="cb28-154"><a href="#cb28-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a>Next, we will convert the data table into tibble format by using the code chunk below.</span>
+<span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a><span class="co">#Warning: `tbl_df()` was deprecated in dplyr 1.0.0.</span></span>
+<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
+<span id="cb28-164"><a href="#cb28-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-165"><a href="#cb28-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a>Lastly, bind_cols() of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called hexagon_Hansen.</span>
+<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span>
+<span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a>The steps above can be perform by using a single code chunk as shown below.</span>
+<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
+<span id="cb28-183"><a href="#cb28-183" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="fl">0.5</span>, </span>
+<span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"Hansen"</span>))</span>
+<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_Hansen) <span class="ot">&lt;-</span> <span class="st">"accHansen"</span></span>
+<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(acc_Hansen)</span>
+<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span>
+<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising Hansen's accessibility</span></span>
+<span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a>mapex <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(hexagons)</span>
+<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-201"><a href="#cb28-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb28-203"><a href="#cb28-203" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_Hansen,</span>
+<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
+<span id="cb28-205"><a href="#cb28-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accHansen"</span>,</span>
+<span id="cb28-206"><a href="#cb28-206" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb28-207"><a href="#cb28-207" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb28-208"><a href="#cb28-208" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb28-209"><a href="#cb28-209" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-210"><a href="#cb28-210" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
+<span id="cb28-211"><a href="#cb28-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb28-212"><a href="#cb28-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: Hansen method"</span>,</span>
+<span id="cb28-213"><a href="#cb28-213" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb28-214"><a href="#cb28-214" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
+<span id="cb28-215"><a href="#cb28-215" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb28-216"><a href="#cb28-216" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb28-217"><a href="#cb28-217" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb28-218"><a href="#cb28-218" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb28-219"><a href="#cb28-219" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb28-220"><a href="#cb28-220" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb28-221"><a href="#cb28-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb28-222"><a href="#cb28-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb28-223"><a href="#cb28-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-224"><a href="#cb28-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-225"><a href="#cb28-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-226"><a href="#cb28-226" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
+<span id="cb28-227"><a href="#cb28-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-230"><a href="#cb28-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-231"><a href="#cb28-231" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_Hansen, mpsz, </span>
+<span id="cb28-232"><a href="#cb28-232" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span>
+<span id="cb28-233"><a href="#cb28-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-234"><a href="#cb28-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-237"><a href="#cb28-237" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-238"><a href="#cb28-238" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_Hansen, </span>
+<span id="cb28-239"><a href="#cb28-239" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(accHansen), </span>
+<span id="cb28-240"><a href="#cb28-240" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb28-241"><a href="#cb28-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb28-242"><a href="#cb28-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb28-243"><a href="#cb28-243" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb28-244"><a href="#cb28-244" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb28-245"><a href="#cb28-245" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
+<span id="cb28-246"><a href="#cb28-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-247"><a href="#cb28-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-248"><a href="#cb28-248" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using KD2SFCA Method</span></span>
+<span id="cb28-249"><a href="#cb28-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-250"><a href="#cb28-250" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing KD2SFCA's accessibility</span></span>
+<span id="cb28-251"><a href="#cb28-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-254"><a href="#cb28-254" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-255"><a href="#cb28-255" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb28-256"><a href="#cb28-256" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb28-257"><a href="#cb28-257" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
+<span id="cb28-258"><a href="#cb28-258" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">50</span>,</span>
+<span id="cb28-259"><a href="#cb28-259" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb28-260"><a href="#cb28-260" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb28-261"><a href="#cb28-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-262"><a href="#cb28-262" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
+<span id="cb28-263"><a href="#cb28-263" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
+<span id="cb28-264"><a href="#cb28-264" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span>
+<span id="cb28-265"><a href="#cb28-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-266"><a href="#cb28-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-267"><a href="#cb28-267" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising KD2SFCA's accessibility</span></span>
+<span id="cb28-268"><a href="#cb28-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-271"><a href="#cb28-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-272"><a href="#cb28-272" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb28-273"><a href="#cb28-273" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_KD2SFCA,</span>
+<span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
+<span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accKD2SFCA"</span>,</span>
+<span id="cb28-276"><a href="#cb28-276" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb28-277"><a href="#cb28-277" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
+<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb28-282"><a href="#cb28-282" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: KD2SFCA method"</span>,</span>
+<span id="cb28-283"><a href="#cb28-283" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb28-284"><a href="#cb28-284" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
+<span id="cb28-285"><a href="#cb28-285" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb28-286"><a href="#cb28-286" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb28-287"><a href="#cb28-287" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb28-288"><a href="#cb28-288" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb28-289"><a href="#cb28-289" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb28-290"><a href="#cb28-290" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb28-291"><a href="#cb28-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb28-292"><a href="#cb28-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb28-293"><a href="#cb28-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-294"><a href="#cb28-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-295"><a href="#cb28-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-296"><a href="#cb28-296" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
+<span id="cb28-297"><a href="#cb28-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-300"><a href="#cb28-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-301"><a href="#cb28-301" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_KD2SFCA, mpsz, </span>
+<span id="cb28-302"><a href="#cb28-302" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span>
+<span id="cb28-303"><a href="#cb28-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-304"><a href="#cb28-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-307"><a href="#cb28-307" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-308"><a href="#cb28-308" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_KD2SFCA, </span>
+<span id="cb28-309"><a href="#cb28-309" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accKD2SFCA, </span>
+<span id="cb28-310"><a href="#cb28-310" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb28-311"><a href="#cb28-311" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb28-312"><a href="#cb28-312" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb28-313"><a href="#cb28-313" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb28-314"><a href="#cb28-314" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb28-315"><a href="#cb28-315" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
+<span id="cb28-316"><a href="#cb28-316" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-317"><a href="#cb28-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-318"><a href="#cb28-318" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelling and Visualising Accessibility using Spatial Accessibility Measure (SAM) Method</span></span>
+<span id="cb28-319"><a href="#cb28-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-320"><a href="#cb28-320" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing SAM accessibility</span></span>
+<span id="cb28-321"><a href="#cb28-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-324"><a href="#cb28-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-325"><a href="#cb28-325" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb28-326"><a href="#cb28-326" aria-hidden="true" tabindex="-1"></a>                         eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb28-327"><a href="#cb28-327" aria-hidden="true" tabindex="-1"></a>                         distmat_km, </span>
+<span id="cb28-328"><a href="#cb28-328" aria-hidden="true" tabindex="-1"></a>                         <span class="at">d0 =</span> <span class="dv">50</span>,</span>
+<span id="cb28-329"><a href="#cb28-329" aria-hidden="true" tabindex="-1"></a>                         <span class="at">power =</span> <span class="dv">2</span>, </span>
+<span id="cb28-330"><a href="#cb28-330" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family =</span> <span class="st">"SAM"</span>))</span>
+<span id="cb28-331"><a href="#cb28-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-332"><a href="#cb28-332" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_SAM) <span class="ot">&lt;-</span> <span class="st">"accSAM"</span></span>
+<span id="cb28-333"><a href="#cb28-333" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_SAM)</span>
+<span id="cb28-334"><a href="#cb28-334" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_SAM)</span>
+<span id="cb28-335"><a href="#cb28-335" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-336"><a href="#cb28-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-337"><a href="#cb28-337" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualising SAM's accessibility</span></span>
+<span id="cb28-338"><a href="#cb28-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-341"><a href="#cb28-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-342"><a href="#cb28-342" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb28-343"><a href="#cb28-343" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hexagon_SAM,</span>
+<span id="cb28-344"><a href="#cb28-344" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> mapex) <span class="sc">+</span> </span>
+<span id="cb28-345"><a href="#cb28-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"accSAM"</span>,</span>
+<span id="cb28-346"><a href="#cb28-346" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb28-347"><a href="#cb28-347" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb28-348"><a href="#cb28-348" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb28-349"><a href="#cb28-349" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-350"><a href="#cb28-350" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(eldercare) <span class="sc">+</span></span>
+<span id="cb28-351"><a href="#cb28-351" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb28-352"><a href="#cb28-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to eldercare: SAM method"</span>,</span>
+<span id="cb28-353"><a href="#cb28-353" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb28-354"><a href="#cb28-354" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="dv">2</span>,</span>
+<span id="cb28-355"><a href="#cb28-355" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb28-356"><a href="#cb28-356" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb28-357"><a href="#cb28-357" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb28-358"><a href="#cb28-358" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">3</span>),</span>
+<span id="cb28-359"><a href="#cb28-359" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb28-360"><a href="#cb28-360" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb28-361"><a href="#cb28-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb28-362"><a href="#cb28-362" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb28-363"><a href="#cb28-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb28-364"><a href="#cb28-364" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-365"><a href="#cb28-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-366"><a href="#cb28-366" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical graphic visualisation</span></span>
+<span id="cb28-367"><a href="#cb28-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-370"><a href="#cb28-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-371"><a href="#cb28-371" aria-hidden="true" tabindex="-1"></a>hexagon_SAM <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hexagon_SAM, mpsz, </span>
+<span id="cb28-372"><a href="#cb28-372" aria-hidden="true" tabindex="-1"></a>                       <span class="at">join =</span> st_intersects)</span>
+<span id="cb28-373"><a href="#cb28-373" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-374"><a href="#cb28-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-377"><a href="#cb28-377" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-378"><a href="#cb28-378" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hexagon_SAM, </span>
+<span id="cb28-379"><a href="#cb28-379" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> accSAM, </span>
+<span id="cb28-380"><a href="#cb28-380" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb28-381"><a href="#cb28-381" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb28-382"><a href="#cb28-382" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb28-383"><a href="#cb28-383" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb28-384"><a href="#cb28-384" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb28-385"><a href="#cb28-385" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span>
+<span id="cb28-386"><a href="#cb28-386" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
