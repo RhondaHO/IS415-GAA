@@ -15,7 +15,7 @@ format:
 execute: 
   message: false
   warning: false
-  eval: false
+  
 
 editor: visual
 ---
@@ -100,13 +100,53 @@ The following packages will be used:
 
 -   [**Ranger**](https://cran.r-project.org/web/packages/ranger/index.html)**:** a fast implementation of Random Forests, particularly suited for high dimensional data
 
--   [**cowplot**](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html): a simple add-on to ggplot and provides various features that help with creating publication-quality figures.
+-   [**cowplot**](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html): a simple add-on to ggplot and provides various features that help with creating publication-quality figures
+
+-   [**Metrics**](https://cran.r-project.org/web/packages/Metrics/Metrics.pdf)**:** allow us to calculate the rmse of our models
 
 ```{r}
-pacman::p_load(readxl, sf, tidyverse, units, matrixStats, olsrr , gdata, tmap, sfdep, jsonlite, onemapsgapi, rvest, ranger, SpatialML, readxl, GWmodel, httr, cowplot )
+pacman::p_load(readxl, sf, tidyverse, units, matrixStats, olsrr , gdata, tmap, sfdep, jsonlite, onemapsgapi, rvest, ranger, SpatialML, readxl, GWmodel, httr, cowplot, Metrics  )
 ```
 
 # Importing Data and Wrangling
+
+Before I can perform my tasks, I need to obtain the following appropriate independent variables from my datasets.
+
+**Structural factors:**
+
+1.  Area of the unit
+
+2.  Floor level
+
+3.  Remaining lease
+
+4.  Age of the unit
+
+**Locational factors**
+
+1.  Proximity to CBD
+
+2.  Proximity to eldercare
+
+3.  Proximity to foodcourt/hawker centres
+
+4.  Proximity to MRT
+
+5.  Proximity to park
+
+6.  Proximity to good primary school
+
+7.  Proximity to shopping mall
+
+8.  Proximity to supermarket
+
+9.  Numbers of kindergartens within 350m
+
+10. Numbers of childcare centres within 350m
+
+11. Numbers of bus stop within 350m
+
+12. Numbers of primary school within 1km
 
 ## Aspatial Data
 
@@ -1346,6 +1386,7 @@ As computation time is too long, I will use what has been generated so far. Base
 Next, I used the bandwidth discovered previously to calibrate our GWRF model. Afterwards, I saved it into an rds file.
 
 ```{r}
+#| eval: false
 set.seed(1234)
 gwRF_adaptive <- grf(resale_price ~ 
                     age +
@@ -1386,6 +1427,7 @@ The output shows that the R2 is 0.8331023. for a GWR model of 30 trees and a ban
 The code chunk below uses predict.lm() function of the stats package to run inference on our test data and save it into RDS format.
 
 ```{r}
+#| eval: false
 ols_pred <- predict.lm(mlr1, test_data[,-2]) %>%
   write_rds("data/model/ols_pred.rds")
 ```
@@ -1395,6 +1437,7 @@ ols_pred <- predict.lm(mlr1, test_data[,-2]) %>%
 The code chunk below uses predict() function of the ranger package to run inference on our test data and save it into RDS format.
 
 ```{r}
+#| eval: false
 rf_pred <- predict(rf, test_data) %>%
   write_rds("data/model/rf_pred.rds")
 ```
@@ -1540,3 +1583,7 @@ By comparing the 3 graphs, GWRF model is more linear while OLS and random forest
 # Conclusion
 
 In conclusion, be comparing the 3 models' performance at predicting the actual resale prices, the RMSE and visualisation of its scatterplots, we can determine that GWRF model is the best model at predicting the actual resale prices. One of the reasons why it performs better is because [GWR](https://www.publichealth.columbia.edu/research/population-health-methods/geographically-weighted-regression#:~:text=outcome%20of%20interest.-,Description,variables%20to%20vary%20by%20locality.) is an outgrowth of ordinary least squares regression (OLS) and adds a level of modeling sophistication by allowing the relationships between the independent and dependent variables to vary by locality.
+
+# Acknowledgment
+
+To conclude, I would like to thank Prof. Kam for our IS415 Geospatial Analytics and Applications course materials & resources. I would also like to thank my seniors, [Megan Sim](https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/?panelset=base&panelset1=extracted2&panelset4=mpsz&panelset5=recreational%252Flifestyle#proximity-distance-calculation) and [Nor Aisyah Binte Ajit](https://aisyahajit2018-is415.netlify.app/posts/2021-11-07-take-home-exercise-3/) as I have referenced their codes.
