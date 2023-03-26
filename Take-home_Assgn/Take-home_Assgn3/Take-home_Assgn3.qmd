@@ -15,7 +15,7 @@ format:
 execute: 
   message: false
   warning: false
-  
+  eval: false
 
 editor: visual
 ---
@@ -34,43 +34,76 @@ In this take-home exercise, I am tasked to predict HDB resale prices at the sub-
 
 ## The Data
 
-| Dataset                                                                                                                                                                            | Description                                      | File Format |
-|----------------------|--------------------------------|------------------|
-| [Master Plan 2019 Region Boundary (No Sea) (KML)](https://dataportal.asia/dataset/203030733_master-plan-2019-region-boundary-no-sea/resource/338757d4-16b7-4c4f-a7ab-9f327bbf0dde) |                                                  | .kml        |
-| [Resale Flat Prices](https://data.gov.sg/dataset/resale-flat-prices)                                                                                                               | HDB resale flat prices from January 2017 onwards | .           |
-| [Bus Stop Location](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=bus%20stop)                                                                    |                                                  |             |
-| [Train Station](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=Train)                                                                             |                                                  |             |
-| [School Directory and Information](https://data.gov.sg/dataset/school-directory-and-information)                                                                                   | Used General Information of School dataset       |             |
-| Child Care Services                                                                                                                                                                | Extracted via onemapAPI                          |             |
-| Eldercare Services                                                                                                                                                                 | Extracted via onemapAPI                          |             |
-| Hawker Centres                                                                                                                                                                     | Extracted via onemapAPI                          |             |
-| Kindergarterns                                                                                                                                                                     | Extracted via onemapAPI                          |             |
-| Parks                                                                                                                                                                              | Extracted via onemapAPI                          |             |
-| [Supermarket](https://data.gov.sg/dataset/supermarkets)                                                                                                                            |                                                  |             |
-| [Shopping Malls](https://github.com/ValaryLim/Mall-Coordinates-Web-Scraper)                                                                                                        |                                                  |             |
+Below is the list of datasets i have collected.
 
-## Tasks
-
-In this take-home exercise, we are tasked to predict HDB resale prices at the sub-market level (i.e. HDB 3-room, HDB 4-room and HDB 5-room) for the month of January and February 2023 in Singapore. The predictive models must be built by using by using conventional OLS method and GWR methods. You are also required to compare the performance of the conventional OLS method versus the geographical weighted methods.
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Type                 | Dataset                                                                                                         | File Format |
++======================+=================================================================================================================+=============+
+| Aspatial             | [Resale Flat Prices](https://data.gov.sg/dataset/resale-flat-prices)                                            | .csv        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [Master Plan 2014 Subzone Boundary (Web)](https://data.gov.sg/dataset/master-plan-2014-subzone-boundary-web)    | .kml        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [Bus Stop Location](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=bus%20stop) | .kml        |
+|                      |                                                                                                                 |             |
+|                      |                                                                                                                 | .shp        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [Train Station](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=Train)          | .kml        |
+|                      |                                                                                                                 |             |
+|                      |                                                                                                                 | .shp        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [School Directory and Information](https://data.gov.sg/dataset/school-directory-and-information)                | .csv        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial-Extracted | Child Care Services                                                                                             | .shp        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial-Extracted | Eldercare Services                                                                                              | .rds        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial-Extracted | Hawker Centres                                                                                                  | .rds        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial-Extracted | Kindergarterns                                                                                                  | .rds        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial-Extracted | Parks                                                                                                           | .rds        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [Supermarket](https://data.gov.sg/dataset/supermarkets)                                                         | .geoson     |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
+| Geospatial           | [Shopping Malls](https://github.com/ValaryLim/Mall-Coordinates-Web-Scraper)                                     | .csv        |
++----------------------+-----------------------------------------------------------------------------------------------------------------+-------------+
 
 # Getting Started
 
 The following packages will be used:
 
--   [sf](https://r-spatial.github.io/sf/): to import, manage, and process geospatial data
+-   [**sf**](https://cran.r-project.org/web/packages/sf/index.html): used for importing, managing, and processing geospatial data
 
--   [tmap](https://cran.r-project.org/web/packages/tmap/): provides functions for plotting cartographic quality static point patterns maps or interactive maps
+-   [**tidyverse**](https://www.tidyverse.org/): a collection of packages for data science tasks
 
--   [plotly](https://cran.r-project.org/package=plotly): for creating interactive web-based graphs
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/index.html): used for creating thematic maps, such as choropleth and bubble maps
 
--   [sfdep](https://cran.r-project.org/web/packages/sfdep/): for spatial dependence of simple features
+-   [**sfdep**](https://cran.r-project.org/web/packages/sfdep/index.html): used to create spatial weights matrix objects, global and local spatial autocorrelation statistics and related calculations (e.g. spatially lag attributes)
 
--   [readxl](https://readxl.tidyverse.org/reference/read_excel.html): to import Excel worksheets(.xlsx)
+-   [**onemapsgapi**](https://cran.r-project.org/web/packages/onemapsgapi/index.html): used to query Singapore-specific spatial data, alongside additional functionalities.
 
--   [tidyverse](https://www.tidyverse.org/): a collection of packages for data science tasks
+-   [**units**](https://cran.r-project.org/web/packages/units/index.html): used to for manipulating numeric vectors that have physical measurement units associated with them
+
+-   [**matrixStats**](https://cran.r-project.org/web/packages/matrixStats/index.html): a set of high-performing functions for operating on rows and columns of matrices
+
+-   [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html): a JSON parser that can convert from JSON to the appropraite R data types
+
+-   [**olsrr**](https://cran.r-project.org/web/packages/olsrr/index.html): used for building least squares regression models
+
+-   [**httr**](https://cran.r-project.org/web/packages/httr/) : used to make API calls, such as a GET request
+
+-   [**ggpubr**](https://cran.r-project.org/web/packages/ggpubr/index.html): used for multivariate data visualisation & analysis
+
+-   [**GWmodel**](https://cran.r-project.org/web/packages/GWmodel/index.html): provides a collection of localised spatial statistical methods, such as summary statistics, principal components analysis, discriminant analysis and various forms of GW regression
+
+-   [**SpatialML**](https://cran.r-project.org/web/packages/SpatialML/index.html)**:** allows for a geographically weighted random forest regression including a function to find the optical bandwidth
+
+-   [**Ranger**](https://cran.r-project.org/web/packages/ranger/index.html)**:** a fast implementation of Random Forests, particularly suited for high dimensional data
+
+-   [**cowplot**](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html): a simple add-on to ggplot and provides various features that help with creating publication-quality figures.
 
 ```{r}
-pacman::p_load(readxl, sf, tidyverse, tmap, sfdep, gifski, httr, jsonlite, onemapsgapi, rvest,readxl )
+pacman::p_load(readxl, sf, tidyverse, units, matrixStats, olsrr , gdata, tmap, sfdep, jsonlite, onemapsgapi, rvest, ranger, SpatialML, readxl, GWmodel, httr, cowplot )
 ```
 
 # Importing Data and Wrangling
@@ -89,11 +122,11 @@ Having a glimpse of our data, we can observe that this dataset has a total of 11
 
 For this assignment, the dataset will focus on:
 
--   Transaction period: October 2022 to February 2023
+-   Transaction period: Oct 2022 to February 2023
 
--   Training dataset period: October 2022 to December 2023
+-   Training dataset period: Oct 2022 to December 2023
 
--   Test dataset period: October 2022 to December 2023
+-   Test dataset period: January 2023 to February 2023
 
 -   Type of rook flat: 5-room flats
 
@@ -102,7 +135,7 @@ The code chunk filters our dataset accordingly.
 ```{r}
 resale<- resale %>% 
   filter(flat_type == "5 ROOM") %>%
-  filter(month >= "2022-10" & month < "2023-02")
+  filter(month >= "2022-10" & month <= "2023-02")
 ```
 
 Based on my [senior's](https://is415-msty.netlify.app/posts/2021-10-25-take-home-exercise-3/?panelset1=extracted2&panelset2=base3&panelset3=base4&panelset=base&panelset4=sg) experience, "ST." is usually written as "SAINT" instead - for example, St. Luke's Primary School is written as Saint Luke's Primary School. To address, this, we'll replace such occurrences:
@@ -164,20 +197,30 @@ resale_rds<-readRDS("data/rds/resale.rds")
 
 #### Structural Data
 
+In this section, I will be pre processing the structural data that I need for my tasks.
+
 ##### Floor Level
 
-let's first take a look at the storey_range values
+let's first take a look at the storey_range values.
 
 ```{r}
-unique(resale_rds$storey_range)
+sort(unique(resale_rds$storey_range))
 ```
 
-To use this in our model, we need to perform dummy coding on it. Based on the unique values, there are 17 storey range categories. pivot_wider() is then used to create duplicate variables representing every storey range, with the value being 1 if the observation belongs in said storey range, and 0 if otherwise.
+We can see that there are 17 storey level ranges categories. The following code chunk recodes the categorical naming to numerical values by assigning 1 to the first range 01 TO 03 and 17 to the last range 49 TO 51.
 
 ```{r}
-resale_rds <- resale_rds %>%
-  pivot_wider(names_from = storey_range, values_from = storey_range, 
-              values_fn = list(storey_range = ~1), values_fill = 0) 
+storey <- sort(unique(resale_rds$storey_range))
+storey_order <- 1:length(storey)
+storey_range_order <- data.frame(storey, storey_order)
+storey_range_order
+```
+
+Next, I will combine it to the original resale df.
+
+```{r}
+resale_rds <- left_join(resale_rds,  storey_range_order, by = c("storey_range" = "storey"))
+
 ```
 
 ##### Remaining Lease
@@ -225,12 +268,274 @@ resale_sf <- st_as_sf(resale_rds,
   st_transform(crs = 3414)
 ```
 
-### Primary School
+### Data Pre-processing
 
-While searching for a dataset for primary school locations, i've crossed upon this dataset from [data.gov.sg](https://data.gov.sg/) which has the general information of schools in Singapore. By filtering out `themainlevel_code` which represents the different types of schools to be Primary, i will be able to extract out the address and postal codes of primary schools in Singapore.
+Under this section, we will check for:
+
+-   check for missing values
+
+-   check correct coordinates system
+
+-   check for invalid geometries
+
+#### Check for Missing Values
 
 ```{r}
-primary_school <- read_csv("data/aspatial/general-information-of-schools.csv")
+#resale_sf
+sum(is.na(resale_sf))
+
+```
+
+We can observe that we have no missing values.
+
+#### Check for Correct Coordinates System
+
+```{r}
+#resale_sf
+st_crs(resale_sf)
+
+```
+
+Our dataset have the correct Singapore coordinates system of 3414.
+
+#### Check for Invalid Geometries
+
+```{r}
+#resale_sf
+length(which(st_is_valid(resale_sf) == FALSE))
+
+```
+
+Based on the output, our geometries are valid.
+
+Once again, I saved the processed resale_sf in an rds file.
+
+```{r}
+#| eval: false
+write_rds(resale_sf, "data/rds/resale_sf.rds")
+```
+
+## Geospatial Data
+
+### Master Plan 2019 Boundary
+
+The code chunk below retrieves the geospatial polygon data for Singapore's region in 2019.
+
+```{r}
+mpsz <- st_read(dsn="data/geospatial/MP14_SUBZONE_WEB_PL.kml") %>%
+  st_transform(crs = 3414)
+```
+
+### Locational Factors Extracted via onemapAPI token
+
+For some of the locational factors, I will be utilising onemapAPI to retrieve its geometry data.
+
+One method I discovered was the usage of a token to retrieve geometry of locational factors based on its related theme. But before we can proceed on, we need to register for account [here](https://www.onemap.gov.sg/docs/#register-free-account) and retrieve the token.
+
+```{r}
+#| eval: false
+token <- get_token("user@example.com", "password")
+```
+
+The code chunk below helps us view the available themes. As a token is needed, I first saved the output in an rds file.
+
+```{r}
+#| eval: false
+#retrieve available themes that we can refer to
+avail_themes <-search_themes(token)
+write_rds(avail_themes, "data/rds/available_themes.rds")
+```
+
+By reading the according file, I sorted the themes in alphabetical order, for easier reference.
+
+```{r}
+#read the file for available themes
+avail_themes<-readRDS("data/rds/available_themes.rds")
+
+#sort by alphabetical order
+avail_themes<-avail_themes[order(avail_themes$THEMENAME),]
+avail_themes
+```
+
+Looking through the available themes from onemap API, some of the themes relevant to our tasks is:
+
++---------------------------------------------------------------------------------------------------------------+------------------+
+| Theme Name                                                                                                    | Query Name       |
++===============================================================================================================+==================+
+| Child Care Services                                                                                           | childcare        |
++---------------------------------------------------------------------------------------------------------------+------------------+
+| Eldercare Services                                                                                            | eldercare        |
++---------------------------------------------------------------------------------------------------------------+------------------+
+| Hawker Centres_New (Note: there are other similar themes such as Hawker Centres and Healthier Hawker Centres) | hawkercentre_new |
++---------------------------------------------------------------------------------------------------------------+------------------+
+| Kindergartens                                                                                                 | kindergartens    |
++---------------------------------------------------------------------------------------------------------------+------------------+
+| Parks (Note: there are other similar themes such as Parks\@SG and NParks Parks and Nature Reserves)           | nationalparks    |
++---------------------------------------------------------------------------------------------------------------+------------------+
+
+For the following code chunks, I created a shapefile for each locational factor I am interested in.
+
+The steps taken are:
+
+1.  Retrieve data such as the geometry and name of the place/amenity by using onemap's get_theme() function which takes in a theme (i.e query name) and the store the data in a df
+
+2.  Convert the df to a sf object by using the st_as_sf() function
+
+3.  Transform crs information to [Singapore coordinates system](https://epsg.io/3414) i.e 3414 by using st_transform() function
+
+4.  Write to a shapefile using st_write() function
+
+::: panel-tabset
+## Childcare
+
+``` r
+#| eval: false
+#theme: childcare
+
+#retrieve the data such as the geometry and name  accordingly to the theme
+childcare_tibble <- get_theme(token, "childcare")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+childcare_sf <- st_as_sf(childcare_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+st_write(obj = childcare_sf,
+         dsn = "data/geospatial",
+         layer = "childcare",
+         driver = "ESRI Shapefile",
+         append=FALSE)
+```
+
+## Eldercare
+
+``` r
+#| eval: false
+#theme: eldercare
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+eldercare_tibble <- get_theme(token, "eldercare")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+eldercare_sf <- st_as_sf(eldercare_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+
+write_rds(eldercare_sf, "data/rds/eldercare.rds")
+```
+
+## Hawker Centres
+
+``` r
+#| eval: false
+#theme: new hawker centres
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+#hawkercentre_new_tibble <- get_theme(token, "hawkercentre_new")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+hawkercentre_new_sf <- st_as_sf(hawkercentre_new_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+
+write_rds(hawkercentre_new_sf, "data/rds/hawker_new.rds")
+
+#issues writing in this manner
+#st_write(obj = hawkercentre_new_sf,
+#         dsn = "data/geospatial",
+#         layer = "hawkercentre_new",
+#        driver = "ESRI Shapefile",
+#         append=FALSE)
+```
+
+## Kindergartens
+
+``` r
+#| eval: false
+#theme: kindergartens
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+kindergartens_tibble <- get_theme(token, "kindergartens")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+kindergartens_sf <- st_as_sf(kindergartens_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+
+write_rds(kindergartens_sf, "data/rds/kindergartens.rds")
+```
+
+## Parks
+
+``` r
+#| eval: false
+#theme: parks
+
+#retrieve the data such as the geometry and name based accordingly to the theme
+nationalparks_tibble <- get_theme(token, "nationalparks")
+
+# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
+nationalparks_sf <- st_as_sf(nationalparks_tibble, coords=c("Lng", "Lat"), 
+                        crs=4326) %>% 
+  st_transform(crs = 3414)
+
+write_rds(nationalparks_sf, "data/rds/nationalparks.rds")
+```
+:::
+
+Import the following to be used for our tasks later.
+
+```{r}
+childcare_sf <-st_read("data/geospatial", layer="childcare")
+eldercare_sf<- readRDS("data/rds/eldercare.rds")
+hawkercentre_new_sf <- readRDS("data/rds/hawker_new.rds")
+kindergartens_sf <- readRDS("data/rds/kindergartens.rds")
+nationalparks_sf <- readRDS("data/rds/nationalparks.rds")
+```
+
+### CBD Area
+
+For this assignment, I consider the CBD area to be in the Downtown Core so I will be using the [coordinates of Downtown Core](https://www.latlong.net/place/downtown-core-singapore-20616.html) .
+
+```{r}
+lat= c(1.287953)
+lng= c(103.851784)
+
+cbd_sf <- data.frame(lat, lng) %>%
+  st_as_sf(coords = c("lng", "lat"), crs=4326) %>%
+  st_transform(crs=3414)
+```
+
+### Supermarket
+
+```{r}
+supermarket_sf <- st_read("data/geospatial/supermarkets-geojson.geojson") 
+supermarket_sf <- supermarket_sf %>%
+  st_transform(crs = 3414)
+```
+
+### Bus Stop
+
+```{r}
+bus_stop<- st_read(dsn = "data/geospatial", layer = "BusStop")
+bus_stop_sf <- bus_stop %>%
+  st_transform(crs = 3414)
+```
+
+### MRT/LRT
+
+```{r}
+
+mrt = st_read(dsn = "data/geospatial/", layer = "Train_Station_Exit_Layer")
+mrt_sf <- mrt %>%
+  st_transform(crs = 3414)
+```
+
+### Primary School
+
+While searching for a dataset for primary school locations, i've crossed upon this dataset from [data.gov.sg](https://data.gov.sg/) which has the general information of schools in Singapore. By filtering out `themainlevel_code` which represents the different types of schools to be Primary, I will be able to extract out the address and postal codes of primary schools in Singapore.
+
+```{r}
+primary_school <- read_csv("data/geospatial/general-information-of-schools.csv")
 
 primary_school <- primary_school %>%
   filter(mainlevel_code == "PRIMARY") %>%
@@ -339,7 +644,7 @@ nrow(popular_primary_schools_sf)
 For shopping malls, I used the dataset extracted by [Valery Lim](https://github.com/ValaryLim/Mall-Coordinates-Web-Scraper) who webscrapped the shopping malls data from its [wikipedia](https://en.wikipedia.org/wiki/List_of_shopping_malls_in_Singapore) in 2019.
 
 ```{r}
-shopping_mall <- read.csv("data/aspatial/mall_coordinates_updated.csv")
+shopping_mall <- read.csv("data/geospatial/mall_coordinates_updated.csv")
 
 shopping_mall <- shopping_mall %>%
   select(name, latitude, longitude)
@@ -359,287 +664,879 @@ shopping_mall_sf <- st_as_sf(shopping_mall,
   st_transform(crs = 3414)
 ```
 
-## Data Pre-processing
+## Data-Pre Processing
 
-Under this section, we will check for:
+Same as before, we will conduct the following steps for data preprocessing, with an additional step of removing irrelevant columns for certain datasets:
 
--   missing values
+-   removing irrelevant columns
+
+-   check for missing values
 
 -   check correct coordinates system
 
 -   check for invalid geometries
 
--   remove unnecessary columns
+#### Remove Irrelevant Columns
 
-### Missing Values
-
-For resale_sf:
+So for our datasets, we only need to know the name and the geometry so in the following code chunks i will be removing/dropping irrelevant columns.
 
 ```{r}
+#mpsz
+mpsz <- mpsz %>% select("Name")
 
-sum(is.na(resale_rds))
+#childcare_sf
+#combine name and address postal to make it unique, some childcare have same name but diff locations
+childcare_sf$full_address <- paste(childcare_sf$NAME, childcare_sf$ADDRESSP)
+childcare_sf <- childcare_sf %>% select("full_address")
+
+#eldercare_sf
+eldercare_sf$full_address <- paste(eldercare_sf$NAME, eldercare_sf$ADDRESSPOSTALCODE)
+eldercare_sf <- eldercare_sf %>% select("full_address")
+
+#hawkercentre_new_sf
+hawkercentre_new_sf <- hawkercentre_new_sf %>% select("NAME")
+
+#kindergartens_sf
+kindergartens_sf <- kindergartens_sf %>% select("NAME")
+
+#nationalparks_sf
+nationalparks_sf <- nationalparks_sf %>% select("NAME")
+
+#supermarket
+supermarket_sf <- supermarket_sf %>% select("Description")
+
+#bus stop
+bus_stop_sf$stop_name <- paste(bus_stop_sf$BUS_STOP_N, bus_stop_sf$BUS_ROOF_N, bus_stop_sf$LOC_DESC)
+bus_stop_sf <- bus_stop_sf %>% select("stop_name")
+
+#mrt
+#combine stn name and exit to make each row unique
+mrt_sf$stn <- paste(mrt_sf$stn_name, mrt_sf$exit_code)
+mrt_sf <- mrt_sf %>% select("stn")
+
+
+
+```
+
+#### Check for Missing Values
+
+```{r}
+#mpsz
+sum(is.na(mpsz))
+
+#childcare_sf
+sum(is.na(childcare_sf))
++
+#eldercare_sf
+sum(is.na(eldercare_sf))
+
+#hawkercentre_new_sf
+sum(is.na(hawkercentre_new_sf))
+
+#kindergartens_sf
+sum(is.na(kindergartens_sf))
+
+#nationalparks_sf
+sum(is.na(nationalparks_sf))
+
+#supermarket_sf
+sum(is.na(supermarket_sf))
+
+#bus stop
+sum(is.na(bus_stop_sf))
+
+#MRT
+sum(is.na(mrt_sf))
+
+#shopping_mall_sf
 sum(is.na(shopping_mall_sf))
+
+#primary_school_sf
 sum(is.na(primary_school_sf))
+
+#popular_primary_schools_sf
 sum(is.na(popular_primary_schools_sf))
 
-
-#st_crs(resale_sf)
 ```
 
-::: panel-tabset
-## resale_sf
+Based on the output, there is no missing values.
 
-``` r
-sum(is.na(resale_rds))
-```
-
-## shopping_mall_sf
-
-``` r
-sum(is.na(shopping_mall_sf))
-```
-
-## primary_school_sf
-
-``` r
-sum(is.na(primary_school_sf))
-```
-
-## popular_primary_schools_sf
-
-``` r
-sum(is.na(popular_primary_schools_sf))
-```
-:::
-
-We can observe that we have no missing values.
-
-## Geospatial Data
-
-### Master Plan 2019 Boundary
-
-The code chunk below retrieves the geospatial polygon data for Singapore's region in 2019.
+#### Check for Correct Coordinates System
 
 ```{r}
-mpsz <- st_read(dsn="data/geospatial/MP14_SUBZONE_WEB_PL.kml") %>%
-  st_transform(crs = 3414)
+#mpsz
+st_crs(mpsz)
+
+#childcare_sf
+st_crs(childcare_sf)
+
+#eldercare_sf
+st_crs(eldercare_sf)
+
+#hawkercentre_new_sf
+st_crs(hawkercentre_new_sf)
+
+#kindergartens_sf
+st_crs(kindergartens_sf)
+
+#nationalparks_sf
+st_crs(nationalparks_sf)
+
+#supermarket_sf
+st_crs(supermarket_sf)
+
+#bus_stop_sf
+st_crs(bus_stop_sf)
+
+#mrt_sf
+st_crs(mrt_sf)
+
+#shopping_mall_sf
+st_crs(shopping_mall_sf)
+
+#primary_school_sf
+st_crs(primary_school_sf)
+
+#popular_primary_schools_sf
+st_crs(popular_primary_schools_sf)
 ```
 
-### Locational Factors Extracted via onemapAPI token
+Based on the output, our datasets are in the correct coordinate systems.
 
-For some of the locational factors, I will be utilising onemapAPI to retrieve its geometry data.
-
-One method I discovered was the usage of a token to retrieve geometry of locational factors based on its related theme.
-
-But before we can proceed on, we need to register for account [here](https://www.onemap.gov.sg/docs/#register-free-account) and retrieve the token.
-
-#:\| eval: false
+#### Check for Invalid Geometries
 
 ```{r}
-#| eval: false
-token <- get_token("user@example.com", "password")
+#mpsz
+length(which(st_is_valid(mpsz) == FALSE))
+
+#childcare_sf
+length(which(st_is_valid(childcare_sf) == FALSE))
+
+#eldercare_sf
+length(which(st_is_valid(eldercare_sf) == FALSE))
+
+#kindergartens_sf
+length(which(st_is_valid(kindergartens_sf) == FALSE))
+
+#hawkercentre_new_sf
+length(which(st_is_valid(hawkercentre_new_sf) == FALSE))
+
+#nationalparks_sf
+length(which(st_is_valid(nationalparks_sf) == FALSE))
+
+#supermarket_sf
+length(which(st_is_valid(supermarket_sf) == FALSE))
+
+#bus_stop_sf
+length(which(st_is_valid(bus_stop_sf) == FALSE))
+
+#mrt_sf
+length(which(st_is_valid(mrt_sf) == FALSE))
+
+#shopping_mall_sf
+length(which(st_is_valid(shopping_mall_sf) == FALSE))
+
+#primary_school_sf
+length(which(st_is_valid(primary_school_sf) == FALSE))
+
+#popular_primary_schools_sf
+length(which(st_is_valid(popular_primary_schools_sf) == FALSE))
 ```
+
+Based on the output, we can see that only the mpsz dataset has invalid geometries. The code chunk beow addresses this issue.
 
 ```{r}
-#| eval: false
-#rmb to take out my token, should be hidden for security purposes
-token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDc2LCJ1c2VyX2lkIjoxMDA3NiwiZW1haWwiOiJyaGt5MjAwMEBnbWFpbC5jb20iLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiaHR0cDpcL1wvb20yLmRmZS5vbmVtYXAuc2dcL2FwaVwvdjJcL3VzZXJcL3Nlc3Npb24iLCJpYXQiOjE2Nzk0MTUxOTgsImV4cCI6MTY3OTg0NzE5OCwibmJmIjoxNjc5NDE1MTk4LCJqdGkiOiJhN2Q0ZjBhYjI0NmEzMjMyZjY3MWJiNjMzZTJhNzhhYSJ9.ei3qIo8LzWvrbgVOaTuyieIGMHl-g4tgFujXppFl01c"
-
+mpsz <- st_make_valid(mpsz)
+length(which(st_is_valid(mpsz) == FALSE))
 ```
 
-The code chunk below helps us view the available themes. As a token is needed, I first saved the output in an rds file.
+#### Visualisations
+
+The following code chunks shows some visualisations for the data we have just preprocessed.
+
+##### **Subzone Boundary of Singapore 2014**
 
 ```{r}
-#| eval: false
-#retrieve available themes that we can refer to
-avail_themes <-search_themes(token)
-write_rds(avail_themes, "data/rds/available_themes.rds")
+plot(st_geometry(mpsz))
 ```
 
-By reading the according file, I sorted the themes in alphabetical order, for easier reference.
+##### **MRT/LRT Stations Map**
 
 ```{r}
-#read the file for available themes
-avail_themes<-readRDS("data/rds/available_themes.rds")
-
-#sort by alphabetical order
-avail_themes<-avail_themes[order(avail_themes$THEMENAME),]
-avail_themes
+tmap_mode("view")
+tm_shape(mrt_sf) +
+  tm_dots(col="red", size=0.05)
 ```
 
-Looking through the available themes from onemapapi, some of the themes relevant to our tasks is:
-
-| Theme Name                                                                                                    | Query Name       |
-|------------------------------------------------|------------------------|
-| Child Care Services                                                                                           | childcare        |
-| Eldercare Services                                                                                            | eldercare        |
-| Hawker Centres_New (Note: there are other similar themes such as Hawker Centres and Healthier Hawker Centres) | hawkercentre_new |
-| Kindergartens                                                                                                 | kindergartens    |
-| Parks (Note: there are other similar themes such as Parks\@SG and NParks Parks and Nature Reserves)           | nationalparks    |
-
-For the following code chunks, I created a shapefile for each locational factor I am interested in.
-
-The steps taken are:
-
-1.  Retrieve data such as the geometry and name of the place/amenity by using onemap's get_theme() function which takes in a theme (i.e query name) and the store the data in a df
-
-2.  Convert the df to a sf object by using the st_as_sf() function
-
-3.  Transform crs information to [Singapore coordinates system](https://epsg.io/3414) i.e 3414 by using st_transform() function
-
-4.  Write to a shapefile using st_write() function
-
-::: panel-tabset
-## Childcare
-
-``` r
-#| eval: false
-#theme: childcare
-
-#retrieve the data such as the geometry and name  accordingly to the theme
-childcare_tibble <- get_theme(token, "childcare")
-
-# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
-childcare_sf <- st_as_sf(childcare_tibble, coords=c("Lng", "Lat"), 
-                        crs=4326) %>% 
-  st_transform(crs = 3414)
-st_write(obj = childcare_sf,
-         dsn = "data/geospatial",
-         layer = "childcare",
-         driver = "ESRI Shapefile",
-         append=FALSE)
-```
-
-## Eldercare
-
-``` r
-#| eval: false
-#theme: eldercare
-
-#retrieve the data such as the geometry and name based accordingly to the theme
-eldercare_tibble <- get_theme(token, "eldercare")
-
-# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
-eldercare_sf <- st_as_sf(eldercare_tibble, coords=c("Lng", "Lat"), 
-                        crs=4326) %>% 
-  st_transform(crs = 3414)
-st_write(obj = eldercare_sf,
-         dsn = "data/geospatial",
-         layer = "eldercare",
-         driver = "ESRI Shapefile",
-         append=FALSE)
-```
-
-## Hawker Centres
-
-``` r
-#| eval: false
-#theme: new hawker centres
-
-#retrieve the data such as the geometry and name based accordingly to the theme
-hawkercentre_new_tibble <- get_theme(token, "hawkercentre_new")
-
-# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
-hawkercentre_new_sf <- st_as_sf(hawkercentre_new_tibble, coords=c("Lng", "Lat"), 
-                        crs=4326) %>% 
-  st_transform(crs = 3414)
-st_write(obj = hawkercentre_new_sf,
-         dsn = "data/geospatial",
-         layer = "hawkercentre_new",
-         driver = "ESRI Shapefile",
-         append=FALSE)
-```
-
-## Kindergartens
-
-``` r
-#| eval: false
-#theme: kindergartens
-
-#retrieve the data such as the geometry and name based accordingly to the theme
-kindergartens_tibble <- get_theme(token, "kindergartens")
-
-# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
-kindergartens_sf <- st_as_sf(kindergartens_tibble, coords=c("Lng", "Lat"), 
-                        crs=4326) %>% 
-  st_transform(crs = 3414)
-st_write(obj = kindergartens_sf,
-         dsn = "data/geospatial",
-         layer = "kindergartens",
-         driver = "ESRI Shapefile",
-         append=FALSE)
-```
-
-## Parks
-
-``` r
-#| eval: false
-#theme: parks
-
-#retrieve the data such as the geometry and name based accordingly to the theme
-nationalparks_tibble <- get_theme(token, "nationalparks")
-
-# to convert a data frame of coordinates to an sf object and transform the crs information and create a shapefile for it
-nationalparks_sf <- st_as_sf(nationalparks_tibble, coords=c("Lng", "Lat"), 
-                        crs=4326) %>% 
-  st_transform(crs = 3414)
-st_write(obj = nationalparks_sf,
-         dsn = "data/geospatial",
-         layer = "nationalparks",
-         driver = "ESRI Shapefile",
-         append=FALSE)
-```
-:::
-
-### CBD Area
-
-For this assignment, I consider the CBD area to be in the Downtown Core so I will be using the [coordinates of Downtown Core](https://www.latlong.net/place/downtown-core-singapore-20616.html) .
+##### **Bus Map**
 
 ```{r}
-lat= c(1.287953)
-lng= c(103.851784)
-
-cbd_sf <- data.frame(lat, lng) %>%
-  st_as_sf(coords = c("lng", "lat"), crs=4326) %>%
-  st_transform(crs=3414)
+tmap_mode("plot")
+tm_shape(mpsz) +
+  tm_borders(alpha = 0.5) +
+  tmap_options(check.and.fix = TRUE) +
+tm_shape(bus_stop_sf) +
+  tm_dots(col="red", size=0.05) +
+  tm_layout(main.title = "Bus Stops",
+          main.title.position = "center",
+          main.title.size = 1.2,
+          frame = TRUE)
 ```
 
-### Supermarket
+##### **Education/Healthcare related map**
+
+The code chunk below shows the location of:
+
+-   childcare centres - blue dots
+
+-   eldercare centres - red dots
+
+-   kindergartens - orange dots
+
+-   primary schools - black dots
+
+-   top 10 popular primary schools - grey dots
 
 ```{r}
-supermarket_sf <- st_read("data/geospatial/supermarkets-geojson.geojson") 
-supermarket_sf <- supermarket_sf %>%
-  st_transform(crs = 3414)
+tmap_mode("view")
+tm_shape(childcare_sf) +
+  tm_dots(alpha=0.5, #affects transparency of points
+          col="#2ec4b6",
+          size=0.05) +
+tm_shape(eldercare_sf) +
+  tm_dots(alpha=0.5,
+          col="#e71d36",
+          size=0.05) +
+tm_shape(kindergartens_sf) +
+  tm_dots(alpha=0.5,
+          col="#ff9f1c",
+          size=0.05) +
+tm_shape(primary_school_sf) +
+  tm_dots(alpha=0.5,
+          col="#011627",
+          size=0.05) +
+tm_shape(popular_primary_schools_sf) +
+  tm_dots(alpha=0.5,
+        col="grey",
+        size=0.05) +
+  tm_view(set.zoom.limits = c(11, 14))
 ```
 
-### Bus Stop
+One thing we can observe is that there are more childcare centres as compared to the rest.
+
+##### Amenities Related Map
+
+The code chunk below shows the location of:
+
+-   supermarkets - red dots
+
+-   shopping malls - orange dots
+
+-   national parks - dark green dots
+
+-   hawker centres - blue dots
 
 ```{r}
-bus_stop<- st_read(dsn = "data/geospatial", layer = "BusStop")
-bus_stop_sf <- bus_stop %>%
-  st_transform(crs = 3414)
+tmap_mode("view")
+tm_shape(supermarket_sf) +
+  tm_dots(alpha=0.5, #affects transparency of points
+          col="#d62828",
+          size=0.05) +
+tm_shape(shopping_mall_sf) +
+  tm_dots(alpha=0.5,
+          col="#f77f00",
+          size=0.05) +
+tm_shape(supermarket_sf) +
+  tm_dots(alpha=0.5,
+          col="#fcbf49",
+          size=0.05) +
+tm_shape(nationalparks_sf) +
+  tm_dots(alpha=0.5,
+          col="#023020",
+          size=0.05) +
+tm_shape(hawkercentre_new_sf) +
+  tm_dots(alpha=0.5,
+          col="#ADD8E6",
+          size=0.05) +
+  tm_view(set.zoom.limits = c(10, 14))
 ```
 
-### MRT
+##### Resale Flat Prices
 
 ```{r}
-#mrt = st_read(dsn = "data/geospatial/", layer = "RapidTransitSystemStation")
-
-
-#mrt_sf <- mrt %>%
-  #st_transform(mrt, 3414)
+tmap_mode("view")
+tmap_options(check.and.fix = TRUE)
+tm_shape(resale_sf) +  
+  tm_dots(col = "resale_price",
+          alpha = 0.6,
+          style="quantile") +
+  # sets minimum zoom level to 11, sets maximum zoom level to 14
+  tm_view(set.zoom.limits = c(11,14))
 ```
 
-## Data-Pre Processing
+We can observe that from July 2022 to December 2022, the are majority of the 5 room HDB flats can be found in the east side of Singapore and the higher priced flats tend to be in the southern-eastern side of Singapore.
 
 ```{r}
-
+tmap_mode("plot")
 ```
 
 ## Formulated Functions
 
-### Proximity Functions
+### Proximity Distance Calculations
 
-### Count Functions
+As per our task , we need to find the proximity of certain facilities i.e proximity to CBD, eldercare, hawker centres, MRT, park, good primary school, shopping mall and supermarket. It can be computed by creating a function called proximity which utilises st_distance() to find the closest facility (shortest distance) with the rowMins() function of our matrixStats package. The values will then be appended to the resale_sf as a new column.
 
-### 
+```{r}
+proximity <- function(df1, df2, varname) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units()
+  df1[,varname] <- rowMins(dist_matrix)
+  return(df1)
+}
+```
+
+```{r}
+resale_sf<-readRDS("data/rds/resale_sf.rds")
+```
+
+```{r}
+#CBD, eldercare, hawker centres, MRT, park, good primary school, shopping mall and supermarket.
+resale_sf <- 
+  proximity(resale_sf, cbd_sf, "PROX_CBD") %>%
+  proximity(., eldercare_sf, "PROX_ELDERCARE") %>%
+  proximity(., hawkercentre_new_sf, "PROX_HAWKER") %>%
+  proximity(., mrt_sf, "PROX_MRT") %>%
+  proximity(., nationalparks_sf, "PROX_PARK") %>%
+  proximity(., popular_primary_schools_sf, "PROX_GDPRISCH") %>%
+  proximity(., shopping_mall_sf, "PROX_SHOPPINGMALL") %>%
+  proximity(., supermarket_sf, "PROX_SPRMKT")
+```
+
+### Facility Count within Radius Calculations
+
+As per our task, we also want to find the number of facilities within a particular radius. Thus, we have to create another function called num_radius() which utilise st_distance() to compute the distance between the flats and the desiredfacilities, and then sum up the observations with rowSums(). The values will be appended to the data frame as a new column.
+
+```{r}
+num_radius <- function(df1, df2, varname, radius) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units() %>%
+    as.data.frame()
+  df1[,varname] <- rowSums(dist_matrix <= radius)
+  return(df1)
+}
+```
+
+```{r}
+#Numbers of kindergartens within 350m, Numbers of childcare centres within 350m, Numbers of bus stop within 350m, Numbers of primary school within 1km
+resale_sf <- 
+  num_radius(resale_sf, kindergartens_sf, "NUM_KNDRGTN", 350) %>%
+  num_radius(., childcare_sf, "NUM_CHILDCARE", 350) %>%
+  num_radius(., bus_stop_sf, "NUM_BUS_STOP", 350) %>%
+  num_radius(., primary_school_sf, "NUM_PRISCH", 1000)
+```
+
+Once again, I would like to save the latest resale_sf file.
+
+```{r}
+#| eval: false
+write_rds(resale_sf, "data/rds/resale_sf_complete.rds")
+```
+
+```{r}
+glimpse(readRDS("data/rds/resale_sf_complete.rds"))
+```
+
+# Train-Test Split
+
+As earlier mentioned, for the resale dataset,
+
+-   Training dataset period: October 2022 to December 2023
+
+-   Test dataset period: January 2023 to February 2023
+
+Hence, the code chunk below reads the rds file - resale_sf which we created earlier on and splits the dataset accordingly.
+
+```{r}
+resale_sf_complete<-readRDS("data/rds/resale_sf_complete.rds")
+```
+
+```{r}
+resale_train <- resale_sf_complete %>%
+  filter(month >= "2022-10" & month <= "2022-12",
+         flat_type == "5 ROOM") 
+```
+
+```{r}
+resale_test <- resale_sf_complete %>%
+  filter(month >= "2023-01" & month <= "2023-02",
+         flat_type == "5 ROOM") 
+```
+
+For future references, I will be writing the train and test data set of resale_sf as a rds file.
+
+```{r}
+#| eval: false
+write_rds(resale_train, "data/model/resale_train.rds")
+write_rds(resale_test, "data/model/resale_test.rds")
+```
+
+The code chunk below reads our train and test dataset of resale_sf.
+
+```{r}
+train_data <- read_rds("data/model/resale_train.rds")
+test_data <- read_rds("data/model/resale_test.rds")
+```
+
+```{r}
+glimpse(train_data)
+```
+
+Having a glimpse at our training and test data, I realised that there are some columns that are irrelevant for our subsequent tasks such as flat_model , town, flat_type, block and street_name. Thus, I removed it.
+
+```{r}
+train_data <-subset(train_data, select = -c(month,flat_model, town,flat_type, block,street_name, storey_range ))
+
+test_data <-subset(test_data, select = -c(month,flat_model, town,flat_type, block,street_name, storey_range ))
+```
+
+The lease_commence_date represents the age of the unit that we had calculated earlier on but its name can be misleading so I changed the name to age.
+
+```{r}
+colnames(train_data)[2] <- "age"
+colnames(test_data)[2] <- "age"
+```
+
+Looking at our data again, the type of age and remaining_lease is characters but it should be numeric/integer so i changed it accordingly.
+
+```{r}
+train_data$age  <- as.numeric(train_data$age)
+test_data$age  <- as.numeric(test_data$age)
+
+train_data$remaining_lease  <- as.numeric(train_data$remaining_lease)
+test_data$remaining_lease  <- as.numeric(test_data$remaining_lease)
+```
+
+Finally, we are done processing our train and test data for our subsequent tasks!
+
+The code chunk below shows a summary of our resale prices.
+
+```{r}
+summary(train_data$resale_price)
+```
+
+# Computing Correlation Matrix
+
+Before loading the predictors into a predictive model, it is always a good practice to use correlation matrix to examine if there is sign of multicolinearity.
+
+But before that, we need to drop our geometry values.
+
+```{r}
+train_nogeo <- train_data %>%
+  st_drop_geometry()
+```
+
+The code chunk below saves the rds file for training data without geometry so we can use it later.
+
+```{r}
+#| eval: false
+write_rds(train_nogeo, "data/model/train_nogeo.rds")
+```
+
+The code chunk below computes the correlation matrix.
+
+```{r}
+corrplot::corrplot(cor(train_nogeo), 
+                   diag = FALSE, 
+                   order = "AOE",
+                   tl.pos = "td", 
+                   tl.cex = 0.5, 
+                   method = "number", 
+                   type = "upper")
+```
+
+In [general](https://blog.clairvoyantsoft.com/correlation-and-collinearity-how-they-can-make-or-break-a-model-9135fbe6936a), an absolute correlation coefficient of \>0.7 among two or more predictors indicates the presence of multicollinearity. As we have a lot of variables, it is quite hard to see the correlation value, but most seems to be okay except age with its correlation to remaining_lease being -1. This indicates that age of the unit and the remaining lease have perfect multicollinearity and we should remove either the age or remaining lease when creating our linear regression model.
+
+The code chunk below removes the age of unit from our dataset.
+
+```{r}
+#removes age column
+train_nogeo<-train_nogeo[,-2]
+```
+
+Another way to check multicolinearity is looking at the Variance Inflation Factor (VIF) which we will perform later.
+
+# Multiple Linear Regression Model (OLS)
+
+First, let's build our multi regression model where y is resale_price and x is the independent predictors.
+
+```{r}
+mlr1 <- lm(resale_price ~. ,
+                data = train_nogeo)
+
+summary(mlr1)
+```
+
+Based on the output, we can infer that the adjusted R square is 0.7054 which roughly indicates that 70% of the variance of the dependent variable being studied is explained by the variance of the independent variable. It seems that most of the predictors are significant (p-value\<0.5) except for PROX_SPRMKT, PROX_SHOPPINGMALL, PROX_GDPRISCH and NUM_BUS_STOP.
+
+## Test of multicollinearity (VIF)
+
+We can use ols_vif_tol() function of our olsrr package to calculate VIF. In general, if the VIF value is less than 5, then there is usually no sign/possibility of correlations.
+
+```{r}
+ols_vif_tol(mlr1)
+```
+
+Th higher the VIF, the less reliable our regression results are going to be. Based on the output, there are no signs of multicollinearity as VIF \<5.
+
+The code chunk below saves the results of our model to an rds file.
+
+```{r}
+#| eval: false
+write_rds(mlr1, "data/model/mlr1.rds" ) 
+```
+
+# GWR Predictive Method
+
+In this section, we will calibrate our mlr1 model to predict HDB resale prices.
+
+## Converting the sf data.frame to SpatialPointDataFrame
+
+```{r}
+train_data_sp <- as_Spatial(train_data[,-2])
+train_data_sp
+```
+
+## Computing adaptive bandwidth
+
+```{r}
+#| eval: false
+bw_adaptive <- bw.gwr(resale_price ~.,
+                  data = train_data_sp,
+                  approach="CV",
+                  kernel="gaussian",
+                  adaptive=TRUE,
+                  longlat=FALSE
+                  )
+```
+
+![](img/bw_adaptive_out.PNG){width="397"}
+
+Doing cross-validation while utilising a gaussian kernel, the smallest CV score is 3.054284e+12 and its adaptive bandwidth is 22.
+
+Next, we will save the adaptive bandwidth as an rds file.
+
+```{r}
+#| eval: false
+write_rds(bw_adaptive, file = "data/model/bw_adaptive.rds")
+```
+
+## Constructing the adaptive bandwidth GWR model
+
+First, let's call the saved bandwith by using the code chunk below.
+
+```{r}
+bw_adaptive <- read_rds("data/model/bw_adaptive.rds")
+```
+
+Now, we can go ahead to calibrate the gwr-based hedonic pricing model by using adaptive bandwidth and Gaussian kernel as shown in the code chunk below.
+
+```{r}
+#| eval: false
+gwr_adaptive <- gwr.basic(formula = resale_price ~.,
+                          data=train_data_sp,
+                          bw=bw_adaptive, 
+                          kernel = 'gaussian', 
+                          adaptive=TRUE,
+                          longlat = FALSE)
+```
+
+The code chunk below will be used to save the model in rds format for future use.
+
+```{r}
+#| eval: false
+write_rds(gwr_adaptive, "data/model/gwr_adaptive.rds")
+```
+
+The code below can be used to display the model output.
+
+```{r}
+gwr_adaptive <- read_rds("data/model/gwr_adaptive.rds")
+gwr_adaptive
+
+```
+
+From the output above, we can observe that the GWR Adjusted R-square is 0.9243233, which is higher than the non-spatial mulitiple linear regression model's Adjusted R-square of 0.709 . Based on [research](https://builtin.com/data-science/adjusted-r-squared#:~:text=R%2Dsquared%20measures%20the%20goodness,is%20not%20a%20good%20fit.), R-squared measures the goodness of fit of a regression model. Hence, a higher R-squared indicates the model is a good fit, while a lower R-squared indicates the model is not a good fit which suggests that the GWR model is a better fit.
+
+GWR model also has a lower AIC i.e 35569.1 than the regression model's AIC i.e 37841.04. Based on [research](https://www.scribbr.com/statistics/akaike-information-criterion/#:~:text=Lower%20AIC%20scores%20are%20better,be%20the%20better%2Dfit%20model.), the lower AIC scores, the better it is, as AIC penalizes models that use more parameters.
+
+# Preparing coordinates data
+
+## Extracting coordinates data
+
+The code chunk below extract the x,y coordinates of the full, training and test data sets.
+
+```{r}
+coords_train <- st_coordinates(train_data)
+coords_test <- st_coordinates(test_data)
+```
+
+Before continue, we write all the output into rds for future uses
+
+```{r}
+#| eval: false
+coords_train <- write_rds(coords_train, "data/model/coords_train.rds" )
+coords_test <- write_rds(coords_test, "data/model/coords_test.rds" )
+```
+
+Now, we need to retrieve our training data, which does not have the geometry.
+
+```{r}
+train_nogeo_rds<-readRDS("data/model/train_nogeo.rds")
+```
+
+# Calibrating Random Forest Model
+
+Now, we will calibrate a model to predict HDB resale price by using random forest function of ranger package. Set.seed() is used to keep results constant as random forest is a simulation. Based on [research](https://medium.com/@raj5287/effects-of-multi-collinearity-in-logistic-regression-svm-rf-af6766d91f1b#:~:text=Random%20Forest%20uses%20bootstrap%20sampling,different%20set%20of%20data%20points.), random forest uses bootstrap sampling and feature sampling, i.e row sampling and column sampling. Therefore, Random Forest is not affected by multicollinearity that much since it is picking different set of features for different models and every model sees a different set of data points. This means that I do not need to remove the age variable.
+
+```{r}
+set.seed(1234)
+rf <- ranger(resale_price ~.,
+             data=train_nogeo_rds)
+```
+
+```{r}
+print(rf)
+```
+
+Based on the output, for a random forest of 500 trees, the OOB prediction error (MSE) is 2833677157 and the R squared (OOB) / R2 is 0.8524123 which implies that around 85% of the variance of the train data is explained by the model.
+
+```{r}
+sqrt(rf$prediction.error)
+```
+
+Random forest rmse is 53232.29.
+
+# Calibrating a Geographically Weighted Random Forest
+
+Next, we would like to calibrate the Geographically Weighted Random Forest by using the grf.bw() function. As the grf.bw() function is computationally expensive, I will be running it on a subset of the data (500 rows). Even though the bandwidth of using 500 rows would differ a lot from the bandwidth of using the whole dataset, but for this assignment approximating it on a subset is good enough as a proof of concept.
+
+```{r}
+#| eval: false
+gwRF_bw <- grf.bw(formula = resale_price ~ 
+                    age +
+                    remaining_lease + 
+                    floor_area_sqm +
+                    storey_order +
+                    PROX_CBD + PROX_ELDERCARE + PROX_HAWKER +
+                    PROX_MRT + PROX_PARK + PROX_GDPRISCH + PROX_SPRMKT +
+                    PROX_SHOPPINGMALL + 
+                    NUM_KNDRGTN + NUM_CHILDCARE + NUM_BUS_STOP + NUM_PRISCH,
+                data = train_nogeo_rds[0:500,],
+                kernel = "adaptive",
+                trees = 30,
+                coords = coords_train[0:500,]
+                )
+
+```
+
+![](img/bw_gwr2.PNG){width="389"}
+
+As computation time is too long, I will use what has been generated so far. Based on the output, the best bandwidth is 85 with a R2 of 0.761592272965718.
+
+Next, I used the bandwidth discovered previously to calibrate our GWRF model. Afterwards, I saved it into an rds file.
+
+```{r}
+set.seed(1234)
+gwRF_adaptive <- grf(resale_price ~ 
+                    age +
+                    remaining_lease + 
+                    floor_area_sqm + storey_order +
+                    PROX_CBD + PROX_ELDERCARE + PROX_HAWKER +
+                    PROX_MRT + PROX_PARK + PROX_GDPRISCH + PROX_SPRMKT +
+                    PROX_SHOPPINGMALL + 
+                    NUM_KNDRGTN + NUM_CHILDCARE + NUM_BUS_STOP + NUM_PRISCH,
+                     dframe=train_nogeo_rds, 
+                     bw= 85,
+                     ntree = 30,
+                     kernel="adaptive",
+                     coords=coords_train)
+write_rds(gwRF_adaptive, "data/model/gwRF_adaptive.rds")
+```
+
+```{r}
+#write_rds(gwRF_adaptive, "data/model/gwRF_adaptive.rds")
+gwRF_adaptive <- read_rds("data/model/gwRF_adaptive.rds")
+```
+
+```{r}
+#look at important variables
+glimpse(gwRF_adaptive$Local.Variable.Importance)
+```
+
+```{r}
+gwRF_adaptive$Global.Model
+```
+
+The output shows that the R2 is 0.8331023. for a GWR model of 30 trees and a bandwidth of 86.
+
+# Predicting by using Test Data
+
+## Multiple Linear Regression (OLS)
+
+The code chunk below uses predict.lm() function of the stats package to run inference on our test data and save it into RDS format.
+
+```{r}
+ols_pred <- predict.lm(mlr1, test_data[,-2]) %>%
+  write_rds("data/model/ols_pred.rds")
+```
+
+## Random Forest
+
+The code chunk below uses predict() function of the ranger package to run inference on our test data and save it into RDS format.
+
+```{r}
+rf_pred <- predict(rf, test_data) %>%
+  write_rds("data/model/rf_pred.rds")
+```
+
+## GWRF model
+
+The code chunk below will be used to combine the test data with its corresponding coordinates data.
+
+```{r}
+test_data <- cbind(test_data, coords_test) %>%
+  st_drop_geometry()
+```
+
+Next, predict.grf() of spatialML package will be used to predict the resale value by using the test data and gwRF_adaptive model calibrated earlier.
+
+```{r}
+#| eval: false
+
+set.seed(1234)
+gwRF_pred <- predict.grf(gwRF_adaptive, 
+                           test_data, 
+                           x.var.name="X",
+                           y.var.name="Y", 
+                           local.w=1,
+                           global.w=0)
+```
+
+Before moving on, let us save the output into rds file for future use.
+
+```{r}
+#| eval: false
+GRF_pred <- write_rds(gwRF_pred, "data/model/GRF_pred.rds")
+```
+
+The output of the predict.grf() is a vector of predicted values. It is wiser to convert it into a data frame for further visualisation and analysis.
+
+```{r}
+GRF_pred <- read_rds("data/model/GRF_pred.rds")
+GRF_pred_df <- as.data.frame(GRF_pred)
+```
+
+In the code chunk below, cbind() is used to append the predicted values for both the GRF and multiple linear regression mode onto test_data.
+
+```{r}
+#for gwrf
+test_data_p <- cbind(test_data, GRF_pred_df)
+```
+
+```{r}
+#| eval: false
+write_rds(test_data_p, "data/model/test_data_p.rds")
+```
+
+## Models Evaluation
+
+To evaluate the 3 models, we can combine the resale price and predicted prices of each model into a single dataframe.
+
+```{r}
+ols_pred_df <- read_rds("data/model/ols_pred.rds") %>%
+  as.data.frame()
+colnames(ols_pred_df) <- c("ols_pred")
+
+rf_pred_df <- read_rds("data/model/rf_pred.rds")$predictions %>%
+  as.data.frame()
+colnames(rf_pred_df) <- c("rf_pred")
+
+gwRF_pred_df <-  GRF_pred %>%
+  as.data.frame()
+colnames(gwRF_pred_df) <- c("gwrf_pred")
+
+prices_pred_df <- cbind(test_data$resale_price, ols_pred_df, rf_pred_df,
+                        gwRF_pred_df) %>% 
+  rename("actual_price" = "test_data$resale_price")
+
+head(prices_pred_df)
+```
+
+Looking at the results, it seems like gwrf model has the closest predicted value to the actual price as compared to the other models.
+
+## Calculating Root Mean Square Error
+
+The root mean square error (RMSE) allows us to measure how far predicted values are from observed values in a regression analysis.
+
+### Multiple Linear Regression (OLS)
+
+```{r}
+#lm
+#MSE <- mean((test_data$resale_price - lm_predicted_value)^2)
+#rmse_lm <- sqrt(MSE)
+
+sqrt(mean((prices_pred_df$actual_price - prices_pred_df$ols_pred)^2))
+```
+
+### Random Forest
+
+```{r}
+sqrt(mean((prices_pred_df$actual_price - prices_pred_df$rf_pred)^2))
+```
+
+### GWRF model
+
+In the code chunk below, rmse() of Metrics package is used to compute the RMSE for GRF model.
+
+```{r}
+#grf
+rmse(test_data_p$resale_price, 
+     test_data_p$GRF_pred)
+#sqrt(mean((prices_pred_df$actual_price - prices_pred_df$gwrf_pred)^2))
+```
+
+Comparing the 3 models RMSE, the GWRF model has the lowest RMSE of 53185.72 as compared to OLS model's RMSE of 69388.4 and random forest model's RMSE of 52045.52. [RMSE](https://help.sap.com/docs/SAP_PREDICTIVE_ANALYTICS/41d1a6d4e7574e32b815f1cc87c00f42/5e5198fd4afe4ae5b48fefe0d3161810.html#:~:text=The%20Root%20Mean%20Squared%20Error%20(RMSE)%20is%20one%20of%20the,the%20target%20value%20(accuracy).) measures the average difference between values predicted by a model and the actual values and provides an estimation of how well the model is able to predict the target value (accuracy). Hence, among the 3 models, the GWRF model will be better model at predicting the resale price.
+
+## Visualising the Predicted Values
+
+```{r}
+
+test_data_models <- cbind(test_data, prices_pred_df)
+
+gwr_plot <- ggplot(data = test_data_p,
+       aes(x = GRF_pred,
+           y = resale_price)) +
+  geom_point()+
+  geom_abline(col = "Red")
+
+
+lm_plot <- ggplot(data = test_data_models,
+       aes(x = ols_pred,
+           y = actual_price)) +
+  geom_point()+
+  geom_abline(col = "Red")
+
+rf_plot <- ggplot(data = test_data_models,
+       aes(x = rf_pred,
+           y = actual_price)) +
+  geom_point()+
+  geom_abline(col = "Red")
+
+plot_grid(gwr_plot, lm_plot, rf_plot, labels = "AUTO")
+```
+
+By comparing the 3 graphs, GWRF model is more linear while OLS and random forest model points on the right half side, majority of it is above the red line. Thus, we can see that the GWRF model is better than the OLS and random forest model as the scatter points are more closer to the diagonal line.
+
+# Conclusion
+
+In conclusion, be comparing the 3 models' performance at predicting the actual resale prices, the RMSE and visualisation of its scatterplots, we can determine that GWRF model is the best model at predicting the actual resale prices. One of the reasons why it performs better is because [GWR](https://www.publichealth.columbia.edu/research/population-health-methods/geographically-weighted-regression#:~:text=outcome%20of%20interest.-,Description,variables%20to%20vary%20by%20locality.) is an outgrowth of ordinary least squares regression (OLS) and adds a level of modeling sophistication by allowing the relationships between the independent and dependent variables to vary by locality.
