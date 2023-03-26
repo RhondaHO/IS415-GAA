@@ -399,13 +399,19 @@ avail_themes
 
 Looking through the available themes from onemap API, some of the themes relevant to our tasks is:
 
++---------------------------------------------------------------------------------------------------------------+------------------+
 | Theme Name                                                                                                    | Query Name       |
-|---------------------------------------------------------------------------------------------------------------|------------------|
++===============================================================================================================+==================+
 | Child Care Services                                                                                           | childcare        |
++---------------------------------------------------------------------------------------------------------------+------------------+
 | Eldercare Services                                                                                            | eldercare        |
++---------------------------------------------------------------------------------------------------------------+------------------+
 | Hawker Centres_New (Note: there are other similar themes such as Hawker Centres and Healthier Hawker Centres) | hawkercentre_new |
++---------------------------------------------------------------------------------------------------------------+------------------+
 | Kindergartens                                                                                                 | kindergartens    |
++---------------------------------------------------------------------------------------------------------------+------------------+
 | Parks (Note: there are other similar themes such as Parks\@SG and NParks Parks and Nature Reserves)           | nationalparks    |
++---------------------------------------------------------------------------------------------------------------+------------------+
 
 For the following code chunks, I created a shapefile for each locational factor I am interested in.
 
@@ -963,7 +969,7 @@ One thing we can observe is that there are more childcare centres as compared to
 
 The code chunk below shows the location of:
 
--   supermarkets - red dots
+-   supermarkets - dark blue dots
 
 -   shopping malls - orange dots
 
@@ -973,17 +979,13 @@ The code chunk below shows the location of:
 
 ```{r}
 tmap_mode("view")
-tm_shape(supermarket_sf) +
-  tm_dots(alpha=0.5, #affects transparency of points
-          col="#d62828",
-          size=0.05) +
 tm_shape(shopping_mall_sf) +
   tm_dots(alpha=0.5,
           col="#f77f00",
           size=0.05) +
 tm_shape(supermarket_sf) +
   tm_dots(alpha=0.5,
-          col="#fcbf49",
+          col="blue",
           size=0.05) +
 tm_shape(nationalparks_sf) +
   tm_dots(alpha=0.5,
