@@ -17,7 +17,7 @@ execute:
   warning: false
   
 
-editor: visual
+editor: visual  
 ---
 
 # Overview
@@ -905,7 +905,8 @@ plot(st_geometry(mpsz))
 ```{r}
 tmap_mode("view")
 tm_shape(mrt_sf) +
-  tm_dots(col="red", size=0.05)
+  tm_dots(col="red", size=0.05) +
+  tm_view(set.zoom.limits = c(11, 14))
 ```
 
 ##### **Bus Map**
