@@ -1342,20 +1342,21 @@ Now, we will calibrate a model to predict HDB resale price by using random fores
 ```{r}
 set.seed(1234)
 rf <- ranger(resale_price ~.,
-             data=train_nogeo_rds)
+             data=train_nogeo_rds,
+              num.trees = 30)
 ```
 
 ```{r}
 print(rf)
 ```
 
-Based on the output, for a random forest of 500 trees, the OOB prediction error (MSE) is 2833677157 and the R squared (OOB) / R2 is 0.8524123 which implies that around 85% of the variance of the train data is explained by the model.
+Based on the output, for a random forest of 30 trees, the OOB prediction error (MSE) is 3246290896 and the R squared (OOB) / R2 is 0.830922 which implies that around 83% of the variance of the train data is explained by the model.
 
 ```{r}
 sqrt(rf$prediction.error)
 ```
 
-Random forest rmse is 53232.29.
+Random forest rmse is 56976.23.
 
 # Calibrating a Geographically Weighted Random Forest
 
@@ -1439,7 +1440,11 @@ The code chunk below uses predict() function of the ranger package to run infere
 
 ```{r}
 #| eval: false
-rf_pred <- predict(rf, test_data) %>%
+
+test_nogeo <-test_data  %>%
+  st_drop_geometry()
+
+rf_pred <- predict(rf, test_nogeo) %>%
   write_rds("data/model/rf_pred.rds")
 ```
 
@@ -1549,7 +1554,7 @@ rmse(test_data_p$resale_price,
 #sqrt(mean((prices_pred_df$actual_price - prices_pred_df$gwrf_pred)^2))
 ```
 
-Comparing the 3 models RMSE, the GWRF model has the lowest RMSE of 53185.72 as compared to OLS model's RMSE of 69388.4 and random forest model's RMSE of 52045.52. [RMSE](https://help.sap.com/docs/SAP_PREDICTIVE_ANALYTICS/41d1a6d4e7574e32b815f1cc87c00f42/5e5198fd4afe4ae5b48fefe0d3161810.html#:~:text=The%20Root%20Mean%20Squared%20Error%20(RMSE)%20is%20one%20of%20the,the%20target%20value%20(accuracy).) measures the average difference between values predicted by a model and the actual values and provides an estimation of how well the model is able to predict the target value (accuracy). Hence, among the 3 models, the GWRF model will be better model at predicting the resale price.
+Comparing the 3 models RMSE, the GWRF model has the lowest RMSE of 53185.72 as compared to OLS model's RMSE of 69388.4 and random forest model's RMSE of 55187.82. [RMSE](https://help.sap.com/docs/SAP_PREDICTIVE_ANALYTICS/41d1a6d4e7574e32b815f1cc87c00f42/5e5198fd4afe4ae5b48fefe0d3161810.html#:~:text=The%20Root%20Mean%20Squared%20Error%20(RMSE)%20is%20one%20of%20the,the%20target%20value%20(accuracy).) measures the average difference between values predicted by a model and the actual values and provides an estimation of how well the model is able to predict the target value (accuracy). Hence, among the 3 models, the GWRF model will be better model at predicting the resale price.
 
 ## Visualising the Predicted Values
 
