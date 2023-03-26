@@ -164,7 +164,7 @@ For this assignment, the dataset will focus on:
 
 -   Transaction period: Oct 2022 to February 2023
 
--   Training dataset period: Oct 2022 to December 2023
+-   Training dataset period: Oct 2022 to December 2022
 
 -   Test dataset period: January 2023 to February 2023
 
@@ -399,19 +399,13 @@ avail_themes
 
 Looking through the available themes from onemap API, some of the themes relevant to our tasks is:
 
-+---------------------------------------------------------------------------------------------------------------+------------------+
 | Theme Name                                                                                                    | Query Name       |
-+===============================================================================================================+==================+
+|---------------------------------------------------------------------------------------------------------------|------------------|
 | Child Care Services                                                                                           | childcare        |
-+---------------------------------------------------------------------------------------------------------------+------------------+
 | Eldercare Services                                                                                            | eldercare        |
-+---------------------------------------------------------------------------------------------------------------+------------------+
 | Hawker Centres_New (Note: there are other similar themes such as Hawker Centres and Healthier Hawker Centres) | hawkercentre_new |
-+---------------------------------------------------------------------------------------------------------------+------------------+
 | Kindergartens                                                                                                 | kindergartens    |
-+---------------------------------------------------------------------------------------------------------------+------------------+
 | Parks (Note: there are other similar themes such as Parks\@SG and NParks Parks and Nature Reserves)           | nationalparks    |
-+---------------------------------------------------------------------------------------------------------------+------------------+
 
 For the following code chunks, I created a shapefile for each locational factor I am interested in.
 
@@ -1091,7 +1085,7 @@ glimpse(readRDS("data/rds/resale_sf_complete.rds"))
 
 As earlier mentioned, for the resale dataset,
 
--   Training dataset period: October 2022 to December 2023
+-   Training dataset period: October 2022 to December 2022
 
 -   Test dataset period: January 2023 to February 2023
 
